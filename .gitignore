@@ -1,0 +1,6 @@
+__pycache__/
+.vscode/
+.venv/
+*.blend1
+*_updater_status.json
+/DLL
