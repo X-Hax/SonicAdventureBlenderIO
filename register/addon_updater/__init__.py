@@ -1,16 +1,9 @@
-from . import (
-    addon_updater_ops,
-    preferences
-)
-
-to_register = [
-    preferences.AddonPreferences
-]
+from . import addon_updater_ops
 
 
-def register(bl_info):
+def register_addon_updater(bl_info):
     addon_updater_ops.register(bl_info)
 
 
-def unregister():
+def unregister_addon_updater():
     addon_updater_ops.unregister()

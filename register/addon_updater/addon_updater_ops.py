@@ -27,6 +27,9 @@ import traceback
 import bpy
 from bpy.app.handlers import persistent
 
+from ... import utils
+ADDON_PACKAGE = utils.__package__
+
 # Safely import the updater.
 # Prevents popups for users with invalid python installs e.g. missing libraries
 # and will replace with a fake class instead if it fails (so UI draws work).
@@ -111,9 +114,9 @@ def get_user_preferences(context=None):
         context = bpy.context
     prefs = None
     if hasattr(context, "user_preferences"):
-        prefs = context.user_preferences.addons.get(__package__, None)
+        prefs = context.user_preferences.addons.get(ADDON_PACKAGE, None)
     elif hasattr(context, "preferences"):
-        prefs = context.preferences.addons.get(__package__, None)
+        prefs = context.preferences.addons.get(ADDON_PACKAGE, None)
     if prefs:
         return prefs.preferences
     # To make the addon stable and non-exception prone, return None
@@ -251,7 +254,7 @@ class AddonUpdaterCheckNow(bpy.types.Operator):
         if not settings:
             updater.print_verbose(
                 "Could not get {} preferences, update check skipped".format(
-                    __package__))
+                    ADDON_PACKAGE))
             return {'CANCELLED'}
 
         updater.set_check_interval(
@@ -814,7 +817,7 @@ def check_for_update_nonthreaded(self, context):
     if not settings:
         if updater.verbose:
             print("Could not get {} preferences, update check skipped".format(
-                __package__))
+                ADDON_PACKAGE))
         return
     updater.set_check_interval(enabled=settings.auto_check_update,
                                months=settings.updater_interval_months,
@@ -1385,7 +1388,7 @@ def register(bl_info):
     # Needs to be within the same folder as the addon itself
     # Need to supply a full, absolute path to folder
     # updater.updater_path = # set path of updater folder, by default:
-    # 			/addons/{__package__}/{__package__}_updater
+    # 			/addons/{ADDON_PACKAGE}/{ADDON_PACKAGE}_updater
 
     # Auto create a backup of the addon when installing other versions.
     updater.backup_current = True  # True by default

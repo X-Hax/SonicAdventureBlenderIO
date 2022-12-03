@@ -1,13 +1,6 @@
 """Main entry point for the Sonic Adventure I/O blender addon"""
 
-import bpy
-from .register import (
-    addon_updater,
-    register_classes,
-    unregister_classes
-
-)
-
+from . import register as reg
 
 bl_info = {
     "name": "Sonic Adventure I/O",
@@ -26,13 +19,11 @@ bl_info = {
 
 
 def register():
-    addon_updater.register(bl_info)
-    register_classes()
+    reg.register_classes(bl_info)
 
 
 def unregister():
-    addon_updater.unregister()
-    unregister_classes()
+    reg.unregister_classes()
 
 
 # When refreshing the addon, reload all modules

@@ -1,5 +1,5 @@
 
-from . import addon_updater_ops
+
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -7,10 +7,14 @@ from bpy.props import (
     StringProperty
 )
 
+from ..addon_updater import addon_updater_ops
+
+from ... import utils
+
 
 @addon_updater_ops.make_annotations
-class AddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = __package__
+class SAIO_AddonPreferences(bpy.types.AddonPreferences):
+    bl_idname = utils.__package__
 
     auto_check_update = BoolProperty(
         name="Auto-check for Update",
@@ -78,6 +82,10 @@ class AddonPreferences(bpy.types.AddonPreferences):
         default="",
         subtype='FILE_PATH'
     )
+
+    @classmethod
+    def register(cls):
+        pass
 
     def draw(self, context):
         layout = self.layout

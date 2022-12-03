@@ -10,6 +10,7 @@ from .texture_properties import SAIO_Texture
 from .landtable_properties import SAIO_LandTable
 from .quick_edit_properties import SAIO_QuickEdit
 from .scene_properties import SAIO_Scene
+from .addon_preferences import SAIO_AddonPreferences
 
 # Order is important
 to_register = [
@@ -23,5 +24,7 @@ to_register = [
     SAIO_LandTable,
 
     SAIO_QuickEdit,
-    SAIO_Scene
+    SAIO_Scene,
+
+    SAIO_AddonPreferences
 ]

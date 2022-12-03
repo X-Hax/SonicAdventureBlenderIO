@@ -2,4 +2,4 @@ __pycache__/
 .vscode/
 .venv/
 *.blend1
-*addon_updater_updater_status.json
+*_updater_status.json
