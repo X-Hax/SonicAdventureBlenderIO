@@ -1,7 +1,7 @@
 import bpy
 
 from ..property_groups import (
-    landtable
+    landtable_properties
 )
 
 from .draw import (
@@ -18,7 +18,7 @@ class SAIO_PT_Landtable(bpy.types.Panel):
 
     def draw_panel(
             layout: bpy.types.UILayout,
-            landtable_properties: landtable.SAIO_LandTable):
+            landtable_properties: landtable_properties.SAIO_LandTable):
 
         prop_advanced(
             layout,

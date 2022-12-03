@@ -1,7 +1,7 @@
 import bpy
 
 from ..property_groups import (
-    mesh as nj_mesh
+    mesh_properties as nj_mesh
 )
 
 

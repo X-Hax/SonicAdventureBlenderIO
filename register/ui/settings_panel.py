@@ -2,7 +2,7 @@ import bpy
 
 from ..property_groups import (
     panel_properties,
-    settings
+    scene_properties
 )
 
 from .draw import (
@@ -91,7 +91,7 @@ class SAIO_PT_Settings(bpy.types.Panel):
 
     def draw_texture_list(
             layout: bpy.types.UILayout,
-            setting_properties: settings.SAIO_Settings,
+            setting_properties: scene_properties.SAIO_Settings,
             panel_settings: panel_properties.SAIO_PanelSettings):
 
         box = layout.box()
@@ -139,7 +139,7 @@ class SAIO_PT_Settings(bpy.types.Panel):
 
     def draw_lighting_panel(
             layout: bpy.types.UILayout,
-            setting_properties: settings.SAIO_Settings,
+            setting_properties: scene_properties.SAIO_Settings,
             panel_settings: panel_properties.SAIO_PanelSettings):
 
         box = layout.box()
@@ -167,7 +167,7 @@ class SAIO_PT_Settings(bpy.types.Panel):
             layout: bpy.types.UILayout,
             scene: bpy.types.Scene,
             panel_settings: panel_properties.SAIO_PanelSettings):
-        setting_properties: settings.SAIO_Settings = scene.saio_settings
+        setting_properties: scene_properties.SAIO_Settings = scene.saio_settings
 
         layout.prop(setting_properties, "author")
         layout.prop(setting_properties, "description")

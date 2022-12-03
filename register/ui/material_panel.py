@@ -1,9 +1,9 @@
 import bpy
 
 from ..property_groups import (
-    material as saio_material,
+    material_properties as saio_material,
     panel_properties,
-    quick_edit
+    quick_edit_properties
 )
 
 from .draw import (
@@ -25,7 +25,7 @@ class SAIO_PT_Material(bpy.types.Panel):
             material: bpy.types.Material,
             material_properties: bpy.types.Material,
             panel_settings: panel_properties.SAIO_PanelSettings,
-            quick_edit_properties: quick_edit.SAIO_QuickEdit = None,
+            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit = None,
             darken_panels=True):
 
         texture_menu = layout.box()
@@ -90,7 +90,7 @@ class SAIO_PT_Material(bpy.types.Panel):
             layout: bpy.types.UILayout,
             material_properties: saio_material.SAIO_Material,
             panel_settings: panel_properties.SAIO_PanelSettings,
-            quick_edit_properties: quick_edit.SAIO_QuickEdit = None,
+            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit = None,
             darken_panels=True):
 
         rendering_menu = layout.box()
@@ -143,7 +143,7 @@ class SAIO_PT_Material(bpy.types.Panel):
             layout: bpy.types.UILayout,
             material_properties: saio_material.SAIO_Material,
             panel_settings: panel_properties.SAIO_PanelSettings,
-            quick_edit_properties: quick_edit.SAIO_QuickEdit = None):
+            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit = None):
 
         gc_menu = layout.box()
         if not expand_menu(
@@ -188,7 +188,7 @@ class SAIO_PT_Material(bpy.types.Panel):
             material: bpy.types.Material,
             material_properties: bpy.types.Material,
             panel_settings: panel_properties.SAIO_PanelSettings,
-            quick_edit_properties: quick_edit.SAIO_QuickEdit = None,
+            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit = None,
             darken_panels=True):
 
         def color_prop(label, name, qe_name):

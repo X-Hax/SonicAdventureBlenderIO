@@ -8,8 +8,8 @@ from bpy.props import (
 )
 
 from ...text.sa_texture import SATextureFile
-from ..property_groups.settings import SAIO_Settings
-from ..property_groups.material import SAIO_Material
+from ..property_groups.scene_properties import SAIO_Settings
+from ..property_groups.material_properties import SAIO_Material
 
 
 class SAIO_OT_Textures_Add(Operator):

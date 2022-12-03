@@ -5,10 +5,10 @@ from bpy.props import (
 )
 
 from . import (
-    material,
-    land_entry,
-    node,
-    mesh,
+    land_entry_properties,
+    material_properties,
+    mesh_properties,
+    node_properties,
     panel_properties
 )
 
@@ -23,7 +23,7 @@ class SAIO_QuickEdit(bpy.types.PropertyGroup):
     # === To-Apply Material properties ===
 
     material_properties: PointerProperty(
-        type=material.SAIO_Material,
+        type=material_properties.SAIO_Material,
         name="Material properties"
     )
 
@@ -165,7 +165,7 @@ class SAIO_QuickEdit(bpy.types.PropertyGroup):
     # === To-Apply Landentry properties ===
 
     land_entry_properties: PointerProperty(
-        type=land_entry.SAIO_LandEntry,
+        type=land_entry_properties.SAIO_LandEntry,
         name="Land Entry properties"
     )
 
@@ -199,7 +199,7 @@ class SAIO_QuickEdit(bpy.types.PropertyGroup):
     )
 
     node_properties: PointerProperty(
-        type=node.SAIO_Node,
+        type=node_properties.SAIO_Node,
         name="Node properties"
     )
 
@@ -215,7 +215,7 @@ class SAIO_QuickEdit(bpy.types.PropertyGroup):
     )
 
     mesh_properties: PointerProperty(
-        type=mesh.SAIO_Mesh,
+        type=mesh_properties.SAIO_Mesh,
         name="Mesh Properties"
     )
 

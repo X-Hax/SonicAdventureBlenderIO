@@ -12,11 +12,11 @@ from bpy.props import (
 )
 
 from . import (
-    landtable,
+    landtable_properties,
     panel_properties,
-    quick_edit,
-    project,
-    texture
+    project_properties,
+    quick_edit_properties,
+    texture_properties
 )
 
 
@@ -118,18 +118,18 @@ class SAIO_Settings(bpy.types.PropertyGroup):
     # === Pointers ===
 
     landtable: PointerProperty(
-        type=landtable.SAIO_LandTable,
+        type=landtable_properties.SAIO_LandTable,
         name="Quick edit properties"
     )
 
     texture_list: CollectionProperty(
-        type=texture.SAIO_Texture,
+        type=texture_properties.SAIO_Texture,
         name="Texture List",
         description="The textures used by sonic adventure"
     )
 
     project: PointerProperty(
-        type=project.SAIO_Project,
+        type=project_properties.SAIO_Project,
         name="Project properties"
     )
 
@@ -144,7 +144,7 @@ class SAIO_Settings(bpy.types.PropertyGroup):
     )
 
     quick_edit: PointerProperty(
-        type=quick_edit.SAIO_QuickEdit,
+        type=quick_edit_properties.SAIO_QuickEdit,
         name="Quick edit properties"
     )
 

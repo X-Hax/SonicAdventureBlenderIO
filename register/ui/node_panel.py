@@ -3,7 +3,7 @@ import bpy
 from .draw import PropertiesPanel
 
 from ..property_groups import (
-    node as nj_object
+    node_properties as nj_object
 )
 
 ATTRIBUTE_LIST = [
