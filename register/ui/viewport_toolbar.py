@@ -7,7 +7,7 @@ from ...utils import (
 )
 
 from . import (
-    settings_panel,
+    scene_panel,
     landtable_panel,
     land_entry_panel,
     node_panel,
@@ -27,10 +27,10 @@ class SAIO_PT_VPSettings(SAIO_PT_Viewport):
     bl_label = "Settings"
 
     def draw(self, context):
-        settings_panel.SAIO_PT_Settings.draw_panel(
+        scene_panel.SAIO_PT_Scene.draw_panel(
             self.layout,
             context.scene,
-            context.scene.saio_settings.viewport_panels
+            context.scene.saio_scene.viewport_panels
         )
 
 
@@ -45,7 +45,7 @@ class SAIO_PT_VPLandTable(SAIO_PT_Viewport):
 
         landtable_panel.SAIO_PT_Landtable.draw_panel(
             self.layout,
-            context.scene.saio_settings.landtable
+            context.scene.saio_scene.landtable
         )
 
 
@@ -69,7 +69,7 @@ class SAIO_PT_VPLandEntry(SAIO_PT_Viewport):
         land_entry_panel.SAIO_PT_LandEntry.draw_panel(
             self.layout,
             context.active_object.saio_land_entry,
-            context.scene.saio_settings.viewport_panels
+            context.scene.saio_scene.viewport_panels
         )
 
 
@@ -183,5 +183,5 @@ class SAIO_PT_VPMaterial(SAIO_PT_Viewport):
                 self.layout,
                 obj.active_material,
                 obj.active_material.saio_material,
-                context.scene.saio_settings.viewport_panels
+                context.scene.saio_scene.viewport_panels
             )

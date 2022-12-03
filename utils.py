@@ -17,7 +17,7 @@ def get_prefs():
 def is_landtable(context: bpy.types.Context):
     if context is None:
         context = bpy.context
-    return context.scene.saio_settings.scene_is_level
+    return context.scene.saio_scene.scene_is_level
 
 
 def is_land_entry(context: bpy.types.Context):

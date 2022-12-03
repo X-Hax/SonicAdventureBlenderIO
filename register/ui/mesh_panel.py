@@ -1,7 +1,7 @@
 import bpy
 
 from ..property_groups import (
-    mesh_properties as nj_mesh
+    SAIO_Mesh
 )
 
 
@@ -15,7 +15,7 @@ class SAIO_PT_Mesh(bpy.types.Panel):
     @staticmethod
     def draw_mesh_properties(
             layout: bpy.types.UILayout,
-            mesh_properites: nj_mesh.SAIO_Mesh):
+            mesh_properites: SAIO_Mesh):
 
         layout.prop(mesh_properites, "force_vertex_colors")
 

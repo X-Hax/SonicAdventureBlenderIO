@@ -11,16 +11,14 @@ from bpy.props import (
     CollectionProperty
 )
 
-from . import (
-    landtable_properties,
-    panel_properties,
-    project_properties,
-    quick_edit_properties,
-    texture_properties
-)
+from .landtable_properties import SAIO_LandTable
+from .panel_properties import SAIO_PanelSettings
+from .project_properties import SAIO_Project
+from .quick_edit_properties import SAIO_QuickEdit
+from .texture_properties import SAIO_Texture
 
 
-class SAIO_Settings(bpy.types.PropertyGroup):
+class SAIO_Scene(bpy.types.PropertyGroup):
     """Property Groups used across the Addon"""
 
     author: StringProperty(
@@ -118,36 +116,36 @@ class SAIO_Settings(bpy.types.PropertyGroup):
     # === Pointers ===
 
     landtable: PointerProperty(
-        type=landtable_properties.SAIO_LandTable,
+        type=SAIO_LandTable,
         name="Quick edit properties"
     )
 
     texture_list: CollectionProperty(
-        type=texture_properties.SAIO_Texture,
+        type=SAIO_Texture,
         name="Texture List",
         description="The textures used by sonic adventure"
     )
 
     project: PointerProperty(
-        type=project_properties.SAIO_Project,
+        type=SAIO_Project,
         name="Project properties"
     )
 
     panels: PointerProperty(
-        type=panel_properties.SAIO_PanelSettings,
+        type=SAIO_PanelSettings,
         name="Panel properties"
     )
 
     viewport_panels: PointerProperty(
-        type=panel_properties.SAIO_PanelSettings,
+        type=SAIO_PanelSettings,
         name="Viewport Panel properties"
     )
 
     quick_edit: PointerProperty(
-        type=quick_edit_properties.SAIO_QuickEdit,
+        type=SAIO_QuickEdit,
         name="Quick edit properties"
     )
 
     @classmethod
     def register(cls):
-        bpy.types.Scene.saio_settings = bpy.props.PointerProperty(type=cls)
+        bpy.types.Scene.saio_scene = bpy.props.PointerProperty(type=cls)

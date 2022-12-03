@@ -1,8 +1,8 @@
 import bpy
 
 from ..property_groups import (
-    panel_properties,
-    scene_properties
+    SAIO_PanelSettings,
+    SAIO_Scene
 )
 
 from .draw import (
@@ -82,8 +82,8 @@ class SAIO_MT_TextureContextMenu(bpy.types.Menu):
         layout.operator(texop.SAIO_OT_Textures_Import.bl_idname)
 
 
-class SAIO_PT_Settings(bpy.types.Panel):
-    bl_label = "SAIO Settings"
+class SAIO_PT_Scene(bpy.types.Panel):
+    bl_label = "SAIO Scene"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
@@ -91,8 +91,8 @@ class SAIO_PT_Settings(bpy.types.Panel):
 
     def draw_texture_list(
             layout: bpy.types.UILayout,
-            setting_properties: scene_properties.SAIO_Settings,
-            panel_settings: panel_properties.SAIO_PanelSettings):
+            setting_properties: SAIO_Scene,
+            panel_settings: SAIO_PanelSettings):
 
         box = layout.box()
         if not expand_menu(
@@ -139,8 +139,8 @@ class SAIO_PT_Settings(bpy.types.Panel):
 
     def draw_lighting_panel(
             layout: bpy.types.UILayout,
-            setting_properties: scene_properties.SAIO_Settings,
-            panel_settings: panel_properties.SAIO_PanelSettings):
+            setting_properties: SAIO_Scene,
+            panel_settings: SAIO_PanelSettings):
 
         box = layout.box()
         if not expand_menu(
@@ -166,27 +166,27 @@ class SAIO_PT_Settings(bpy.types.Panel):
     def draw_panel(
             layout: bpy.types.UILayout,
             scene: bpy.types.Scene,
-            panel_settings: panel_properties.SAIO_PanelSettings):
-        setting_properties: scene_properties.SAIO_Settings = scene.saio_settings
+            panel_settings: SAIO_PanelSettings):
+        setting_properties: SAIO_Scene = scene.saio_scene
 
         layout.prop(setting_properties, "author")
         layout.prop(setting_properties, "description")
         layout.prop(setting_properties, "scene_is_level")
 
-        SAIO_PT_Settings.draw_texture_list(
+        SAIO_PT_Scene.draw_texture_list(
             layout,
             setting_properties,
             panel_settings
         )
 
-        SAIO_PT_Settings.draw_lighting_panel(
+        SAIO_PT_Scene.draw_lighting_panel(
             layout,
             setting_properties,
             panel_settings
         )
 
     def draw(self, context):
-        SAIO_PT_Settings.draw_panel(
+        SAIO_PT_Scene.draw_panel(
             self.layout,
             context.scene,
-            context.scene.saio_settings.panels)
+            context.scene.saio_scene.panels)

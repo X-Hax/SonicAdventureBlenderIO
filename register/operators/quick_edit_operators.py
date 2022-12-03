@@ -5,7 +5,7 @@ from bpy.props import (
     EnumProperty,
 )
 
-from ..property_groups import quick_edit_properties
+from ..property_groups import SAIO_QuickEdit
 
 PROPERTY_MAPPING = {
     "material": [
@@ -182,7 +182,7 @@ PROPERTY_MAPPING = {
 
 
 def map_quick_edit_properties(
-        quick_edit_properties: quick_edit_properties.SAIO_QuickEdit):
+        quick_edit_properties: SAIO_QuickEdit):
 
     result = {}
 
@@ -296,8 +296,8 @@ class SAIO_OT_QuickEdit_Set(Operator):
 
     def execute(self, context):
 
-        quick_edit_properties: quick_edit_properties.SAIO_QuickEdit \
-            = context.scene.saio_settings.quick_edit
+        quick_edit_properties: SAIO_QuickEdit \
+            = context.scene.saio_scene.quick_edit
 
         prop_mapping = map_quick_edit_properties(quick_edit_properties)
         targets = []
@@ -372,7 +372,7 @@ class SAIO_OT_QuickEdit_Select(Operator):
 
     def execute(self, context):
 
-        quick_edit_properties = context.scene.saio_settings.quick_edit
+        quick_edit_properties = context.scene.saio_scene.quick_edit
         prop_mapping = map_quick_edit_properties(quick_edit_properties)
 
         if self.mode == 'ADD':

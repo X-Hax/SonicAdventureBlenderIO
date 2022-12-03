@@ -8,8 +8,10 @@ from bpy.props import (
 )
 
 from ...text.sa_texture import SATextureFile
-from ..property_groups.scene_properties import SAIO_Settings
-from ..property_groups.material_properties import SAIO_Material
+from ..property_groups import (
+    SAIO_Scene,
+    SAIO_Material
+)
 
 
 class SAIO_OT_Textures_Add(Operator):
@@ -19,7 +21,7 @@ class SAIO_OT_Textures_Add(Operator):
     bl_description = "Adds texture to the texture list"
 
     def execute(self, context):
-        settings: SAIO_Settings = context.scene.saio_settings
+        settings: SAIO_Scene = context.scene.saio_scene
 
         # getting next usable global id
         ids = [t.global_id for t in settings.texture_list]
@@ -48,7 +50,7 @@ class SAIO_OT_Textures_Remove(Operator):
     bl_description = "Removes the selected texture from the texture list"
 
     def execute(self, context):
-        settings: SAIO_Settings = context.scene.saio_settings
+        settings: SAIO_Scene = context.scene.saio_scene
         settings.texture_list.remove(settings.active_texture_index)
 
         settings.active_texture_index -= 1
@@ -75,7 +77,7 @@ class SAIO_OT_Textures_Move(Operator):
     )
 
     def execute(self, context):
-        settings: SAIO_Settings = context.scene.saio_settings
+        settings: SAIO_Scene = context.scene.saio_scene
 
         new_index = (
             settings.active_texture_index
@@ -108,7 +110,7 @@ class SAIO_OT_Textures_Autoname(Operator):
     bl_description = "Renames all entries to the assigned texture"
 
     def execute(self, context):
-        tex_list = context.scene.saio_settings.texture_list
+        tex_list = context.scene.saio_scene.texture_list
 
         for t in tex_list:
             if t.image is not None:
@@ -125,7 +127,7 @@ class SAIO_OT_Textures_Clear(Operator):
     bl_description = "Removes all entries from the list"
 
     def execute(self, context):
-        settings = context.scene.saio_settings
+        settings = context.scene.saio_scene
         settings.active_texture_index = -1
 
         for t in settings.texture_list:
@@ -159,7 +161,7 @@ class SAIO_OT_Textures_Import(Operator, ImportHelper):
             context: bpy.types.Context,
             textures: list[tuple[int, str]]):
         bpy.ops.saio.textures_clear()
-        texture_list = context.scene.saio_settings.texture_list
+        texture_list = context.scene.saio_scene.texture_list
 
         for i, t in textures:
             img = None

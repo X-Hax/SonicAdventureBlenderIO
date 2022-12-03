@@ -6,9 +6,9 @@ from .draw import (
 )
 
 from ..property_groups import (
-    land_entry_properties,
-    panel_properties,
-    quick_edit_properties
+    SAIO_LandEntry,
+    SAIO_PanelSettings,
+    SAIO_QuickEdit
 )
 
 from ...utils import is_land_entry
@@ -163,8 +163,8 @@ class SAIO_PT_LandEntry(bpy.types.Panel):
     @staticmethod
     def draw_attributes(
             layout: bpy.types.UILayout,
-            land_entry_properties: land_entry_properties.SAIO_LandEntry,
-            panel_settings: panel_properties.SAIO_PanelSettings):
+            land_entry_properties: SAIO_LandEntry,
+            panel_settings: SAIO_PanelSettings):
 
         box = layout.box()
         if not expand_menu(box, panel_settings, "expanded_surface_attributes"):
@@ -183,9 +183,9 @@ class SAIO_PT_LandEntry(bpy.types.Panel):
     def draw_panel(
             layout: bpy.types.UILayout,
             is_level: bool,
-            land_entry_properties: land_entry_properties.SAIO_LandEntry,
-            panel_settings: panel_properties.SAIO_PanelSettings,
-            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit = None):
+            land_entry_properties: SAIO_LandEntry,
+            panel_settings: SAIO_PanelSettings,
+            quick_edit_properties: SAIO_QuickEdit = None):
 
         if not is_level:
             layout.box().label(text="Scene is not marked as a level")
@@ -220,7 +220,7 @@ class SAIO_PT_LandEntry(bpy.types.Panel):
 
         SAIO_PT_LandEntry.draw_panel(
             self.layout,
-            context.scene.saio_settings.scene_is_level,
+            context.scene.saio_scene.scene_is_level,
             context.active_object.saio_land_entry,
-            context.scene.saio_settings.panels
+            context.scene.saio_scene.panels
         )

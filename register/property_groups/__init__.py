@@ -1,29 +1,27 @@
 """All property groups declared by the addon"""
 
-from . import (
-    land_entry_properties,
-    landtable_properties,
-    material_properties,
-    mesh_properties,
-    node_properties,
-    panel_properties,
-    project_properties,
-    quick_edit_properties,
-    scene_properties,
-    texture_properties
-)
+from .panel_properties import SAIO_PanelSettings
+from .land_entry_properties import SAIO_LandEntry
+from .material_properties import SAIO_Material
+from .mesh_properties import SAIO_Mesh
+from .node_properties import SAIO_Node
+from .project_properties import SAIO_Project
+from .texture_properties import SAIO_Texture
+from .landtable_properties import SAIO_LandTable
+from .quick_edit_properties import SAIO_QuickEdit
+from .scene_properties import SAIO_Scene
 
 # Order is important
 to_register = [
-    panel_properties.SAIO_PanelSettings,
-    land_entry_properties.SAIO_LandEntry,
-    material_properties.SAIO_Material,
-    mesh_properties.SAIO_Mesh,
-    node_properties.SAIO_Node,
-    project_properties.SAIO_Project,
-    texture_properties.SAIO_Texture,
-    landtable_properties.SAIO_LandTable,
+    SAIO_PanelSettings,
+    SAIO_LandEntry,
+    SAIO_Material,
+    SAIO_Mesh,
+    SAIO_Node,
+    SAIO_Project,
+    SAIO_Texture,
+    SAIO_LandTable,
 
-    quick_edit_properties.SAIO_QuickEdit,
-    scene_properties.SAIO_Settings
+    SAIO_QuickEdit,
+    SAIO_Scene
 ]

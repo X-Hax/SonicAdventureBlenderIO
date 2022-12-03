@@ -1,7 +1,7 @@
 import bpy
 
 from ..property_groups import (
-    landtable_properties
+    SAIO_LandTable
 )
 
 from .draw import (
@@ -18,7 +18,7 @@ class SAIO_PT_Landtable(bpy.types.Panel):
 
     def draw_panel(
             layout: bpy.types.UILayout,
-            landtable_properties: landtable_properties.SAIO_LandTable):
+            landtable_properties: SAIO_LandTable):
 
         prop_advanced(
             layout,
@@ -54,11 +54,11 @@ class SAIO_PT_Landtable(bpy.types.Panel):
 
     def draw(self, context):
 
-        if not context.scene.saio_settings.scene_is_level:
+        if not context.scene.saio_scene.scene_is_level:
             self.layout.box().label(text="Scene is not marked as a level")
             return
 
         SAIO_PT_Landtable.draw_panel(
             self.layout,
-            context.scene.saio_settings.landtable
+            context.scene.saio_scene.landtable
         )

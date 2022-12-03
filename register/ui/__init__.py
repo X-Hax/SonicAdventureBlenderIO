@@ -4,7 +4,7 @@ from . import (
     material_panel,
     node_panel,
     mesh_panel,
-    settings_panel,
+    scene_panel,
     landtable_panel,
     viewport_toolbar,
     quick_edit_panel
@@ -18,9 +18,9 @@ to_register = [
     mesh_panel.SAIO_PT_Mesh,
     landtable_panel.SAIO_PT_Landtable,
 
-    settings_panel.SAIO_UL_TextureList,
-    settings_panel.SAIO_MT_TextureContextMenu,
-    settings_panel.SAIO_PT_Settings,
+    scene_panel.SAIO_UL_TextureList,
+    scene_panel.SAIO_MT_TextureContextMenu,
+    scene_panel.SAIO_PT_Scene,
 
     viewport_toolbar.SAIO_PT_VPSettings,
     viewport_toolbar.SAIO_PT_VPLandTable,

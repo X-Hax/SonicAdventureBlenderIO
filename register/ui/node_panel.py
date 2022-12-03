@@ -3,7 +3,7 @@ import bpy
 from .draw import PropertiesPanel
 
 from ..property_groups import (
-    node_properties as nj_object
+    SAIO_Node
 )
 
 ATTRIBUTE_LIST = [
@@ -25,7 +25,7 @@ class SAIO_PT_Node(PropertiesPanel):
     @staticmethod
     def draw_node_properties(
             layout: bpy.types.UILayout,
-            node_properties: nj_object.SAIO_Node):
+            node_properties: SAIO_Node):
 
         for attribute in ATTRIBUTE_LIST:
             layout.prop(node_properties, attribute)

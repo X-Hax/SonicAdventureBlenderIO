@@ -13,7 +13,7 @@ from .draw import (
 )
 
 from ..property_groups import (
-    quick_edit_properties
+    SAIO_QuickEdit
 )
 
 from ..operators import quick_edit_operators as qeo
@@ -72,7 +72,7 @@ class SAIO_PT_QuickEdit(viewport_toolbar.SAIO_PT_Viewport):
     @staticmethod
     def expand_select_menu(
             layout: bpy.types.UILayout,
-            quick_edit: quick_edit_properties.SAIO_QuickEdit,
+            quick_edit: SAIO_QuickEdit,
             selection_prop: str,
             panel_prop: str):
 
@@ -88,7 +88,7 @@ class SAIO_PT_QuickEdit(viewport_toolbar.SAIO_PT_Viewport):
     def draw_land_entry_selection(
             layout: bpy.types.UILayout,
             is_level: bool,
-            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit):
+            quick_edit_properties: SAIO_QuickEdit):
 
         box = layout.box()
         if not SAIO_PT_QuickEdit.expand_select_menu(
@@ -109,7 +109,7 @@ class SAIO_PT_QuickEdit(viewport_toolbar.SAIO_PT_Viewport):
     @staticmethod
     def draw_node_selection(
             layout: bpy.types.UILayout,
-            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit):
+            quick_edit_properties: SAIO_QuickEdit):
 
         box = layout.box()
         if not SAIO_PT_QuickEdit.expand_select_menu(
@@ -127,7 +127,7 @@ class SAIO_PT_QuickEdit(viewport_toolbar.SAIO_PT_Viewport):
     @staticmethod
     def draw_mesh_selection(
             layout: bpy.types.UILayout,
-            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit):
+            quick_edit_properties: SAIO_QuickEdit):
 
         box = layout.box()
         if not SAIO_PT_QuickEdit.expand_select_menu(
@@ -145,7 +145,7 @@ class SAIO_PT_QuickEdit(viewport_toolbar.SAIO_PT_Viewport):
     @staticmethod
     def draw_material_selection(
             layout: bpy.types.UILayout,
-            quick_edit_properties: quick_edit_properties.SAIO_QuickEdit):
+            quick_edit_properties: SAIO_QuickEdit):
 
         box = layout.box()
         if not SAIO_PT_QuickEdit.expand_select_menu(
@@ -173,7 +173,7 @@ class SAIO_PT_QuickEdit(viewport_toolbar.SAIO_PT_Viewport):
 
         box = SAIO_PT_QuickEdit.draw_operators(self.layout)
 
-        quick_edit_properties = context.scene.saio_settings.quick_edit
+        quick_edit_properties = context.scene.saio_scene.quick_edit
 
         SAIO_PT_QuickEdit.draw_node_selection(
             box,
@@ -184,7 +184,7 @@ class SAIO_PT_QuickEdit(viewport_toolbar.SAIO_PT_Viewport):
 
             SAIO_PT_QuickEdit.draw_land_entry_selection(
                 box,
-                context.scene.saio_settings.scene_is_level,
+                context.scene.saio_scene.scene_is_level,
                 quick_edit_properties
             )
 
