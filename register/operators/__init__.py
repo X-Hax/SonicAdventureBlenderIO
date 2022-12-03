@@ -1,5 +1,6 @@
 from . import (
-    texture_operators
+    texture_operators,
+    quick_edit_operators
 )
 
 to_register = [
@@ -9,4 +10,7 @@ to_register = [
     texture_operators.SAIO_OT_Textures_Autoname,
     texture_operators.SAIO_OT_Textures_Clear,
     texture_operators.SAIO_OT_Textures_Import,
+
+    quick_edit_operators.SAIO_OT_QuickEdit_Set,
+    quick_edit_operators.SAIO_OT_QuickEdit_Select,
 ]

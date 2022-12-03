@@ -7,7 +7,8 @@ from .draw import (
 
 from ..property_groups import (
     land_entry,
-    panel_properties
+    panel_properties,
+    quick_edit
 )
 
 from ...utils import is_land_entry
@@ -181,14 +182,22 @@ class SAIO_PT_LandEntry(bpy.types.Panel):
     @staticmethod
     def draw_panel(
             layout: bpy.types.UILayout,
+            is_level: bool,
             land_entry_properties: land_entry.SAIO_LandEntry,
-            panel_settings: panel_properties.SAIO_PanelSettings):
+            panel_settings: panel_properties.SAIO_PanelSettings,
+            quick_edit_properties: quick_edit.SAIO_QuickEdit = None):
+
+        if not is_level:
+            layout.box().label(text="Scene is not marked as a level")
+            return
 
         prop_advanced(
             layout,
             "Blockit (hex):  0x",
             land_entry_properties,
-            "blockbit")
+            "blockbit",
+            quick_edit_properties,
+            "apply_blockbit")
 
         layout.separator(factor=1)
 
@@ -209,12 +218,9 @@ class SAIO_PT_LandEntry(bpy.types.Panel):
 
     def draw(self, context):
 
-        if not context.scene.saio_settings.scene_is_level:
-            self.layout.box().label(text="Scene is not marked as a level")
-            return
-
         SAIO_PT_LandEntry.draw_panel(
             self.layout,
+            context.scene.saio_settings.scene_is_level,
             context.active_object.saio_land_entry,
             context.scene.saio_settings.panels
         )

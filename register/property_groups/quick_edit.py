@@ -90,6 +90,33 @@ class SAIO_QuickEdit(bpy.types.PropertyGroup):
         default=False
     )
 
+    apply_mipmap_distance_multiplier: BoolProperty(
+        name="Apply mipmap distance multiplier",
+        description=(
+            "Sets the mdm of all selected"
+            " materials when pressing 'Set'"
+        ),
+        default=False
+    )
+
+    apply_source_alpha: BoolProperty(
+        name="Apply source alpha",
+        description=(
+            "Sets the source alpha of all selected"
+            " materials when pressing 'Set'"
+        ),
+        default=False
+    )
+
+    apply_destination_alpha: BoolProperty(
+        name="Apply destination alpha",
+        description=(
+            "Sets the destination alpha of all selected"
+            " materials when pressing 'Set'"
+        ),
+        default=False
+    )
+
     apply_shadow_stencil: BoolProperty(
         name="Apply shadow stencil",
         description=(
@@ -151,7 +178,7 @@ class SAIO_QuickEdit(bpy.types.PropertyGroup):
         default=False
     )
 
-    apply_land_entry_blockbit: BoolProperty(
+    apply_blockbit: BoolProperty(
         name="Apply Blockbit",
         description=(
             "Sets the Blockbit of all selected"
@@ -160,29 +187,20 @@ class SAIO_QuickEdit(bpy.types.PropertyGroup):
         default=False
     )
 
-    apply_object_attributes: BoolProperty(
-        name="Apply Object Attributes",
-        description=(
-            "Sets object attributes for all selected"
-            " objects when pressing 'Set'"
-        ),
-        default=False
-    )
+    # === Node ===
 
-    # === Object ===
-
-    use_object_edit: BoolProperty(
-        name="Activate Quick Object Edit",
+    use_node_edit: BoolProperty(
+        name="Activate Quick Node Edit",
         description=(
             "When active, the Buttons will use"
-            " and apply the object properties"
+            " and apply the node properties"
         ),
         default=False
     )
 
-    object_properties: PointerProperty(
+    node_properties: PointerProperty(
         type=node.SAIO_Node,
-        name="Object properties"
+        name="Node properties"
     )
 
     # === Mesh ===

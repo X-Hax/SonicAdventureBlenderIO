@@ -179,8 +179,9 @@ class SAIO_PT_VPMaterial(SAIO_PT_Viewport):
         SAIO_PT_VPMaterial.draw_material_list(self.layout, obj)
 
         if obj.active_material is not None:
-            material_panel.SAIO_PT_Material.draw_material_properties(
+            material_panel.SAIO_PT_Material.draw_panel(
                 self.layout,
                 obj.active_material,
+                obj.active_material.saio_material,
                 context.scene.saio_settings.viewport_panels
             )

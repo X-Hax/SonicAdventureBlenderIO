@@ -21,7 +21,7 @@ def prop_advanced(
         split = layout.split(factor=0.5)
         row = split.row()
         row.alignment = 'LEFT'
-        if prop2 is not None:
+        if prop2 is not None and prop2Name is not None:
             row.prop(prop2, prop2Name, text="")
         row.label(text=label)
         split.prop(prop1, prop1Name, text="")
@@ -29,7 +29,7 @@ def prop_advanced(
     else:
         row = layout.row()
         row.alignment = 'LEFT'
-        if prop2 is not None:
+        if prop2 is not None and prop2Name is not None:
             row.prop(prop2, prop2Name, text="")
         row.label(text=label)
         row.alignment = 'EXPAND'

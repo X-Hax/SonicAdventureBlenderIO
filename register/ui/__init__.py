@@ -6,7 +6,8 @@ from . import (
     mesh_panel,
     settings_panel,
     landtable_panel,
-    viewport_toolbar
+    viewport_toolbar,
+    quick_edit_panel
 )
 
 to_register = [
@@ -27,6 +28,8 @@ to_register = [
     viewport_toolbar.SAIO_PT_VPNode,
     viewport_toolbar.SAIO_PT_VPMesh,
     viewport_toolbar.SAIO_PT_VPMaterial,
+
+    quick_edit_panel.SAIO_PT_QuickEdit
 ]
 
 

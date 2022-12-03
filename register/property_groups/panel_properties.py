@@ -10,12 +10,7 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
 
     # === Quick Edit ===
 
-    expanded_quick_edit_panel: BoolProperty(
-        name="Quick Edit",
-        default=False
-    )
-
-    expanded_material_edit: BoolProperty(
+    expanded_material_quick_edit: BoolProperty(
         name="Material Quick Edit",
         description=(
             "A menu for quickly assigning material"
@@ -24,11 +19,29 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
         default=False
     )
 
-    expanded_land_entry_edit: BoolProperty(
-        name="LandEntry Quick Edit",
+    expanded_node_quick_edit: BoolProperty(
+        name="Node Quick Edit",
         description=(
-            "A menu for quickly assigning LandEntry"
+            "A menu for quickly assigning Node"
              " properties to mutliple objects"
+        ),
+        default=False
+    )
+
+    expanded_land_entry_quick_edit: BoolProperty(
+        name="Land Entry Quick Edit",
+        description=(
+            "A menu for quickly assigning Land Entry"
+             " properties to mutliple objects"
+        ),
+        default=False
+    )
+
+    expanded_mesh_quick_edit: BoolProperty(
+        name="Mesh Quick Edit",
+        description=(
+            "A menu for quickly assigning mesh"
+            " properties to mutliple objects"
         ),
         default=False
     )
@@ -55,7 +68,7 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
         default=False
     )
 
-    # === Object ===
+    # === Land Entry ===
 
     expanded_surface_attributes: BoolProperty(
         name="Surface Attributes",
@@ -74,11 +87,6 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
                  "Edit surface attributes specific to sa2"),
         ),
         default="UNIVERSAL"
-    )
-
-    expanded_object_attributes: BoolProperty(
-        name="Object Attributes",
-        default=False
     )
 
     # === Settings ===
