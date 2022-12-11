@@ -22,6 +22,7 @@ to_register = [
     scene_panel.SAIO_MT_TextureContextMenu,
     scene_panel.SAIO_PT_Scene,
 
+    viewport_toolbar.SAIO_PT_VPTools,
     viewport_toolbar.SAIO_PT_VPSettings,
     viewport_toolbar.SAIO_PT_VPLandTable,
     viewport_toolbar.SAIO_PT_VPLandEntry,

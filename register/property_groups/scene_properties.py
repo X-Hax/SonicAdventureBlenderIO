@@ -17,6 +17,12 @@ from .project_properties import SAIO_Project
 from .quick_edit_properties import SAIO_QuickEdit
 from .texture_properties import SAIO_Texture
 
+from ...material_setup import update_scene_lighting
+
+
+def _update_scene_lighting(self, context):
+    update_scene_lighting(context)
+
 
 class SAIO_Scene(bpy.types.PropertyGroup):
     """Property Groups used across the Addon"""
@@ -67,33 +73,37 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         default=(0.0, 0.0, 1.0),
         min=0,
         max=1,
-        size=3
+        size=3,
+        update=_update_scene_lighting
     )
 
     light_color: FloatVectorProperty(
         name="Light Color",
         description="The color of the emulated light",
-        default=(1.0, 1.0, 1.0),
+        default=(1.0, 1.0, 1.0, 1.0),
         subtype='COLOR_GAMMA',
         min=0,
         max=1,
-        size=3
+        size=4,
+        update=_update_scene_lighting
     )
 
     light_ambient_color: FloatVectorProperty(
         name="Light Ambient Color",
         description="The ambient color of the emulated light",
-        default=(0.3, 0.3, 0.3),
+        default=(0.3, 0.3, 0.3, 1.0),
         subtype='COLOR_GAMMA',
         min=0,
         max=1,
-        size=3
+        size=4,
+        update=_update_scene_lighting
     )
 
     display_specular: BoolProperty(
         name="Viewport Specular",
         description="Display specular in the blender material view",
-        default=True
+        default=True,
+        update=_update_scene_lighting
     )
 
     viewport_alpha_type: EnumProperty(

@@ -1,11 +1,5 @@
 import bpy
 
-from ...utils import (
-    is_landtable,
-    is_land_entry,
-    get_active_node_properties
-)
-
 from . import (
     scene_panel,
     landtable_panel,
@@ -15,12 +9,35 @@ from . import (
     material_panel,
 )
 
+from ..operators import (
+    SAIO_OT_Material_TextureFromID,
+    SAIO_OT_Material_TextureToID,
+    SAIO_OT_Material_UpdateNodes
+)
+
+from ...utils import (
+    is_landtable,
+    is_land_entry,
+    get_active_node_properties
+)
+
 
 class SAIO_PT_Viewport(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "SA I/O"
     bl_options = {"DEFAULT_CLOSED"}
+
+
+class SAIO_PT_VPTools(SAIO_PT_Viewport):
+    bl_label = "Tools"
+
+    def draw(self, context):
+
+        layout = self.layout
+        layout.operator(SAIO_OT_Material_TextureFromID.bl_idname)
+        layout.operator(SAIO_OT_Material_TextureToID.bl_idname)
+        layout.operator(SAIO_OT_Material_UpdateNodes.bl_idname)
 
 
 class SAIO_PT_VPSettings(SAIO_PT_Viewport):
@@ -158,7 +175,10 @@ class SAIO_PT_VPMaterial(SAIO_PT_Viewport):
         row = layout.row()
         row.template_ID(object, "active_material", new="material.new")
 
-        slot = object.material_slots[object.active_material_index]
+        slot = None
+        if object.active_material_index < len(object.material_slots):
+            slot = object.material_slots[object.active_material_index]
+
         if slot:
             icon_link = 'MESH_DATA' if slot.link == 'DATA' else 'OBJECT_DATA'
             row.prop(slot, "link", icon=icon_link, icon_only=True)

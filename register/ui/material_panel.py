@@ -1,15 +1,17 @@
 import bpy
 
+from .draw import (
+    prop_advanced,
+    expand_menu
+)
+
 from ..property_groups import (
     SAIO_Material,
     SAIO_PanelSettings,
     SAIO_QuickEdit
 )
 
-from .draw import (
-    prop_advanced,
-    expand_menu
-)
+from ..operators import SAIO_OT_Material_UpdateNodes
 
 
 class SAIO_PT_Material(bpy.types.Panel):
@@ -190,6 +192,8 @@ class SAIO_PT_Material(bpy.types.Panel):
             panel_settings: SAIO_PanelSettings,
             quick_edit_properties: SAIO_QuickEdit = None,
             darken_panels=True):
+
+        layout.operator(SAIO_OT_Material_UpdateNodes.bl_idname).mode = 'ACTIVE'
 
         def color_prop(label, name, qe_name):
             prop_advanced(

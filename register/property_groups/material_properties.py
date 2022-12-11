@@ -10,6 +10,19 @@ from bpy.props import (
     PointerProperty
 )
 
+from ...material_setup import update_material_values
+
+
+def _update_material_values(self, context):
+    path = repr(self)
+    if (not path.startswith("bpy.data.materials['")
+            or not path.endswith("'].saio_material")):
+        return
+    material_name = path[20:-16]
+    material = bpy.data.materials[material_name]
+    if material is not None:
+        update_material_values(material)
+
 
 class SAIO_Material(bpy.types.PropertyGroup):
     """ Property Group for managing Material Properties"""
@@ -22,6 +35,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
         subtype='COLOR_GAMMA',
         size=4,
         min=0.0, max=1.0,
+        update=_update_material_values,
         default=(1.0, 1.0, 1.0, 1.0),
     )
 
@@ -31,6 +45,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
         subtype='COLOR_GAMMA',
         size=4,
         min=0.0, max=1.0,
+        update=_update_material_values,
         default=(1.0, 1.0, 1.0, 1.0),
     )
 
@@ -40,37 +55,43 @@ class SAIO_Material(bpy.types.PropertyGroup):
         subtype='COLOR_GAMMA',
         size=4,
         min=0.0, max=1.0,
+        update=_update_material_values,
         default=(1.0, 1.0, 1.0, 1.0),
     )
 
-    specular_exponent: FloatProperty(
-        name="Specularity",
-        description="Specular Precision on the material",
-        default=1.0,
-        min=0, max=1
+    specular_exponent: IntProperty(
+        name="Specular Exponent",
+        description="Specular exponent on the material",
+        default=32,
+        min=0, max=255,
+        update=_update_material_values,
     )
 
     flat_shading: BoolProperty(
         name="Flat Shading",
         description="Render without shading",
+        update=_update_material_values,
         default=False
     )
 
     ignore_ambient: BoolProperty(
         name="No Ambient Lighting",
         description="Ignores ambient as a whole when rendering (SA2 Only)",
+        update=_update_material_values,
         default=False
     )
 
     ignore_diffuse: BoolProperty(
         name="Ignore Diffuse Lighting",
         description="Ignores diffuse lighting when rendering",
+        update=_update_material_values,
         default=False
     )
 
     ignore_specular: BoolProperty(
         name="Ignore Specular Lighting",
         description="Removes the specularity from the material",
+        update=_update_material_values,
         default=False
     )
 
@@ -82,6 +103,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             "Utilizes the alpha channel of the"
             " color and texture to render transparency"
         ),
+        update=_update_material_values,
         default=False
     )
 
@@ -135,6 +157,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
     use_texture: BoolProperty(
         name="Use Texture",
         description="Uses the texture references in the properties",
+        update=_update_material_values,
         default=True
     )
 
@@ -144,6 +167,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             "Uses normal mapping instead of the uv coordinates,"
             "to make the texture face the camera (equivalent to matcaps)"
         ),
+        update=_update_material_values,
         default=False
     )
 
@@ -182,6 +206,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             "The U channel of the mesh UVs"
             " always stays between 0 and 1"
         ),
+        update=_update_material_values,
         default=False
     )
 
@@ -191,6 +216,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             "The V channel of the mesh UVs"
             " always stays between 0 and 1"
         ),
+        update=_update_material_values,
         default=False
     )
 
@@ -200,6 +226,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             "The V channel of the mesh UVs"
             " mirrors every time it reaches a multiple of 1"
         ),
+        update=_update_material_values,
         default=False
     )
 
@@ -209,6 +236,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             "The V channel of the mesh UVs"
             " mirrors every time it reaches a multiple of 1"
         ),
+        update=_update_material_values,
         default=False
     )
 

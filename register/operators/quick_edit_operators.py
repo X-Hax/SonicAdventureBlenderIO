@@ -1,4 +1,3 @@
-import os
 import bpy
 from bpy.types import Operator
 from bpy.props import (
