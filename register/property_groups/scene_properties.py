@@ -17,11 +17,21 @@ from .project_properties import SAIO_Project
 from .quick_edit_properties import SAIO_QuickEdit
 from .texture_properties import SAIO_Texture
 
-from ...material_setup import update_scene_lighting
+from ...material_setup import (
+    update_scene_lighting,
+    update_material_outputs
+)
 
 
 def _update_scene_lighting(self, context):
     update_scene_lighting(context)
+
+
+def _update_material_outputs(self, context):
+    update_material_outputs(
+        bpy.data.materials,
+        context.scene.saio_scene.use_principled
+    )
 
 
 class SAIO_Scene(bpy.types.PropertyGroup):
@@ -43,6 +53,17 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         name="Enable Level Tools",
         description="Enables the LandTable/Level Tools for the scene.",
         default=False
+    )
+
+    use_principled: BoolProperty(
+        name="Use Principled BSDF",
+        description=(
+            "When checked, blender hooks up the principled"
+            " node to the material output so that the models"
+            " can be exported with material information"
+        ),
+        default=False,
+        update=_update_material_outputs
     )
 
     active_texture_index: IntProperty(

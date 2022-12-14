@@ -10,7 +10,6 @@ LIGHTING_PROPERTIES = [
 
 MATERIAL_PROPERTIES = {
     "SAIO Shader": [
-        ("Use Texture", "use_texture", None),
         ("Use Alpha", "use_alpha", None),
         ("Flat Shading", "flat_shading", None),
         ("Diffuse", "diffuse", None),
@@ -28,6 +27,7 @@ MATERIAL_PROPERTIES = {
             lambda value: 0.0 if value else 1.0),
     ],
     "SAIO Principled": [
+        ("Base Color", "diffuse", None),
         ("Roughness", "specular_exponent",
             lambda value: 1.0 - (value / 255.0)),
     ],
@@ -140,6 +140,76 @@ def _setup_material(
         node_tree.links.new(from_socket, to_socket)
 
 
+def _material_connect_output(
+        material: bpy.types.Material,
+        use_principled: bool):
+
+    node_tree = material.node_tree
+
+    try:
+        output = node_tree.nodes["SAIO Output"]
+        shader = node_tree.nodes["SAIO Shader"]
+        principled = node_tree.nodes["SAIO Principled"]
+    except Exception:
+        return
+
+    to_connect = principled if use_principled else shader
+
+    try:
+        link = output.inputs[0].links[0]
+
+        if link.from_node == to_connect:
+            return
+
+        node_tree.links.remove(link)
+    except Exception:
+        pass
+
+    node_tree.links.new(to_connect.outputs[0], output.inputs[0])
+
+
+def _materia_connect_texture(
+        material: bpy.types.Material):
+    use_texture = material.saio_material.use_texture
+    use_alpha = material.saio_material.use_alpha
+    node_tree = material.node_tree
+
+    try:
+        texture = node_tree.nodes["SAIO Texture"]
+        shader = node_tree.nodes["SAIO Shader"]
+        principled = node_tree.nodes["SAIO Principled"]
+    except Exception:
+        return
+
+    def setup_links(
+            shader_input: str,
+            principled_input: str,
+            output_index: int,
+            use_link: bool):
+
+        inputs = [
+            shader.inputs[shader_input],
+            principled.inputs[principled_input],
+        ]
+
+        texture_output = texture.outputs[output_index]
+
+        if use_link:
+            for input in inputs:
+                node_tree.links.new(texture_output, input)
+        else:
+            links = []
+            for input in inputs:
+                for link in input.links:
+                    links.append(link)
+
+            for link in links:
+                node_tree.links.remove(link)
+
+    setup_links("Texture", "Base Color", 0, use_texture)
+    setup_links("Texture-Alpha", "Alpha", 1, use_texture and use_alpha)
+
+
 def update_material_values(material: bpy.types.Material):
     material_properties = material.saio_material
     node_tree = material.node_tree
@@ -152,6 +222,8 @@ def update_material_values(material: bpy.types.Material):
                 value = convert(value)
             node.inputs[socket_name].default_value = value
 
+    _materia_connect_texture(material)
+
 
 def update_materials(
         context: bpy.types.Context,
@@ -160,6 +232,7 @@ def update_materials(
     template = _get_node_template()
     lighting_node_tree = _get_scene_lighting_node(context)
     template_nodes = {}
+    use_principled = context.scene.saio_scene.use_principled
 
     for node in template.nodes:
         node_tree = None
@@ -185,7 +258,16 @@ def update_materials(
                 _setup_material(material, template, lighting_node_tree)
                 break
 
+        _material_connect_output(material, use_principled)
         update_material_values(material)
+
+
+def update_material_outputs(
+        materials: list[bpy.types.Material],
+        use_principled: bool):
+
+    for material in materials:
+        _material_connect_output(material, use_principled)
 
 
 def update_scene_lighting(context: bpy.types.Context):

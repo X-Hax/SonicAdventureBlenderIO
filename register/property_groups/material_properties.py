@@ -158,7 +158,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
         name="Use Texture",
         description="Uses the texture references in the properties",
         update=_update_material_values,
-        default=True
+        default=False
     )
 
     use_environment: BoolProperty(

@@ -172,6 +172,7 @@ class SAIO_PT_Scene(bpy.types.Panel):
         layout.prop(setting_properties, "author")
         layout.prop(setting_properties, "description")
         layout.prop(setting_properties, "scene_is_level")
+        layout.prop(setting_properties, "use_principled")
 
         SAIO_PT_Scene.draw_texture_list(
             layout,
