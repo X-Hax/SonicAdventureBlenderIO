@@ -210,7 +210,32 @@ def _materia_connect_texture(
     setup_links("Texture-Alpha", "Alpha", 1, use_texture and use_alpha)
 
 
-def update_material_values(material: bpy.types.Material):
+def _material_update_blending(
+        material: bpy.types.Material,
+        blend_method: str,
+        clip_threshold: float):
+
+    matprops = material.saio_material
+    material.use_backface_culling = matprops.culling
+
+    if not matprops.use_alpha:
+        material.blend_method = 'OPAQUE'
+        material.shadow_method = 'OPAQUE'
+    else:
+
+        material.blend_method = blend_method
+        material.alpha_threshold = clip_threshold
+
+        if blend_method == 'BLEND':
+            material.shadow_method = 'HASHED'
+        else:
+            material.shadow_method = blend_method
+
+
+def update_material_values(
+        material: bpy.types.Material,
+        blend_method: str,
+        clip_threshold: float):
     material_properties = material.saio_material
     node_tree = material.node_tree
 
@@ -223,6 +248,7 @@ def update_material_values(material: bpy.types.Material):
             node.inputs[socket_name].default_value = value
 
     _materia_connect_texture(material)
+    _material_update_blending(material, blend_method, clip_threshold)
 
 
 def update_materials(
@@ -232,7 +258,11 @@ def update_materials(
     template = _get_node_template()
     lighting_node_tree = _get_scene_lighting_node(context)
     template_nodes = {}
-    use_principled = context.scene.saio_scene.use_principled
+
+    sceneprops = context.scene.saio_scene
+    use_principled = sceneprops.use_principled
+    blend_method = sceneprops.viewport_alpha_type
+    clip_threshold = sceneprops.viewport_alpha_cutoff
 
     for node in template.nodes:
         node_tree = None
@@ -259,7 +289,7 @@ def update_materials(
                 break
 
         _material_connect_output(material, use_principled)
-        update_material_values(material)
+        update_material_values(material, blend_method, clip_threshold)
 
 
 def update_material_outputs(

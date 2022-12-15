@@ -20,8 +20,13 @@ def _update_material_values(self, context):
         return
     material_name = path[20:-16]
     material = bpy.data.materials[material_name]
+
+    sceneprops = context.scene.saio_scene
+    blend_method = sceneprops.viewport_alpha_type
+    clip_threshold = sceneprops.viewport_alpha_cutoff
+
     if material is not None:
-        update_material_values(material)
+        update_material_values(material, blend_method, clip_threshold)
 
 
 class SAIO_Material(bpy.types.PropertyGroup):

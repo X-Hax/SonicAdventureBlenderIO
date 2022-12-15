@@ -19,7 +19,8 @@ from .texture_properties import SAIO_Texture
 
 from ...material_setup import (
     update_scene_lighting,
-    update_material_outputs
+    update_material_outputs,
+    update_materials
 )
 
 
@@ -32,6 +33,10 @@ def _update_material_outputs(self, context):
         bpy.data.materials,
         context.scene.saio_scene.use_principled
     )
+
+
+def _update_materials(self, context):
+    update_materials(context, bpy.data.materials)
 
 
 class SAIO_Scene(bpy.types.PropertyGroup):
@@ -133,15 +138,16 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         items=(('BLEND', "Blend", "The default blending"),
                ('HASHED', "Hashed", "Hashed transparency"),
                ('CLIP', "Clip", "Sharp edges for certain thresholds")),
-        default='BLEND'
+        default='BLEND',
+        update=_update_materials
     )
 
     viewport_alpha_cutoff: FloatProperty(
         name="Viewport blend Cutoff",
         description="Cutoff value for the eevee alpha cutoff transparency",
-        min=0,
-        max=1,
-        default=0.5
+        min=0, max=1,
+        default=0.5,
+        update=_update_materials
     )
 
     # === Pointers ===
