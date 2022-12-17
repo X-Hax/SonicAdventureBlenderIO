@@ -11,7 +11,7 @@ from ..property_groups import (
     SAIO_QuickEdit
 )
 
-from ..operators import SAIO_OT_Material_UpdateNodes
+from ..operators import SAIO_OT_Material_UpdateActiveNodes
 
 
 class SAIO_PT_Material(bpy.types.Panel):
@@ -58,6 +58,17 @@ class SAIO_PT_Material(bpy.types.Panel):
                 qe_name)
 
         texture_prop("Texture ID:", "texture_id", "apply_texture_id")
+
+        try:
+            texture_node: bpy.types.ShaderNodeTexImage \
+                = material.node_tree.nodes["SAIO Texture"]
+
+            block.prop_search(
+                texture_node, "image", bpy.data, "images", text='Texture')
+
+        except Exception:
+            pass
+
         texture_prop("Environment Texture:", "use_environment", None)
 
         block.separator(factor=2)
@@ -193,7 +204,7 @@ class SAIO_PT_Material(bpy.types.Panel):
             quick_edit_properties: SAIO_QuickEdit = None,
             darken_panels=True):
 
-        layout.operator(SAIO_OT_Material_UpdateNodes.bl_idname).mode = 'ACTIVE'
+        layout.operator(SAIO_OT_Material_UpdateActiveNodes.bl_idname)
 
         def color_prop(label, name, qe_name):
             prop_advanced(

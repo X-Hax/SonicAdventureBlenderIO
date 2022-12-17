@@ -6,7 +6,7 @@ from .material_properties import SAIO_Material
 from .mesh_properties import SAIO_Mesh
 from .node_properties import SAIO_Node
 from .project_properties import SAIO_Project
-from .texture_properties import SAIO_Texture
+from .texture_properties import SAIO_Texture, SAIO_TextureList
 from .landtable_properties import SAIO_LandTable
 from .quick_edit_properties import SAIO_QuickEdit
 from .scene_properties import SAIO_Scene
@@ -21,6 +21,7 @@ to_register = [
     SAIO_Node,
     SAIO_Project,
     SAIO_Texture,
+    SAIO_TextureList,
     SAIO_LandTable,
 
     SAIO_QuickEdit,

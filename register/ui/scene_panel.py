@@ -2,7 +2,8 @@ import bpy
 
 from ..property_groups import (
     SAIO_PanelSettings,
-    SAIO_Scene
+    SAIO_Scene,
+    SAIO_TextureList
 )
 
 from .draw import (
@@ -94,6 +95,8 @@ class SAIO_PT_Scene(bpy.types.Panel):
             setting_properties: SAIO_Scene,
             panel_settings: SAIO_PanelSettings):
 
+        texture_list: SAIO_TextureList = setting_properties.texture_list
+
         box = layout.box()
         if not expand_menu(
                 box,
@@ -107,10 +110,10 @@ class SAIO_PT_Scene(bpy.types.Panel):
         row.template_list(
             "SAIO_UL_TextureList",
             "",
-            setting_properties,
-            "texture_list",
-            setting_properties,
-            "active_texture_index")
+            texture_list,
+            "textures",
+            texture_list,
+            "active_index")
 
         column = row.column()
 
@@ -132,9 +135,9 @@ class SAIO_PT_Scene(bpy.types.Panel):
             icon='DOWNARROW_HLT',
             text="")
 
-        if setting_properties.active_texture_index >= 0:
-            texture = setting_properties.texture_list[
-                setting_properties.active_texture_index]
+        if texture_list.active_index >= 0:
+            texture = texture_list.textures[
+                texture_list.active_index]
             box.prop_search(texture, "image", bpy.data, "images")
 
     def draw_lighting_panel(

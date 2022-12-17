@@ -4,18 +4,16 @@ from bpy.props import (
     BoolProperty,
     FloatProperty,
     FloatVectorProperty,
-    IntProperty,
     EnumProperty,
     StringProperty,
     PointerProperty,
-    CollectionProperty
 )
 
 from .landtable_properties import SAIO_LandTable
 from .panel_properties import SAIO_PanelSettings
 from .project_properties import SAIO_Project
 from .quick_edit_properties import SAIO_QuickEdit
-from .texture_properties import SAIO_Texture
+from .texture_properties import SAIO_TextureList
 
 from ...material_setup import (
     update_scene_lighting,
@@ -69,12 +67,6 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         ),
         default=False,
         update=_update_material_outputs
-    )
-
-    active_texture_index: IntProperty(
-        name="Active texture index",
-        description="Index of active item in texture list",
-        default=-1
     )
 
     correct_material_textures: BoolProperty(
@@ -157,8 +149,8 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         name="Quick edit properties"
     )
 
-    texture_list: CollectionProperty(
-        type=SAIO_Texture,
+    texture_list: PointerProperty(
+        type=SAIO_TextureList,
         name="Texture List",
         description="The textures used by sonic adventure"
     )

@@ -15,7 +15,8 @@ from .quick_edit_operators import (
 from .material_tools import (
     SAIO_OT_Material_TextureFromID,
     SAIO_OT_Material_TextureToID,
-    SAIO_OT_Material_UpdateNodes
+    SAIO_OT_Material_UpdateNodes,
+    SAIO_OT_Material_UpdateActiveNodes
 )
 
 to_register = [
@@ -32,4 +33,5 @@ to_register = [
     SAIO_OT_Material_TextureFromID,
     SAIO_OT_Material_TextureToID,
     SAIO_OT_Material_UpdateNodes,
+    SAIO_OT_Material_UpdateActiveNodes
 ]

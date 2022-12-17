@@ -10,6 +10,7 @@ from bpy.props import (
 from ...text.sa_texture import SATextureFile
 from ..property_groups import (
     SAIO_Scene,
+    SAIO_TextureList,
     SAIO_Material
 )
 
@@ -21,25 +22,7 @@ class SAIO_OT_Textures_Add(Operator):
     bl_description = "Adds texture to the texture list"
 
     def execute(self, context):
-        settings: SAIO_Scene = context.scene.saio_scene
-
-        # getting next usable global id
-        ids = [t.global_id for t in settings.texture_list]
-        ids.sort(key=lambda x: x)
-
-        global_id = len(settings.texture_list)
-        for i, index in enumerate(ids):
-            if i != index:
-                global_id = i
-                break
-
-        # creating texture
-        tex = settings.texture_list.add()
-        settings.active_texture_index = len(settings.texture_list) - 1
-
-        tex.name = "Texture"
-        tex.global_id = global_id
-
+        context.scene.saio_scene.texture_list.new("Texture")
         return {'FINISHED'}
 
 
@@ -50,15 +33,8 @@ class SAIO_OT_Textures_Remove(Operator):
     bl_description = "Removes the selected texture from the texture list"
 
     def execute(self, context):
-        settings: SAIO_Scene = context.scene.saio_scene
-        settings.texture_list.remove(settings.active_texture_index)
-
-        settings.active_texture_index -= 1
-        if len(settings.texture_list) == 0:
-            settings.active_texture_index = -1
-        elif settings.active_texture_index < 0:
-            settings.active_texture_index = 0
-
+        texture_list: SAIO_TextureList = context.scene.saio_scene.texture_list
+        texture_list.remove(texture_list.active_index)
         return {'FINISHED'}
 
 
@@ -78,28 +54,28 @@ class SAIO_OT_Textures_Move(Operator):
 
     def execute(self, context):
         settings: SAIO_Scene = context.scene.saio_scene
+        texture_list: SAIO_TextureList = settings.texture_list
+
+        old_index = texture_list.active_index
 
         new_index = (
-            settings.active_texture_index
+            texture_list.active_index
             + (-1 if self.direction == 'UP'
                else 1)
         )
 
-        if new_index != -1 and new_index < len(settings.texture_list):
+        texture_list.move(
+            old_index,
+            new_index)
 
-            if settings.correct_material_textures:
-                for m in bpy.data.materials:
-                    props: SAIO_Material = m.saio_material
-                    if props.texture_id == new_index:
-                        props.texture_id = settings.active_texture_index
-                    elif props.texture_id == settings.active_texture_index:
-                        props.texture_id = new_index
+        if settings.correct_material_textures:
+            for m in bpy.data.materials:
+                props: SAIO_Material = m.saio_material
+                if props.texture_id == new_index:
+                    props.texture_id = old_index
+                elif props.texture_id == old_index:
+                    props.texture_id = new_index
 
-            settings.texture_list.move(
-                settings.active_texture_index,
-                new_index)
-
-            settings.active_texture_index = new_index
         return {'FINISHED'}
 
 
@@ -110,13 +86,7 @@ class SAIO_OT_Textures_Autoname(Operator):
     bl_description = "Renames all entries to the assigned texture"
 
     def execute(self, context):
-        tex_list = context.scene.saio_scene.texture_list
-
-        for t in tex_list:
-            if t.image is not None:
-                t.name = os.path.splitext(t.image.name)[0]
-            else:
-                t.name = "Texture"
+        context.scene.saio_scene.texture_list.autoname()
         return {'FINISHED'}
 
 
@@ -127,14 +97,7 @@ class SAIO_OT_Textures_Clear(Operator):
     bl_description = "Removes all entries from the list"
 
     def execute(self, context):
-        settings = context.scene.saio_scene
-        settings.active_texture_index = -1
-
-        for t in settings.texture_list:
-            if t.image is not None:
-                t.image.use_fake_user = False
-
-        settings.texture_list.clear()
+        context.scene.saio_scene.texture_list.clear()
         return {'FINISHED'}
 
 
