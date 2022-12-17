@@ -1,4 +1,3 @@
-
 from . import (
     land_entry_panel,
     material_panel,
@@ -7,7 +6,8 @@ from . import (
     scene_panel,
     landtable_panel,
     viewport_toolbar,
-    quick_edit_panel
+    quick_edit_panel,
+    menus
 )
 
 to_register = [
@@ -30,7 +30,10 @@ to_register = [
     viewport_toolbar.SAIO_PT_VPMesh,
     viewport_toolbar.SAIO_PT_VPMaterial,
 
-    quick_edit_panel.SAIO_PT_QuickEdit
+    quick_edit_panel.SAIO_PT_QuickEdit,
+
+    menus.TOPBAR_MT_SAIO_Export,
+    menus.TOPBAR_MT_SAIO_Import
 ]
 
 
@@ -39,4 +42,5 @@ def register():
 
 
 def unregister():
-    pass
+    menus.TOPBAR_MT_SAIO_Export.unregister()
+    menus.TOPBAR_MT_SAIO_Import.unregister()

@@ -50,4 +50,4 @@ class SAIO_Project(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        pass
+        bpy.types.Scene.saio_project = bpy.props.PointerProperty(type=cls)

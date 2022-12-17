@@ -10,17 +10,35 @@ def get_name():
     return os.path.basename(get_path())
 
 
-def get_prefs():
-    return bpy.context.preferences.addons[get_name()].preferences
+def get_prefs(context: bpy.types.Context = None):
+    if context is None:
+        context = bpy.context
+    return context.preferences.addons[get_name()].preferences
 
 
-def is_landtable(context: bpy.types.Context):
+def get_default_path(context: bpy.types.Context = None):
+    if context is None:
+        context = bpy.context
+
+    settings = context.scene.saio_project
+    prefs = get_prefs(context)
+
+    path = ""
+    if prefs.use_project_path and settings.project_folder != "":
+        path = settings.project_folder
+    else:
+        path = prefs.default_path
+
+    return path
+
+
+def is_landtable(context: bpy.types.Context = None):
     if context is None:
         context = bpy.context
     return context.scene.saio_scene.scene_is_level
 
 
-def is_land_entry(context: bpy.types.Context):
+def is_land_entry(context: bpy.types.Context = None):
     if context is None:
         context = bpy.context
     return (

@@ -12,7 +12,17 @@ from . import (
 from ..operators import (
     SAIO_OT_Material_TextureFromID,
     SAIO_OT_Material_TextureToID,
-    SAIO_OT_Material_UpdateNodes
+    SAIO_OT_Material_UpdateNodes,
+
+    SAIO_OT_Import_Model,
+    SAIO_OT_Import_Level,
+
+    SAIO_OT_Export_SA1MDL,
+    SAIO_OT_Export_SA2MDL,
+    SAIO_OT_Export_SA2BMDL,
+    SAIO_OT_Export_SA1LVL,
+    SAIO_OT_Export_SA2LVL,
+    SAIO_OT_Export_SA2BLVL,
 )
 
 from ...utils import (
@@ -35,6 +45,45 @@ class SAIO_PT_VPTools(SAIO_PT_Viewport):
     def draw(self, context):
 
         layout = self.layout
+
+        layout.operator(
+            SAIO_OT_Import_Model.bl_idname,
+            text="Import Model")
+
+        layout.operator(
+            SAIO_OT_Import_Level.bl_idname,
+            text="Import Level")
+        layout.separator()
+
+        export_columns = layout.row()
+        export_models = export_columns.column()
+        export_levels = export_columns.column()
+
+        export_models.operator(
+            SAIO_OT_Export_SA1MDL.bl_idname,
+            text="Export SA1MDL")
+
+        export_models.operator(
+            SAIO_OT_Export_SA2MDL.bl_idname,
+            text="Export SA2MDL")
+
+        export_models.operator(
+            SAIO_OT_Export_SA2BMDL.bl_idname,
+            text="Export SA2BMDL")
+
+        export_levels.operator(
+            SAIO_OT_Export_SA1LVL.bl_idname,
+            text="Export SA1LVL")
+
+        export_levels.operator(
+            SAIO_OT_Export_SA2LVL.bl_idname,
+            text="Export SA2LVL")
+
+        export_levels.operator(
+            SAIO_OT_Export_SA2BLVL.bl_idname,
+            text="Export SA2LVL")
+
+        layout.separator()
         layout.operator(SAIO_OT_Material_TextureFromID.bl_idname)
         layout.operator(SAIO_OT_Material_TextureToID.bl_idname)
         layout.operator(SAIO_OT_Material_UpdateNodes.bl_idname)

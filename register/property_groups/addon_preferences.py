@@ -48,7 +48,7 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
         min=0,
         max=59)
 
-    printDebug: BoolProperty(
+    print_debug: BoolProperty(
         name="Print Debug",
         description=(
             "Prints debug info to output window,"
@@ -57,7 +57,7 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
         default=False,
     )
 
-    useProjectPath: BoolProperty(
+    use_project_path: BoolProperty(
         name="Use Project Folder",
         description=(
             "Overrides the set Default Path if a Project File"
@@ -66,7 +66,7 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
         default=True
     )
 
-    defaultPath: StringProperty(
+    default_path: StringProperty(
         name="Default Path",
         description=(
             "Sets the default path used when importing/exporting files."
@@ -76,7 +76,7 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
         subtype='FILE_PATH'
     )
 
-    toolspath: StringProperty(
+    tools_path: StringProperty(
         name="SA Tools Path",
         description="Path to your SA Tools install.",
         default="",
@@ -90,9 +90,9 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
         split = layout.split()
-        split.prop(self, "printDebug")
-        split.prop(self, "useProjectPath")
+        split.prop(self, "print_debug")
+        split.prop(self, "use_project_path")
         split = layout.split()
-        split.prop(self, "toolspath")
-        split.prop(self, "defaultPath")
+        split.prop(self, "tools_path")
+        split.prop(self, "default_path")
         addon_updater_ops.update_settings_ui(self, context)
