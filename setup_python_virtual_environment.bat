@@ -10,7 +10,7 @@ IF EXIST %python% (
 
 	rem creating the virtual environment
 	%python% -m venv .venv
-	cd .venv/Scripts
+	cd .venv\Scripts
 
 	rem first, we gotta upgrade pip
 	python.exe -m pip install --upgrade pip
@@ -20,6 +20,7 @@ IF EXIST %python% (
 	pip.exe install autopep8
 	pip.exe install pycodestyle
 	pip.exe install pylint
+	pip.exe install pythonnet
 	pip.exe install fake-bpy-module-3.3
 
 	echo set up!

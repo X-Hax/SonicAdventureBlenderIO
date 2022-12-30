@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 *.blend1
 *_updater_status.json
+/DLL

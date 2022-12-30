@@ -279,8 +279,8 @@ class SAIO_Material(bpy.types.PropertyGroup):
         name="Generation Type",
         description="Which function to use when generating the coords",
         items=(
-            ('MTX3X4', 'Matrix 3x4', ""),
-            ('MTX2X4', 'Matrix 2x4', ""),
+            ('MATRIX3X4', 'Matrix 3x4', ""),
+            ('MATRIX2X4', 'Matrix 2x4', ""),
             ('BITMAP0', 'Bitmap 0', ""),
             ('BITMAP1', 'Bitmap 1', ""),
             ('BITMAP2', 'Bitmap 2', ""),
@@ -291,7 +291,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             ('BITMAP7', 'Bitmap 7', ""),
             ('SRTG', 'SRTG', ""),
         ),
-        default='MTX2X4'
+        default='MATRIX2X4'
     )
 
     texgen_source_matrix: EnumProperty(
@@ -305,6 +305,24 @@ class SAIO_Material(bpy.types.PropertyGroup):
             ('NORMAL', 'Normal', ""),
             ('BINORMAL', 'Binormal', ""),
             ('TANGENT', 'Tangent', ""),
+            ('TEXCOORD0', 'TexCoord0', ""),
+            ('TEXCOORD1', 'TexCoord1', ""),
+            ('TEXCOORD2', 'TexCoord2', ""),
+            ('TEXCOORD3', 'TexCoord3', ""),
+            ('TEXCOORD4', 'TexCoord4', ""),
+            ('TEXCOORD5', 'TexCoord5', ""),
+            ('TEXCOORD6', 'TexCoord6', ""),
+        ),
+        default='TEXCOORD0'
+    )
+
+    texgen_source_bitmap: EnumProperty(
+        name="Generation Source - Bitmap",
+        description=(
+            "Which texture to use when"
+            " generating the uv coords (Bitmap)"
+        ),
+        items=(
             ('TEX0', 'Tex0', ""),
             ('TEX1', 'Tex1', ""),
             ('TEX2', 'Tex2', ""),
@@ -315,24 +333,6 @@ class SAIO_Material(bpy.types.PropertyGroup):
             ('TEX7', 'Tex7', ""),
         ),
         default='TEX0'
-    )
-
-    texgen_source_bitmap: EnumProperty(
-        name="Generation Source - Bitmap",
-        description=(
-            "Which uv map of the mesh to use when"
-            " generating the uv coords (Bitmap)"
-        ),
-        items=(
-            ('TEXCOORD0', 'TexCoord0', ""),
-            ('TEXCOORD1', 'TexCoord1', ""),
-            ('TEXCOORD2', 'TexCoord2', ""),
-            ('TEXCOORD3', 'TexCoord3', ""),
-            ('TEXCOORD4', 'TexCoord4', ""),
-            ('TEXCOORD5', 'TexCoord5', ""),
-            ('TEXCOORD6', 'TexCoord6', ""),
-        ),
-        default='TEXCOORD0'
     )
 
     texgen_source_srtg: EnumProperty(

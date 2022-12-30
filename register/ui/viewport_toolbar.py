@@ -55,33 +55,33 @@ class SAIO_PT_VPTools(SAIO_PT_Viewport):
             text="Import Level")
         layout.separator()
 
-        export_columns = layout.row()
-        export_models = export_columns.column()
-        export_levels = export_columns.column()
+        if context.scene.saio_scene.scene_is_level:
 
-        export_models.operator(
-            SAIO_OT_Export_SA1MDL.bl_idname,
-            text="Export SA1MDL")
+            layout.operator(
+                SAIO_OT_Export_SA1LVL.bl_idname,
+                text="Export SA1LVL")
 
-        export_models.operator(
-            SAIO_OT_Export_SA2MDL.bl_idname,
-            text="Export SA2MDL")
+            layout.operator(
+                SAIO_OT_Export_SA2LVL.bl_idname,
+                text="Export SA2LVL")
 
-        export_models.operator(
-            SAIO_OT_Export_SA2BMDL.bl_idname,
-            text="Export SA2BMDL")
+            layout.operator(
+                SAIO_OT_Export_SA2BLVL.bl_idname,
+                text="Export SA2LVL")
 
-        export_levels.operator(
-            SAIO_OT_Export_SA1LVL.bl_idname,
-            text="Export SA1LVL")
+        else:
 
-        export_levels.operator(
-            SAIO_OT_Export_SA2LVL.bl_idname,
-            text="Export SA2LVL")
+            layout.operator(
+                SAIO_OT_Export_SA1MDL.bl_idname,
+                text="Export SA1MDL")
 
-        export_levels.operator(
-            SAIO_OT_Export_SA2BLVL.bl_idname,
-            text="Export SA2LVL")
+            layout.operator(
+                SAIO_OT_Export_SA2MDL.bl_idname,
+                text="Export SA2MDL")
+
+            layout.operator(
+                SAIO_OT_Export_SA2BMDL.bl_idname,
+                text="Export SA2BMDL")
 
         layout.separator()
         layout.operator(SAIO_OT_Material_TextureFromID.bl_idname)

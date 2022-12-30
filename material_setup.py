@@ -8,20 +8,30 @@ LIGHTING_PROPERTIES = [
     ("display_specular", "Specular Factor", "NodeSocketFloat"),
 ]
 
+
+def _convert_to_gamma(color):
+    return (
+        color[0] ** 2,
+        color[1] ** 2,
+        color[2] ** 2,
+        color[3],
+    )
+
+
 MATERIAL_PROPERTIES = {
     "SAIO Shader": [
         ("Use Alpha", "use_alpha", None),
         ("Flat Shading", "flat_shading", None),
-        ("Diffuse", "diffuse", None),
+        ("Diffuse", "diffuse", _convert_to_gamma),
         ("Diffuse-Alpha", "diffuse", lambda value: value[3]),
         ("Diffuse Factor", "ignore_diffuse",
             lambda value: 0.0 if value else 1.0),
-        ("Specular", "specular", None),
+        ("Specular", "specular", _convert_to_gamma),
         ("Specular-Alpha", "specular", lambda value: value[3]),
         ("Specular Exponent", "specular_exponent", None),
         ("Specular Factor", "ignore_specular",
             lambda value: 0.0 if value else 1.0),
-        ("Ambient", "ambient", None),
+        ("Ambient", "ambient", _convert_to_gamma),
         ("Ambient-Alpha", "ambient", lambda value: value[3]),
         ("Ambient Factor", "ignore_ambient",
             lambda value: 0.0 if value else 1.0),
@@ -42,12 +52,17 @@ MATERIAL_PROPERTIES = {
 
 
 def _get_node_template() -> bpy.types.NodeTree:
-
+    import os
     lib_path = f"{utils.get_path()}\\SAIOShaders.blend"
+
+    def compare_path(other):
+        absolute_path = bpy.path.abspath(other)
+        absolute_path = os.path.abspath(absolute_path)
+        return absolute_path == lib_path
 
     found = False
     for library in bpy.data.libraries:
-        if library.filepath == lib_path:
+        if compare_path(library.filepath):
             found = True
             break
 
@@ -64,7 +79,7 @@ def _get_node_template() -> bpy.types.NodeTree:
     for group in bpy.data.node_groups:
         if (group.name == "SAIO Material Template"
                 and group.library is not None
-                and group.library.filepath == lib_path):
+                and compare_path(group.library.filepath)):
             return group
 
     raise Exception("Template not found")

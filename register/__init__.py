@@ -8,6 +8,8 @@ from . import (
     ui
 )
 
+from ..library import load
+
 classes = []
 
 classes.extend(property_groups.to_register)
@@ -15,8 +17,18 @@ classes.extend(operators.to_register)
 classes.extend(ui.to_register)
 
 
+def _install_pythondotnet():
+    try:
+        import pythonnet
+    except ModuleNotFoundError:
+        import pip
+        pip.main(["install", "pythonnet"])
+
+
 def register_classes(bl_info):
     """Loading API classes into blender"""
+
+    _install_pythondotnet()
 
     addon_updater.register_addon_updater(bl_info)
 
@@ -31,6 +43,8 @@ def register_classes(bl_info):
 
 def unregister_classes():
     """Unloading classes loaded in register(), as well as various cleanup"""
+
+    load.unload_library()
 
     addon_updater.unregister_addon_updater()
 
