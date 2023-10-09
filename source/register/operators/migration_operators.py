@@ -72,7 +72,7 @@ class SAIO_OT_MigrateArmature(SAIOBasePopupOperator):
             context.mode == 'OBJECT'
             and context.active_object is not None
             and context.active_object.type == 'ARMATURE'
-            and 'saSettings' in context.active_object)
+            and 'saObjflags' in context.active_object)
 
     def draw(self, context: Context):
         self.layout.label(text="!! WARNING !!")
