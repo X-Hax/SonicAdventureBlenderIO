@@ -131,7 +131,7 @@ class SAIO_OT_MigratePath(SAIOBaseOperator):
             context.mode == 'OBJECT'
             and context.active_object is not None
             and context.active_object.type == 'CURVE'
-            and len(context.active_object) > 0)
+            and len(context.active_object.children) > 0)
 
     def _execute(self, context: Context):
 
