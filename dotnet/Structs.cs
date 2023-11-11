@@ -1,8 +1,8 @@
-﻿using SA3D.Modeling.ModelData;
-using SA3D.Modeling.ModelData.Buffer;
-using SA3D.Modeling.ModelData.GC;
-using SA3D.Modeling.ModelData.Weighted;
+﻿using SA3D.Modeling.Mesh;
+using SA3D.Modeling.Mesh.Buffer;
+using SA3D.Modeling.Mesh.Weighted;
 using SA3D.Modeling.ObjectData;
+using SA3D.Modeling.ObjectData.Enums;
 using SA3D.Modeling.Structs;
 using System.Numerics;
 
@@ -46,17 +46,14 @@ namespace SAIO.NET
         public LandEntry ToLandEntry(Attach attach, bool automaticNodeAttributes)
         {
             Matrix4x4.Decompose(WorldMatrix, out Vector3 scale, out Quaternion rotation, out Vector3 position);
-            Vector3 euler = rotation.ToEuler(NodeAttributes.HasFlag(NodeAttributes.RotateZYX));
+            Vector3 euler = rotation.QuaternionToEuler(NodeAttributes.HasFlag(NodeAttributes.RotateZYX));
 
-            LandEntry result = new(attach)
-            {
-                SurfaceAttributes = SurfaceAttributes
-            };
+            LandEntry result = LandEntry.CreateWithAttach(attach, SurfaceAttributes);
 
             result.Model.Label = Label;
             result.Model.SetAllNodeAttributes(NodeAttributes);
             result.Model.Position = position;
-            result.Model.Rotation = euler;
+            result.Model.EulerRotation = euler;
             result.Model.Scale = scale;
 
             if(automaticNodeAttributes)
@@ -68,124 +65,21 @@ namespace SAIO.NET
         }
     }
 
-    public struct MaterialStruct
-    {
-        public Color Diffuse { get; set; }
-        public Color Specular { get; set; }
-        public float SpecularExponent { get; set; }
-        public Color Ambient { get; set; }
-        public MaterialAttributes MaterialAttributes { get; set; }
-        public bool UseAlpha { get; set; }
-        public bool Culling { get; set; }
-        public BlendMode SourceBlendMode { get; set; }
-        public BlendMode DestinationBlendmode { get; set; }
-        public uint TextureIndex { get; set; }
-        public FilterMode TextureFiltering { get; set; }
-        public bool AnisotropicFiltering { get; set; }
-        public float MipmapDistanceAdjust { get; set; }
-        public bool ClampU { get; set; }
-        public bool MirrorU { get; set; }
-        public bool ClampV { get; set; }
-        public bool MirrorV { get; set; }
-        public byte ShadowStencil { get; set; }
-        public TexCoordID TexCoordID { get; set; }
-        public TexGenType TexGenType { get; set; }
-        public TexGenSrc TexGenSrc { get; set; }
-        public TexGenMatrix MatrixID { get; set; }
-
-        public MaterialStruct(
-            float dr, float dg, float db, float da,
-            float sr, float sg, float sb, float sa,
-            float specularExponent,
-            float ar, float ag, float ab, float aa,
-            MaterialAttributes materialAttributes,
-            bool useAlpha,
-            bool culling,
-            BlendMode sourceBlendMode,
-            BlendMode destinationBlendmode,
-            uint textureIndex,
-            FilterMode textureFiltering,
-            bool anisotropicFiltering,
-            float mipmapDistanceAdjust,
-            bool clampU,
-            bool mirrorU,
-            bool clampV,
-            bool mirrorV,
-            byte shadowStencil,
-            TexCoordID texCoordID,
-            TexGenType texGenType,
-            TexGenSrc texGenSrc,
-            TexGenMatrix matrixID)
-        {
-            Diffuse = new(dr, dg, db, da);
-            Specular = new(sr, sg, sb, sa);
-            SpecularExponent = specularExponent;
-            Ambient = new(ar, ag, ab, aa);
-            MaterialAttributes = materialAttributes;
-            UseAlpha = useAlpha;
-            Culling = culling;
-            SourceBlendMode = sourceBlendMode;
-            DestinationBlendmode = destinationBlendmode;
-            TextureIndex = textureIndex;
-            TextureFiltering = textureFiltering;
-            AnisotropicFiltering = anisotropicFiltering;
-            MipmapDistanceAdjust = mipmapDistanceAdjust;
-            ClampU = clampU;
-            MirrorU = mirrorU;
-            ClampV = clampV;
-            MirrorV = mirrorV;
-            ShadowStencil = shadowStencil;
-            TexCoordID = texCoordID;
-            TexGenType = texGenType;
-            TexGenSrc = texGenSrc;
-            MatrixID = matrixID;
-        }
-
-        internal BufferMaterial ToBufferMaterial()
-        {
-            return new()
-            {
-                Diffuse = Diffuse,
-                Specular = Specular,
-                SpecularExponent = SpecularExponent,
-                Ambient = Ambient,
-                MaterialAttributes = MaterialAttributes,
-                UseAlpha = UseAlpha,
-                BackfaceCulling = Culling,
-                SourceBlendMode = SourceBlendMode,
-                DestinationBlendmode = DestinationBlendmode,
-                TextureIndex = TextureIndex,
-                TextureFiltering = TextureFiltering,
-                AnisotropicFiltering = AnisotropicFiltering,
-                MipmapDistanceAdjust = MipmapDistanceAdjust,
-                ClampU = ClampU,
-                MirrorU = MirrorU,
-                ClampV = ClampV,
-                MirrorV = MirrorV,
-                ShadowStencil = ShadowStencil,
-                TexCoordID = TexCoordID,
-                TexGenType = TexGenType,
-                TexGenSrc = TexGenSrc,
-                MatrixID = MatrixID,
-            };
-        }
-    }
-
     public struct MeshStruct
     {
         public string Label { get; set; }
-        public WeightedBufferVertex[] Vertices { get; set; }
+        public WeightedVertex[] Vertices { get; set; }
         public BufferCorner[][] Corners { get; set; }
-        public MaterialStruct[] Materials { get; set; }
+        public BufferMaterial[] Materials { get; set; }
         public int RootNodeIndex { get; set; }
         public bool HasVertexColors { get; set; }
         public bool ForceVertexColors { get; set; }
 
         public MeshStruct(
             string label,
-            WeightedBufferVertex[] vertices,
+            WeightedVertex[] vertices,
             BufferCorner[][] corners,
-            MaterialStruct[] materials,
+            BufferMaterial[] materials,
             int rootNodeIndex,
             bool hasVertexColors,
             bool forceVertexColors)
@@ -199,15 +93,10 @@ namespace SAIO.NET
             ForceVertexColors = forceVertexColors;
         }
 
-        public WeightedBufferAttach ToWeightedBuffer(bool writeSpecular)
+        public WeightedMesh ToWeightedBuffer(bool writeSpecular)
         {
-            BufferMaterial[] materials = new BufferMaterial[Materials.Length];
-            for(int j = 0; j < materials.Length; j++)
-            {
-                materials[j] = Materials[j].ToBufferMaterial();
-            }
+            WeightedMesh wba = WeightedMesh.Create(Vertices, Corners, Materials, HasVertexColors);
 
-            WeightedBufferAttach wba = WeightedBufferAttach.Create(Vertices, Corners, materials, HasVertexColors);
             wba.Label = Label;
             wba.RootIndices.Add(RootNodeIndex);
             wba.ForceVertexColors = ForceVertexColors;

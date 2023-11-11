@@ -1,9 +1,15 @@
 ﻿using SA3D.Common;
-using SA3D.Lookup;
-using SA3D.Modeling.ModelData;
-using SA3D.Modeling.ModelData.BASIC;
-using SA3D.Modeling.ModelData.Weighted;
+using SA3D.Common.Lookup;
+using SA3D.Modeling.File;
+using SA3D.Modeling.Mesh;
+using SA3D.Modeling.Mesh.Basic;
+using SA3D.Modeling.Mesh.Weighted;
 using SA3D.Modeling.ObjectData;
+using SA3D.Modeling.ObjectData.Enums;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace SAIO.NET
 {
@@ -11,10 +17,10 @@ namespace SAIO.NET
     {
         public LandTable LandTable { get; }
         public LandEntryStruct[] LandEntries { get; }
-        public WeightedBufferAttach[] Attaches { get; }
+        public WeightedMesh[] Attaches { get; }
         public int? VisualCount { get; }
 
-        public BLandTable(LandTable landTable, LandEntryStruct[] landEntries, WeightedBufferAttach[] attaches, int? visualCount)
+        public BLandTable(LandTable landTable, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount)
         {
             LandTable = landTable;
             LandEntries = landEntries;
@@ -25,7 +31,7 @@ namespace SAIO.NET
         private static void ExportSingle(
             LandTable landtable,
             LandEntryStruct[] landentries,
-            WeightedBufferAttach[] wbas,
+            WeightedMesh[] wbas,
             bool optimize,
             bool automaticNodeAttributes)
         {
@@ -44,7 +50,7 @@ namespace SAIO.NET
                     throw new InvalidOperationException($"Landtable format {landtable.Format} not a single mesh landtable");
             }
 
-            Attach[] attaches = wbas.Select(x => x.ToAttach(optimize, attachFormat)).ToArray();
+            Attach[] attaches = wbas.Select(x => x.ToAttach(attachFormat, optimize, false)).ToArray();
             List<LandEntry> geometry = new();
 
             foreach(LandEntryStruct landentry in landentries)
@@ -59,25 +65,26 @@ namespace SAIO.NET
         private static void ExportDouble(
             LandTable landtable,
             LandEntryStruct[] landentries,
-            WeightedBufferAttach[] wbas,
+            WeightedMesh[] wbas,
             bool optimize,
             bool automaticNodeAttributes)
         {
-            var attachFormat = landtable.Format switch
+            AttachFormat attachFormat = landtable.Format switch
             {
                 ModelFormat.SA2 => AttachFormat.CHUNK,
                 ModelFormat.SA2B => AttachFormat.GC,
                 _ => throw new InvalidOperationException($"Landtable format {landtable.Format} not a double mesh landtable"),
             };
-            WeightedBufferAttach?[] visualWBAs = new WeightedBufferAttach?[wbas.Length];
-            WeightedBufferAttach?[] collisionWBAs = new WeightedBufferAttach?[wbas.Length];
+
+            WeightedMesh?[] visualWBAs = new WeightedMesh?[wbas.Length];
+            WeightedMesh?[] collisionWBAs = new WeightedMesh?[wbas.Length];
 
             List<LandEntryStruct> visualLandentries = new();
             List<LandEntryStruct> collisionLandentries = new();
 
             foreach(LandEntryStruct landentry in landentries)
             {
-                bool isCollision = landentry.SurfaceAttributes.IsCollision();
+                bool isCollision = landentry.SurfaceAttributes.CheckIsCollision();
                 bool isVisual = !isCollision || landentry.SurfaceAttributes.HasFlag(SurfaceAttributes.Visible);
                 // if its neither, we'll just keep it as an invisible visual model. just in case
 
@@ -94,8 +101,8 @@ namespace SAIO.NET
                 }
             }
 
-            Attach?[] visualAttaches = visualWBAs.Select(x => x?.ToAttach(optimize, attachFormat)).ToArray();
-            Attach?[] collisionAttaches = collisionWBAs.Select(x => x?.ToAttach(optimize, AttachFormat.BASIC)).ToArray();
+            Attach?[] visualAttaches = visualWBAs.Select(x => x?.ToAttach(attachFormat, optimize, false)).ToArray();
+            Attach?[] collisionAttaches = collisionWBAs.Select(x => x?.ToAttach(AttachFormat.BASIC, optimize, false)).ToArray();
 
             List<LandEntry> geometry = new();
 
@@ -139,17 +146,15 @@ namespace SAIO.NET
                 throw new InvalidDataException("No landentries passed over");
             }
 
-            LandTable landtable = new(format)
+            LandTable landtable = new(new LabeledArray<LandEntry>(0), format)
             {
                 Label = name,
                 DrawDistance = drawDistance,
                 TextureFileName = string.IsNullOrWhiteSpace(texFileName) ? null : texFileName,
                 TexListPtr = texListPointer
             };
-            landtable.MetaData.Author = author;
-            landtable.MetaData.Description = description;
 
-            WeightedBufferAttach[] wbas = weightedAttaches
+            WeightedMesh[] wbas = weightedAttaches
                 .Select(x => x.ToWeightedBuffer(writeSpecular))
                 .ToArray();
 
@@ -177,19 +182,25 @@ namespace SAIO.NET
                     break;
             }
 
-            landtable.WriteFile(filepath);
+            MetaData metaData = new()
+            {
+                Author = author,
+                Description = description
+            };
+
+            LevelFile.WriteToFile(filepath, landtable, metaData);
         }
 
         public static BLandTable Import(string filepath, bool optimize)
         {
-            LandTable landtable = LandTable.ReadFile(filepath);
+            LevelFile level = LevelFile.ReadFromFile(filepath);
 
             Dictionary<Attach, int> attaches = new();
             List<LandEntryStruct> landEntries = new();
 
             int? visualCount = null;
 
-            foreach(LandEntry landEntry in landtable.Geometry)
+            foreach(LandEntry landEntry in level.Level.Geometry)
             {
                 if(landEntry.Model.Attach == null)
                 {
@@ -197,7 +208,7 @@ namespace SAIO.NET
                     continue;
                 }
 
-                if(landtable.Format >= ModelFormat.SA2
+                if(level.Level.Format >= ModelFormat.SA2
                     && landEntry.Model.Attach is BasicAttach
                     && visualCount == null)
                 {
@@ -218,13 +229,15 @@ namespace SAIO.NET
                     landEntry.Model.LocalMatrix));
             }
 
-            WeightedBufferAttach[] wbas = new WeightedBufferAttach[attaches.Count];
+            level.Level.BufferMeshData(optimize);
+
+            WeightedMesh[] wbas = new WeightedMesh[attaches.Count];
             foreach(KeyValuePair<Attach, int> item in attaches)
             {
-                wbas[item.Value] = WeightedBufferAttach.FromAttach(item.Key, optimize);
+                wbas[item.Value] = WeightedMesh.FromAttach(item.Key, BufferMode.None);
             }
 
-            return new(landtable, landEntries.ToArray(), wbas, visualCount);
+            return new(level.Level, landEntries.ToArray(), wbas, visualCount);
         }
 
     }

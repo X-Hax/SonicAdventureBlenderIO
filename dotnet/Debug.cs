@@ -1,4 +1,6 @@
-﻿using SA3D.Modeling.ModelData;
+﻿/* Unavailable until SA3D.Modeling.JSON is available
+     
+using SA3D.Modeling.ModelData;
 using SA3D.Modeling.ObjectData;
 using System.Text.Json;
 
@@ -47,3 +49,5 @@ namespace SAIO.NET
         }
     }
 }
+
+*/

@@ -1,10 +1,14 @@
-﻿using SA3D.Archival.Tex;
-using SA3D.Event.SA2.Model;
-using SA3D.Modeling.ModelData.CHUNK;
-using SA3D.Modeling.ModelData.Weighted;
+﻿using SA3D.Modeling.Mesh.Chunk;
+using SA3D.Modeling.Mesh.Chunk.PolyChunks;
 using SA3D.Modeling.ObjectData;
+using SA3D.SA2Event;
+using SA3D.SA2Event.Model;
 using SA3D.Texturing;
-using SA3D.Texturing.NJS;
+using SA3D.Texturing.Texname;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace SAIO.NET
 {
@@ -14,13 +18,13 @@ namespace SAIO.NET
 
         public Node[] NotArmaturedModels { get; }
 
-        public Event.SA2.Model.ModelData EventData { get; }
+        public ModelData EventData { get; }
 
         public TextureSet? Textures { get; }
 
-        public NjsTexList? TexNames { get; }
+        public TextureNameList? TexNames { get; }
 
-        public Cutscene(Model[] models, Node[] notArmaturedModels, Event.SA2.Model.ModelData eventData, TextureSet? textures, NjsTexList? texNames)
+        public Cutscene(Model[] models, Node[] notArmaturedModels, ModelData eventData, TextureSet? textures, TextureNameList? texNames)
         {
             Models = models;
             NotArmaturedModels = notArmaturedModels;
@@ -29,14 +33,16 @@ namespace SAIO.NET
             TexNames = texNames;
         }
 
-        private static void NameObjects(string basename, Event.SA2.Model.ModelData modeldata)
+        private static void NameObjects(string basename, ModelData modeldata)
         {
             static void NameHierarchy(string name, Node? root)
             {
                 if(root == null)
+                {
                     return;
+                }
 
-                Node[] nodes = root.GetNodes();
+                Node[] nodes = root.GetTreeNodes();
 
                 if(nodes.Length == 1)
                 {
@@ -58,9 +64,9 @@ namespace SAIO.NET
                 NameHierarchy($"{basename}_{entryIndex++:D3}", entry.DisplayModel);
             }
 
-            for(int i = 0; i < modeldata.Upgrades.Length; i++)
+            for(int i = 0; i < modeldata.OverlayUpgrades.Length; i++)
             {
-                var upgrade = modeldata.Upgrades[i];
+                OverlayUpgrade upgrade = modeldata.OverlayUpgrades[i];
 
                 NameHierarchy($"{basename}_upgrade_{i:D2}_m1", upgrade.Model1);
                 NameHierarchy($"{basename}_upgrade_{i:D2}_m2", upgrade.Model2);
@@ -103,7 +109,9 @@ namespace SAIO.NET
                 foreach(EventEntry entry in modeldata.Scenes[i].Entries)
                 {
                     if(commons.Contains(entry.DisplayModel))
+                    {
                         continue;
+                    }
 
                     NameHierarchy($"{basename}_{i:D2}_{index:D3}", entry.DisplayModel);
 
@@ -136,10 +144,10 @@ namespace SAIO.NET
             }
 
 
-            Event.SA2.Event eventData = Event.SA2.Event.ReadFiles(path);
-            NameObjects(Path.GetFileNameWithoutExtension(path), eventData.MainData);
+            Event eventData = Event.ReadFromFiles(path);
+            NameObjects(Path.GetFileNameWithoutExtension(path), eventData.ModelData);
 
-            Node[] nodes = eventData.MainData.GetModels(true);
+            HashSet<Node> nodes = eventData.ModelData.GetModels(true);
 
 
             List<Model> models = new();
@@ -149,7 +157,7 @@ namespace SAIO.NET
             }
 
             // compare texture list with texture names
-            NjsTexList? texNames = null;
+            TextureNameList? texNames = null;
             if(eventData.ExternalTexlist != null)
             {
                 if(textures == null || eventData.ExternalTexlist.TextureNames.Length != textures.Textures.Count)
@@ -160,8 +168,8 @@ namespace SAIO.NET
                 {
                     for(int i = 0; i < textures.Textures.Count; i++)
                     {
-                        var name = eventData.ExternalTexlist.TextureNames[i];
-                        var texture = textures.Textures[i];
+                        TextureName name = eventData.ExternalTexlist.TextureNames[i];
+                        SA3D.Texturing.Texture texture = textures.Textures[i];
                         if(name.Name?.Trim().ToLower() != texture.Name.Trim().ToLower())
                         {
                             texNames = eventData.ExternalTexlist;
@@ -173,47 +181,42 @@ namespace SAIO.NET
 
             return new(
                 models.ToArray(),
-                eventData.MainData.GetNonAnimatedModels(true),
-                eventData.MainData,
+                eventData.ModelData.GetNonAnimatedModels(true).ToArray(),
+                eventData.ModelData,
                 textures,
                 texNames);
         }
 
-        public static int GetMaterialIndex(Node model, PolyChunkTextureID textureChunk)
+        public static int GetMaterialIndex(Node model, TextureChunk textureChunk)
         {
             if(model.Attach == null)
+            {
                 throw new InvalidOperationException("Model has no attach");
+            }
 
-            Dictionary<ChunkAttach, PolyChunk[]> activePolychunks = ChunkAttachConverter.GetActivePolyChunks(model.RootParent);
+            Dictionary<ChunkAttach, PolyChunk?[]> activePolychunks = ChunkAttach.GetActivePolyChunks(model);
 
-            if(!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk[]? polychunks))
+            if(!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk?[]? polychunks))
+            {
                 throw new InvalidOperationException("model has no active poly chunks");
+            }
 
             int materialIndex = 0;
-            PolyChunkTextureID? curID = null;
+            TextureChunk? curID = null;
 
-            foreach(PolyChunk cnk in polychunks)
+            foreach(PolyChunk? cnk in polychunks)
             {
-                switch(cnk.Type)
+                switch(cnk)
                 {
-                    case ChunkType.Tiny_TextureID:
-                    case ChunkType.Tiny_TextureID2:
-                        curID = (PolyChunkTextureID)cnk;
+                    case TextureChunk texChunk:
+                        curID = texChunk;
                         break;
-                    case ChunkType.Strip_Strip:
-                    case ChunkType.Strip_StripUVN:
-                    case ChunkType.Strip_StripUVH:
-                    case ChunkType.Strip_StripNormal:
-                    case ChunkType.Strip_StripUVNNormal:
-                    case ChunkType.Strip_StripUVHNormal:
-                    case ChunkType.Strip_StripColor:
-                    case ChunkType.Strip_StripUVNColor:
-                    case ChunkType.Strip_StripUVHColor:
-                    case ChunkType.Strip_Strip2:
-                    case ChunkType.Strip_StripUVN2:
-                    case ChunkType.Strip_StripUVH2:
+                    case StripChunk:
                         if(curID == textureChunk)
+                        {
                             return materialIndex;
+                        }
+
                         materialIndex++;
                         break;
                 }
@@ -222,48 +225,40 @@ namespace SAIO.NET
             throw new InvalidOperationException("Material index not found. Texture chunk not part of the (rendered) attaches");
         }
 
-        public static PolyChunkTextureID GetTextureChunkFromMaterialIndex(Node model, int materialIndex)
+        public static TextureChunk GetTextureChunkFromMaterialIndex(Node model, int materialIndex)
         {
             if(model.Attach == null)
+            {
                 throw new InvalidOperationException("Model has no attach");
+            }
 
-            Dictionary<ChunkAttach, PolyChunk[]> activePolychunks = ChunkAttachConverter.GetActivePolyChunks(model.RootParent);
+            Dictionary<ChunkAttach, PolyChunk?[]> activePolychunks = ChunkAttach.GetActivePolyChunks(model);
 
-            if(!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk[]? polychunks))
+            if(!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk?[]? polychunks))
+            {
                 throw new InvalidOperationException("model has no active poly chunks");
+            }
 
             int currentMaterialIndex = 0;
-            PolyChunkTextureID? curID = null;
+            TextureChunk? curID = null;
 
-            foreach(PolyChunk cnk in polychunks)
+            foreach(PolyChunk? cnk in polychunks)
             {
-                switch(cnk.Type)
+                switch(cnk)
                 {
-                    case ChunkType.Tiny_TextureID:
-                    case ChunkType.Tiny_TextureID2:
-                        curID = (PolyChunkTextureID)cnk;
+                    case TextureChunk texChunk:
+                        curID = texChunk;
                         break;
-                    case ChunkType.Strip_Strip:
-                    case ChunkType.Strip_StripUVN:
-                    case ChunkType.Strip_StripUVH:
-                    case ChunkType.Strip_StripNormal:
-                    case ChunkType.Strip_StripUVNNormal:
-                    case ChunkType.Strip_StripUVHNormal:
-                    case ChunkType.Strip_StripColor:
-                    case ChunkType.Strip_StripUVNColor:
-                    case ChunkType.Strip_StripUVHColor:
-                    case ChunkType.Strip_Strip2:
-                    case ChunkType.Strip_StripUVN2:
-                    case ChunkType.Strip_StripUVH2:
+                    case StripChunk:
                         if(currentMaterialIndex == materialIndex)
                         {
-                            if(curID == null)
-                                throw new InvalidOperationException("No texture id chunk found");
-                            return curID;
+                            return curID ?? throw new InvalidOperationException("No texture id chunk found");
                         }
+
                         currentMaterialIndex++;
                         break;
                 }
+
             }
 
             throw new InvalidOperationException("No texture chunk found");

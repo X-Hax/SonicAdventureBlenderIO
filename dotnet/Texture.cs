@@ -1,30 +1,33 @@
 ﻿using SA3D.Texturing;
+using System;
+using Image = SA3D.Texturing.Texture;
 
 namespace SAIO.NET
 {
     public static class Texture
     {
-        public static float[] GetData(Texturing.Texture texture)
+        public static float[] GetData(Image texture)
         {
             const float factor = 1 / (float)byte.MaxValue;
-            var pixels = texture.GetColorPixels();
+            ReadOnlySpan<byte> pixels = texture.GetColorPixels();
             float[] result = new float[pixels.Length];
 
             int destIndex = 0;
             int pixRowSize = texture.Width * 4;
             for(int y = texture.Height - 1; y >= 0; y--)
             {
-                ReadOnlySpan<byte> row = pixels.Slice(y * pixRowSize);
+                ReadOnlySpan<byte> row = pixels[(y * pixRowSize)..];
                 for(int x = 0; x < pixRowSize; x++)
                 {
                     result[destIndex] = row[x] * factor;
                     destIndex++;
                 }
             }
+
             return result;
         }
 
-        public static Texturing.Texture Create(string name, uint globalIndex, int width, int height, bool? index4, float[] colors)
+        public static Image Create(string name, uint globalIndex, int width, int height, bool? index4, float[] colors)
         {
             ReadOnlySpan<float> source = colors;
             int destIndex = 0;
@@ -36,7 +39,7 @@ namespace SAIO.NET
 
                 for(int y = height - 1; y >= 0; y--)
                 {
-                    ReadOnlySpan<float> row = source.Slice(y * pixRowSize);
+                    ReadOnlySpan<float> row = source[(y * pixRowSize)..];
                     for(int x = 0; x < pixRowSize; x++)
                     {
                         pixelData[destIndex] = (byte)(row[x] * 255);
@@ -44,7 +47,7 @@ namespace SAIO.NET
                     }
                 }
 
-                return new Texturing.Texture(name, globalIndex, width, height, pixelData);
+                return new ColorTexture(width, height, pixelData, name, globalIndex);
             }
             else
             {
@@ -52,19 +55,22 @@ namespace SAIO.NET
 
                 for(int y = height - 1; y >= 0; y--)
                 {
-                    ReadOnlySpan<float> row = source.Slice(y * pixRowSize);
+                    ReadOnlySpan<float> row = source[(y * pixRowSize)..];
                     for(int x = 0; x < pixRowSize; x += 4)
                     {
                         byte r = (byte)(row[x] * 255);
                         byte g = (byte)(row[x + 1] * 255);
                         byte b = (byte)(row[x + 2] * 255);
 
-                        pixelData[destIndex] = TextureUtils.GetLuminance(r, g, b);
+                        pixelData[destIndex] = TextureUtilities.GetLuminance(r, g, b);
                         destIndex++;
                     }
                 }
 
-                return new IndexTexture(name, globalIndex, width, height, pixelData, index4.Value);
+                return new IndexTexture(width, height, pixelData, name, globalIndex)
+                {
+                    IsIndex4 = index4.Value
+                };
             }
         }
     }

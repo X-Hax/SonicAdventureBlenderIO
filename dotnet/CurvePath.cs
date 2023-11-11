@@ -1,8 +1,13 @@
 ﻿using SA3D.Common;
-using SA3D.Ini;
-using SA3D.Ini.Converters;
+using SA3D.Common.Converters;
+using SA3D.Common.Ini;
+using SA3D.Common.Ini.Attributes;
+using SA3D.Common.IO;
 using SA3D.Modeling.Structs;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Numerics;
 
 namespace SAIO.NET
@@ -45,7 +50,7 @@ namespace SAIO.NET
             {
                 PathDataEntry entry = path.Path[i];
                 positions[i] = entry.Position;
-                normals[i] = Vector3Extensions.XZAnglesToNormal(new(entry.XRotation, 0, entry.ZRotation));
+                normals[i] = VectorUtilities.XZAnglesToNormal(new(entry.XRotation, 0, entry.ZRotation));
             }
 
             return (positions, normals);
@@ -71,29 +76,29 @@ namespace SAIO.NET
 
         public static PathData ReadINIFile(string filename)
         {
-            return IniDeserialize.Deserialize<PathData>(filename)
+            return IniSerializer.DeserializeFromFile<PathData>(filename)
                 ?? throw new InvalidOperationException($"Failed to parse file {filename} to pathdata!");
         }
 
         public void WriteINIFile(string filename)
         {
-            IniSerialize.Serialize(this, filename);
+            IniSerializer.SerializeToFile(this, filename);
         }
 
-        public static PathData Read(IByteData data, uint address)
+        public static PathData Read(EndianStackReader reader, uint address)
         {
             PathData result = new()
             {
-                Unknown = data.GetInt16(address),
-                TotalDistance = data.GetSingle(address + 4)
+                Unknown = reader.ReadShort(address),
+                TotalDistance = reader.ReadFloat(address + 4)
             };
 
-            ushort count = data.GetUInt16(address + 2);
-            if(data.GetPointer(address + 8, out uint entryAddr))
+            ushort count = reader.ReadUShort(address + 2);
+            if(reader.TryReadPointer(address + 8, out uint entryAddr))
             {
                 for(int i = 0; i < count; i++)
                 {
-                    result.Path.Add(PathDataEntry.Read(data, entryAddr));
+                    result.Path.Add(PathDataEntry.Read(reader, entryAddr));
                     entryAddr += PathDataEntry.Size;
                 }
             }
@@ -101,7 +106,7 @@ namespace SAIO.NET
             return result;
         }
 
-        public void Write(EndianWriter writer)
+        public void Write(EndianStackWriter writer)
         {
             uint pathAddr = writer.PointerPosition;
             foreach(PathDataEntry entry in Path)
@@ -109,10 +114,10 @@ namespace SAIO.NET
                 entry.Write(writer);
             }
 
-            writer.WriteInt16(Unknown);
-            writer.WriteUInt16((ushort)Path.Count);
-            writer.WriteSingle(TotalDistance);
-            writer.WriteUInt32(pathAddr);
+            writer.WriteShort(Unknown);
+            writer.WriteUShort((ushort)Path.Count);
+            writer.WriteFloat(TotalDistance);
+            writer.WriteUInt(pathAddr);
         }
 
         public void ToCode(string name, bool usePathStructs, out string entries, out string head)
@@ -150,7 +155,7 @@ namespace SAIO.NET
             }
 
             entries += "\n};";
-            var floatToString = IOType.Float.GetFloatPrinter();
+            Func<float, string> floatToString = FloatIOType.Float.GetPrinter();
 
             head = $"{headType} {headName} = {{ {Unknown}, LengthOfArray<int16_t>({arrayName}), {floatToString(TotalDistance)}, {arrayName}, (ObjectFuncPtr)0x{Code:X} }};";
         }
@@ -165,7 +170,6 @@ namespace SAIO.NET
         }
     }
 
-    [Serializable]
     public class PathDataEntry
     {
         public const int Size = 20;
@@ -181,40 +185,35 @@ namespace SAIO.NET
         [TypeConverter(typeof(Vector3Converter))]
         public Vector3 Position { get; set; }
 
+
         public PathDataEntry() { }
 
-        public static PathDataEntry Read(IByteData data, uint address)
+
+        public static PathDataEntry Read(EndianStackReader reader, uint address)
         {
             return new()
             {
-                XRotation = MathHelper.BAMSToRad(data.GetUInt16(address)),
-                ZRotation = MathHelper.BAMSToRad(data.GetUInt16(address + 2)),
-                Distance = data.GetSingle(address + 4),
-                Position = data.ReadVector3(address + 8)
+                XRotation = MathHelper.BAMSToRad(reader.ReadUShort(address)),
+                ZRotation = MathHelper.BAMSToRad(reader.ReadUShort(address + 2)),
+                Distance = reader.ReadFloat(address + 4),
+                Position = reader.ReadVector3(address + 8)
             };
         }
 
-        public void Write(EndianWriter writer)
+        public void Write(EndianStackWriter writer)
         {
-            writer.WriteUInt16((ushort)MathHelper.RadToBAMS(XRotation));
-            writer.WriteUInt16((ushort)MathHelper.RadToBAMS(ZRotation));
-            writer.WriteSingle(Distance);
-            Position.Write(writer);
+            writer.WriteUShort((ushort)MathHelper.RadToBAMS(XRotation));
+            writer.WriteUShort((ushort)MathHelper.RadToBAMS(ZRotation));
+            writer.WriteFloat(Distance);
+            writer.WriteVector3(Position);
         }
 
         public string ToStruct(bool usePathStructs)
         {
-            var bamsToString = IOType.BAMS16.GetFloatPrinter();
-            var floatToString = IOType.Float.GetFloatPrinter();
+            Func<float, string> bamsToString = FloatIOType.BAMS16.GetPrinter();
+            Func<float, string> floatToString = FloatIOType.Float.GetPrinter();
 
-            string positionStruct = Position.ToStruct();
-            if(usePathStructs)
-            {
-                // removing the curly brackets
-                positionStruct = positionStruct[2..^2];
-            }
-
-            return $"{{ {bamsToString(XRotation)}, {bamsToString(ZRotation)}, {floatToString(Distance)}, {positionStruct} }}";
+            return $"{{ {bamsToString(XRotation)}, {bamsToString(ZRotation)}, {floatToString(Distance)}, {floatToString(Position.X)}, {floatToString(Position.Y)}, {floatToString(Position.Z)} }}";
         }
     }
 }
