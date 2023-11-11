@@ -8,56 +8,6 @@ namespace SAIO.NET
 {
     public static class Flags
     {
-        public static MaterialAttributes ComposeMaterialAttributes(bool flat, bool noAmbient, bool noDiffuse, bool noSpecular, bool useTexture, bool normalMapping)
-        {
-            MaterialAttributes result = default;
-
-            if(flat)
-            {
-                result |= MaterialAttributes.Flat;
-            }
-
-            if(noAmbient)
-            {
-                result |= MaterialAttributes.NoAmbient;
-            }
-
-            if(noDiffuse)
-            {
-                result |= MaterialAttributes.NoLighting;
-            }
-
-            if(noSpecular)
-            {
-                result |= MaterialAttributes.NoSpecular;
-            }
-
-            if(useTexture)
-            {
-                result |= MaterialAttributes.UseTexture;
-            }
-
-            if(normalMapping)
-            {
-                result |= MaterialAttributes.NormalMapping;
-            }
-
-            return result;
-        }
-
-        public static bool[] DecomposeMaterialAttributes(this MaterialAttributes attributes)
-        {
-            return new[] {
-                attributes.HasFlag(MaterialAttributes.Flat),
-                attributes.HasFlag(MaterialAttributes.NoAmbient),
-                attributes.HasFlag(MaterialAttributes.NoLighting),
-                attributes.HasFlag(MaterialAttributes.NoSpecular),
-                attributes.HasFlag(MaterialAttributes.UseTexture),
-                attributes.HasFlag(MaterialAttributes.NormalMapping)
-            };
-        }
-
-
         public static NodeAttributes ComposeNodeAttributes(bool noPosition, bool noRotation, bool noScale, bool skipDraw, bool skipChildren, bool rotateZYX, bool noAnimate, bool noMorph)
         {
             NodeAttributes result = default;
