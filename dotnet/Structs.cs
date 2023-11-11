@@ -7,7 +7,7 @@ using SA3D.Modeling.Structs;
 using System.Numerics;
 
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public struct NodeStruct
     {
@@ -59,7 +59,7 @@ namespace SA3D.Modeling.Blender
             result.Model.Rotation = euler;
             result.Model.Scale = scale;
 
-            if (automaticNodeAttributes)
+            if(automaticNodeAttributes)
             {
                 result.Model.AutoNodeAttributes();
             }
@@ -202,7 +202,7 @@ namespace SA3D.Modeling.Blender
         public WeightedBufferAttach ToWeightedBuffer(bool writeSpecular)
         {
             BufferMaterial[] materials = new BufferMaterial[Materials.Length];
-            for (int j = 0; j < materials.Length; j++)
+            for(int j = 0; j < materials.Length; j++)
             {
                 materials[j] = Materials[j].ToBufferMaterial();
             }

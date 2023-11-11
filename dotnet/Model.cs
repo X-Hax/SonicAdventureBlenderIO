@@ -4,7 +4,7 @@ using SA3D.Modeling.ObjectData;
 using SA3D.Modeling.Structs;
 using System.Numerics;
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public class Model
     {
@@ -33,18 +33,18 @@ namespace SA3D.Modeling.Blender
             bool writeSpecular,
             bool autoNodeAttributes)
         {
-            if (nodes.Length == 0)
+            if(nodes.Length == 0)
             {
                 throw new InvalidDataException("No nodes passed over");
             }
 
             Node[] objNodes = new Node[nodes.Length];
-            for (int i = 0; i < nodes.Length; i++)
+            for(int i = 0; i < nodes.Length; i++)
             {
                 NodeStruct node = nodes[i];
 
                 Matrix4x4 localMatrix = node.WorldMatrix;
-                if (node.ParentIndex >= 0)
+                if(node.ParentIndex >= 0)
                 {
                     Matrix4x4.Invert(nodes[node.ParentIndex].WorldMatrix, out Matrix4x4 invertedWorld);
                     localMatrix *= invertedWorld;
@@ -67,21 +67,21 @@ namespace SA3D.Modeling.Blender
                 objNodes[i] = objNode;
             }
             Node root = objNodes[0];
-            if (ignoreRoot)
+            if(ignoreRoot)
                 root.VirtualParent = true;
 
 
             WeightedBufferAttach[] attaches = new WeightedBufferAttach[weightedAttaches.Length];
-            for (int i = 0; i < weightedAttaches.Length; i++)
+            for(int i = 0; i < weightedAttaches.Length; i++)
             {
                 attaches[i] = weightedAttaches[i].ToWeightedBuffer(writeSpecular);
             }
 
             WeightedBufferAttach.ToModel(root, attaches, optimize, format, ignoreWeights);
 
-            if (autoNodeAttributes)
+            if(autoNodeAttributes)
             {
-                foreach (Node node in objNodes)
+                foreach(Node node in objNodes)
                 {
                     node.AutoNodeAttributes();
                 }
@@ -104,7 +104,7 @@ namespace SA3D.Modeling.Blender
 
             // if no models are weighted, then blender wont create virtual meshes.
             // as such, an object should have just one model, to avoid creating non-virtual children
-            if (!weighted)
+            if(!weighted)
                 attaches = WeightedBufferAttach.MergeAtDependencyRoots(attaches, node.GetNodes());
 
             return new Model(node, attaches, weighted, author, desription);

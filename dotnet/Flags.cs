@@ -2,7 +2,7 @@
 using SA3D.Modeling.ModelData.Buffer;
 using SA3D.Modeling.ObjectData;
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public static class Flags
     {
@@ -10,12 +10,18 @@ namespace SA3D.Modeling.Blender
         {
             MaterialAttributes result = default;
 
-            if (flat) result |= MaterialAttributes.Flat;
-            if (noAmbient) result |= MaterialAttributes.NoAmbient;
-            if (noDiffuse) result |= MaterialAttributes.NoLighting;
-            if (noSpecular) result |= MaterialAttributes.NoSpecular;
-            if (useTexture) result |= MaterialAttributes.UseTexture;
-            if (normalMapping) result |= MaterialAttributes.NormalMapping;
+            if(flat)
+                result |= MaterialAttributes.Flat;
+            if(noAmbient)
+                result |= MaterialAttributes.NoAmbient;
+            if(noDiffuse)
+                result |= MaterialAttributes.NoLighting;
+            if(noSpecular)
+                result |= MaterialAttributes.NoSpecular;
+            if(useTexture)
+                result |= MaterialAttributes.UseTexture;
+            if(normalMapping)
+                result |= MaterialAttributes.NormalMapping;
 
             return result;
         }
@@ -36,14 +42,22 @@ namespace SA3D.Modeling.Blender
         {
             NodeAttributes result = default;
 
-            if (noPosition) result |= NodeAttributes.NoPosition;
-            if (noRotation) result |= NodeAttributes.NoRotation;
-            if (noScale) result |= NodeAttributes.NoScale;
-            if (skipDraw) result |= NodeAttributes.SkipDraw;
-            if (skipChildren) result |= NodeAttributes.SkipChildren;
-            if (rotateZYX) result |= NodeAttributes.RotateZYX;
-            if (noAnimate) result |= NodeAttributes.NoAnimate;
-            if (noMorph) result |= NodeAttributes.NoMorph;
+            if(noPosition)
+                result |= NodeAttributes.NoPosition;
+            if(noRotation)
+                result |= NodeAttributes.NoRotation;
+            if(noScale)
+                result |= NodeAttributes.NoScale;
+            if(skipDraw)
+                result |= NodeAttributes.SkipDraw;
+            if(skipChildren)
+                result |= NodeAttributes.SkipChildren;
+            if(rotateZYX)
+                result |= NodeAttributes.RotateZYX;
+            if(noAnimate)
+                result |= NodeAttributes.NoAnimate;
+            if(noMorph)
+                result |= NodeAttributes.NoMorph;
 
             return result;
         }
@@ -66,7 +80,7 @@ namespace SA3D.Modeling.Blender
         {
             SurfaceAttributes result = default;
 
-            for (int i = 0; i < names.Length; i++)
+            for(int i = 0; i < names.Length; i++)
             {
                 result |= Enum.Parse<SurfaceAttributes>(names[i]);
             }
@@ -79,10 +93,10 @@ namespace SA3D.Modeling.Blender
             SurfaceAttributes[] values = Enum.GetValues<SurfaceAttributes>();
             List<string> result = new();
 
-            for (int i = 0; i < values.Length; i++)
+            for(int i = 0; i < values.Length; i++)
             {
                 SurfaceAttributes value = values[i];
-                if (attributes.HasFlag(value))
+                if(attributes.HasFlag(value))
                 {
                     result.Add(value.ToString());
                 }
@@ -95,16 +109,26 @@ namespace SA3D.Modeling.Blender
         {
             EventEntryAttribute result = default;
 
-            if (unk0) result |= EventEntryAttribute.Unk0;
-            if (enableLight) result |= EventEntryAttribute.Root_EnableLighting;
-            if (unk2) result |= EventEntryAttribute.Unk2;
-            if (disableShadow) result |= EventEntryAttribute.Root_DisableShadows;
-            if (unk4) result |= EventEntryAttribute.Unk4;
-            if (unk5) result |= EventEntryAttribute.Unk5;
-            if (unk6) result |= EventEntryAttribute.Unk6;
-            if (reflection) result |= EventEntryAttribute.Reflection;
-            if (blare) result |= EventEntryAttribute.Blare;
-            if (unk9) result |= EventEntryAttribute.Unk9;
+            if(unk0)
+                result |= EventEntryAttribute.Unk0;
+            if(enableLight)
+                result |= EventEntryAttribute.Root_EnableLighting;
+            if(unk2)
+                result |= EventEntryAttribute.Unk2;
+            if(disableShadow)
+                result |= EventEntryAttribute.Root_DisableShadows;
+            if(unk4)
+                result |= EventEntryAttribute.Unk4;
+            if(unk5)
+                result |= EventEntryAttribute.Unk5;
+            if(unk6)
+                result |= EventEntryAttribute.Unk6;
+            if(reflection)
+                result |= EventEntryAttribute.Reflection;
+            if(blare)
+                result |= EventEntryAttribute.Blare;
+            if(unk9)
+                result |= EventEntryAttribute.Unk9;
 
             return result;
         }

@@ -2,7 +2,7 @@
 using SA3D.Modeling.ObjectData;
 using System.Text.Json;
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public struct DebugModel
     {

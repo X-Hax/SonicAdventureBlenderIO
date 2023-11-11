@@ -6,7 +6,7 @@ using SA3D.Modeling.ObjectData;
 using SA3D.Texturing;
 using SA3D.Texturing.NJS;
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public class Cutscene
     {
@@ -33,18 +33,18 @@ namespace SA3D.Modeling.Blender
         {
             static void NameHierarchy(string name, Node? root)
             {
-                if (root == null)
+                if(root == null)
                     return;
 
                 Node[] nodes = root.GetNodes();
 
-                if (nodes.Length == 1)
+                if(nodes.Length == 1)
                 {
                     nodes[0].Label = name;
                 }
                 else
                 {
-                    for (int i = 0; i < nodes.Length; i++)
+                    for(int i = 0; i < nodes.Length; i++)
                     {
                         nodes[i].Label = $"{name}_{i:D3}";
                     }
@@ -53,12 +53,12 @@ namespace SA3D.Modeling.Blender
             }
 
             int entryIndex = 0;
-            foreach (EventEntry entry in modeldata.Scenes[0].Entries)
+            foreach(EventEntry entry in modeldata.Scenes[0].Entries)
             {
                 NameHierarchy($"{basename}_{entryIndex++:D3}", entry.DisplayModel);
             }
 
-            for (int i = 0; i < modeldata.Upgrades.Length; i++)
+            for(int i = 0; i < modeldata.Upgrades.Length; i++)
             {
                 var upgrade = modeldata.Upgrades[i];
 
@@ -72,11 +72,11 @@ namespace SA3D.Modeling.Blender
 
             Dictionary<Node, Node> shadowModels = new();
 
-            foreach (Scene scene in modeldata.Scenes.Skip(1))
+            foreach(Scene scene in modeldata.Scenes.Skip(1))
             {
-                foreach (EventEntry entry in scene.Entries)
+                foreach(EventEntry entry in scene.Entries)
                 {
-                    if (!iterated.Contains(entry.DisplayModel))
+                    if(!iterated.Contains(entry.DisplayModel))
                     {
                         iterated.Add(entry.DisplayModel);
                         if(entry.ShadowModel != null)
@@ -84,7 +84,7 @@ namespace SA3D.Modeling.Blender
                             shadowModels.Add(entry.DisplayModel, entry.ShadowModel);
                         }
                     }
-                    else if (!commons.Contains(entry.DisplayModel))
+                    else if(!commons.Contains(entry.DisplayModel))
                     {
                         commons.Add(entry.DisplayModel);
                         commonsOrdered.Add(entry.DisplayModel);
@@ -92,26 +92,26 @@ namespace SA3D.Modeling.Blender
                 }
             }
 
-            for (int i = 0; i < commonsOrdered.Count; i++)
+            for(int i = 0; i < commonsOrdered.Count; i++)
             {
                 NameHierarchy($"{basename}_common_{i:D3}", commonsOrdered[i]);
             }
 
-            for (int i = 1; i < modeldata.Scenes.Count; i++)
+            for(int i = 1; i < modeldata.Scenes.Count; i++)
             {
                 int index = 0;
-                foreach (EventEntry entry in modeldata.Scenes[i].Entries)
+                foreach(EventEntry entry in modeldata.Scenes[i].Entries)
                 {
-                    if (commons.Contains(entry.DisplayModel))
+                    if(commons.Contains(entry.DisplayModel))
                         continue;
 
                     NameHierarchy($"{basename}_{i:D2}_{index:D3}", entry.DisplayModel);
-                    
+
                     index++;
                 }
             }
 
-            foreach (KeyValuePair<Node, Node> item in shadowModels)
+            foreach(KeyValuePair<Node, Node> item in shadowModels)
             {
                 string name = item.Key.Label[..^4];
                 NameHierarchy(name + "_shadow", item.Value);
@@ -126,11 +126,11 @@ namespace SA3D.Modeling.Blender
 
             TextureSet? textures = null;
 
-            if (File.Exists(texturePath))
+            if(File.Exists(texturePath))
             {
                 try
                 {
-                    textures = TextureArchive.ReadArchiveFromFile(texturePath).ToTextureSet();
+                    textures = SA3D.Archival.Archive.ReadArchiveFromFile(texturePath).ToTextureSet();
                 }
                 catch { }
             }
@@ -143,7 +143,7 @@ namespace SA3D.Modeling.Blender
 
 
             List<Model> models = new();
-            foreach (Node node in nodes)
+            foreach(Node node in nodes)
             {
                 models.Add(Model.Process(node, optimize));
             }
@@ -152,17 +152,17 @@ namespace SA3D.Modeling.Blender
             NjsTexList? texNames = null;
             if(eventData.ExternalTexlist != null)
             {
-                if (textures == null || eventData.ExternalTexlist.TextureNames.Length != textures.Textures.Count)
+                if(textures == null || eventData.ExternalTexlist.TextureNames.Length != textures.Textures.Count)
                 {
                     texNames = eventData.ExternalTexlist;
                 }
                 else
                 {
-                    for (int i = 0; i < textures.Textures.Count; i++)
+                    for(int i = 0; i < textures.Textures.Count; i++)
                     {
                         var name = eventData.ExternalTexlist.TextureNames[i];
                         var texture = textures.Textures[i];
-                        if (name.Name?.Trim().ToLower() != texture.Name.Trim().ToLower())
+                        if(name.Name?.Trim().ToLower() != texture.Name.Trim().ToLower())
                         {
                             texNames = eventData.ExternalTexlist;
                             break;
@@ -181,20 +181,20 @@ namespace SA3D.Modeling.Blender
 
         public static int GetMaterialIndex(Node model, PolyChunkTextureID textureChunk)
         {
-            if (model.Attach == null)
+            if(model.Attach == null)
                 throw new InvalidOperationException("Model has no attach");
 
             Dictionary<ChunkAttach, PolyChunk[]> activePolychunks = ChunkAttachConverter.GetActivePolyChunks(model.RootParent);
 
-            if (!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk[]? polychunks))
+            if(!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk[]? polychunks))
                 throw new InvalidOperationException("model has no active poly chunks");
 
             int materialIndex = 0;
             PolyChunkTextureID? curID = null;
 
-            foreach (PolyChunk cnk in polychunks)
+            foreach(PolyChunk cnk in polychunks)
             {
-                switch (cnk.Type)
+                switch(cnk.Type)
                 {
                     case ChunkType.Tiny_TextureID:
                     case ChunkType.Tiny_TextureID2:
@@ -212,7 +212,7 @@ namespace SA3D.Modeling.Blender
                     case ChunkType.Strip_Strip2:
                     case ChunkType.Strip_StripUVN2:
                     case ChunkType.Strip_StripUVH2:
-                        if (curID == textureChunk)
+                        if(curID == textureChunk)
                             return materialIndex;
                         materialIndex++;
                         break;
@@ -224,20 +224,20 @@ namespace SA3D.Modeling.Blender
 
         public static PolyChunkTextureID GetTextureChunkFromMaterialIndex(Node model, int materialIndex)
         {
-            if (model.Attach == null)
+            if(model.Attach == null)
                 throw new InvalidOperationException("Model has no attach");
 
             Dictionary<ChunkAttach, PolyChunk[]> activePolychunks = ChunkAttachConverter.GetActivePolyChunks(model.RootParent);
 
-            if (!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk[]? polychunks))
+            if(!activePolychunks.TryGetValue((ChunkAttach)model.Attach, out PolyChunk[]? polychunks))
                 throw new InvalidOperationException("model has no active poly chunks");
 
             int currentMaterialIndex = 0;
             PolyChunkTextureID? curID = null;
 
-            foreach (PolyChunk cnk in polychunks)
+            foreach(PolyChunk cnk in polychunks)
             {
-                switch (cnk.Type)
+                switch(cnk.Type)
                 {
                     case ChunkType.Tiny_TextureID:
                     case ChunkType.Tiny_TextureID2:
@@ -255,9 +255,9 @@ namespace SA3D.Modeling.Blender
                     case ChunkType.Strip_Strip2:
                     case ChunkType.Strip_StripUVN2:
                     case ChunkType.Strip_StripUVH2:
-                        if (currentMaterialIndex == materialIndex)
+                        if(currentMaterialIndex == materialIndex)
                         {
-                            if (curID == null)
+                            if(curID == null)
                                 throw new InvalidOperationException("No texture id chunk found");
                             return curID;
                         }
@@ -268,6 +268,6 @@ namespace SA3D.Modeling.Blender
 
             throw new InvalidOperationException("No texture chunk found");
         }
-    
+
     }
 }

@@ -5,7 +5,7 @@ using SA3D.Modeling.ModelData.BASIC;
 using SA3D.Modeling.ModelData.Weighted;
 using SA3D.Modeling.ObjectData;
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public class BLandTable
     {
@@ -30,7 +30,7 @@ namespace SA3D.Modeling.Blender
             bool automaticNodeAttributes)
         {
             AttachFormat attachFormat;
-            switch (landtable.Format)
+            switch(landtable.Format)
             {
                 case ModelFormat.SA1:
                 case ModelFormat.SADX:
@@ -47,7 +47,7 @@ namespace SA3D.Modeling.Blender
             Attach[] attaches = wbas.Select(x => x.ToAttach(optimize, attachFormat)).ToArray();
             List<LandEntry> geometry = new();
 
-            foreach (LandEntryStruct landentry in landentries)
+            foreach(LandEntryStruct landentry in landentries)
             {
                 Attach attach = attaches[landentry.MeshIndex];
                 geometry.Add(landentry.ToLandEntry(attach, automaticNodeAttributes));
@@ -75,19 +75,19 @@ namespace SA3D.Modeling.Blender
             List<LandEntryStruct> visualLandentries = new();
             List<LandEntryStruct> collisionLandentries = new();
 
-            foreach (LandEntryStruct landentry in landentries)
+            foreach(LandEntryStruct landentry in landentries)
             {
                 bool isCollision = landentry.SurfaceAttributes.IsCollision();
                 bool isVisual = !isCollision || landentry.SurfaceAttributes.HasFlag(SurfaceAttributes.Visible);
                 // if its neither, we'll just keep it as an invisible visual model. just in case
 
-                if (isVisual)
+                if(isVisual)
                 {
                     visualLandentries.Add(landentry);
                     visualWBAs[landentry.MeshIndex] = wbas[landentry.MeshIndex];
                 }
 
-                if (isCollision)
+                if(isCollision)
                 {
                     collisionLandentries.Add(landentry);
                     collisionWBAs[landentry.MeshIndex] = wbas[landentry.MeshIndex];
@@ -99,7 +99,7 @@ namespace SA3D.Modeling.Blender
 
             List<LandEntry> geometry = new();
 
-            foreach (LandEntryStruct landentry in visualLandentries)
+            foreach(LandEntryStruct landentry in visualLandentries)
             {
                 Attach attach = visualAttaches[landentry.MeshIndex] ?? throw new InvalidOperationException($"Attach {landentry.MeshIndex} was not converted as visual");
                 LandEntry le = landentry.ToLandEntry(attach, automaticNodeAttributes);
@@ -107,7 +107,7 @@ namespace SA3D.Modeling.Blender
                 geometry.Add(le);
             }
 
-            foreach (LandEntryStruct landentry in collisionLandentries)
+            foreach(LandEntryStruct landentry in collisionLandentries)
             {
                 Attach attach = collisionAttaches[landentry.MeshIndex] ?? throw new InvalidOperationException($"Attach {landentry.MeshIndex} was not converted as collision");
                 LandEntry le = landentry.ToLandEntry(attach, automaticNodeAttributes);
@@ -134,7 +134,7 @@ namespace SA3D.Modeling.Blender
             string author,
             string description)
         {
-            if (landentries.Length == 0)
+            if(landentries.Length == 0)
             {
                 throw new InvalidDataException("No landentries passed over");
             }
@@ -157,14 +157,14 @@ namespace SA3D.Modeling.Blender
             {
                 for(int i = 0; i < landentries.Length; i++)
                 {
-                    if ((landentries[i].SurfaceAttributes & SurfaceAttributes.ValidMask) == default)
+                    if((landentries[i].SurfaceAttributes & SurfaceAttributes.ValidMask) == default)
                     {
                         landentries[i].SurfaceAttributes = SurfaceAttributes.Visible | SurfaceAttributes.Solid;
                     }
                 }
             }
 
-            switch (format)
+            switch(format)
             {
                 case ModelFormat.Buffer:
                 case ModelFormat.SA1:
@@ -189,22 +189,22 @@ namespace SA3D.Modeling.Blender
 
             int? visualCount = null;
 
-            foreach (LandEntry landEntry in landtable.Geometry)
+            foreach(LandEntry landEntry in landtable.Geometry)
             {
-                if (landEntry.Model.Attach == null)
+                if(landEntry.Model.Attach == null)
                 {
                     Console.WriteLine($"Landentry {landEntry.Model.Label} did not have a model");
                     continue;
                 }
 
-                if (landtable.Format >= ModelFormat.SA2
+                if(landtable.Format >= ModelFormat.SA2
                     && landEntry.Model.Attach is BasicAttach
                     && visualCount == null)
                 {
                     visualCount = landEntries.Count;
                 }
 
-                if (!attaches.TryGetValue(landEntry.Model.Attach, out int index))
+                if(!attaches.TryGetValue(landEntry.Model.Attach, out int index))
                 {
                     index = attaches.Count;
                     attaches.Add(landEntry.Model.Attach, index);
@@ -219,7 +219,7 @@ namespace SA3D.Modeling.Blender
             }
 
             WeightedBufferAttach[] wbas = new WeightedBufferAttach[attaches.Count];
-            foreach (KeyValuePair<Attach, int> item in attaches)
+            foreach(KeyValuePair<Attach, int> item in attaches)
             {
                 wbas[item.Value] = WeightedBufferAttach.FromAttach(item.Key, optimize);
             }

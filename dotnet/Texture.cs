@@ -1,6 +1,6 @@
 ﻿using SA3D.Texturing;
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public static class Texture
     {
@@ -12,10 +12,10 @@ namespace SA3D.Modeling.Blender
 
             int destIndex = 0;
             int pixRowSize = texture.Width * 4;
-            for (int y = texture.Height - 1; y >= 0; y--)
+            for(int y = texture.Height - 1; y >= 0; y--)
             {
                 ReadOnlySpan<byte> row = pixels.Slice(y * pixRowSize);
-                for (int x = 0; x < pixRowSize; x++)
+                for(int x = 0; x < pixRowSize; x++)
                 {
                     result[destIndex] = row[x] * factor;
                     destIndex++;
@@ -30,14 +30,14 @@ namespace SA3D.Modeling.Blender
             int destIndex = 0;
             int pixRowSize = width * 4;
 
-            if (index4 == null)
+            if(index4 == null)
             {
                 byte[] pixelData = new byte[width * height * 4];
 
-                for (int y = height - 1; y >= 0; y--)
+                for(int y = height - 1; y >= 0; y--)
                 {
                     ReadOnlySpan<float> row = source.Slice(y * pixRowSize);
-                    for (int x = 0; x < pixRowSize; x++)
+                    for(int x = 0; x < pixRowSize; x++)
                     {
                         pixelData[destIndex] = (byte)(row[x] * 255);
                         destIndex++;
@@ -50,10 +50,10 @@ namespace SA3D.Modeling.Blender
             {
                 byte[] pixelData = new byte[width * height];
 
-                for (int y = height - 1; y >= 0; y--)
+                for(int y = height - 1; y >= 0; y--)
                 {
                     ReadOnlySpan<float> row = source.Slice(y * pixRowSize);
-                    for (int x = 0; x < pixRowSize; x += 4)
+                    for(int x = 0; x < pixRowSize; x += 4)
                     {
                         byte r = (byte)(row[x] * 255);
                         byte g = (byte)(row[x + 1] * 255);

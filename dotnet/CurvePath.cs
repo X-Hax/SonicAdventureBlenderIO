@@ -5,7 +5,7 @@ using SA3D.Modeling.Structs;
 using System.ComponentModel;
 using System.Numerics;
 
-namespace SA3D.Modeling.Blender
+namespace SAIO.NET
 {
     public class CurvePath
     {
@@ -13,7 +13,7 @@ namespace SA3D.Modeling.Blender
         {
             PathData result = new();
 
-            for (int i = 0; i < positions.Length; i++)
+            for(int i = 0; i < positions.Length; i++)
             {
                 Vector3 xyAngles = normals[i].NormalToXZAngles();
 
@@ -24,7 +24,7 @@ namespace SA3D.Modeling.Blender
                     ZRotation = xyAngles.Z
                 };
 
-                if (i < positions.Length - 1)
+                if(i < positions.Length - 1)
                 {
                     entry.Distance = Vector3.Distance(entry.Position, positions[i + 1]);
                     result.TotalDistance += entry.Distance;
@@ -89,9 +89,9 @@ namespace SA3D.Modeling.Blender
             };
 
             ushort count = data.GetUInt16(address + 2);
-            if (data.GetPointer(address + 8, out uint entryAddr))
+            if(data.GetPointer(address + 8, out uint entryAddr))
             {
-                for (int i = 0; i < count; i++)
+                for(int i = 0; i < count; i++)
                 {
                     result.Path.Add(PathDataEntry.Read(data, entryAddr));
                     entryAddr += PathDataEntry.Size;
@@ -104,7 +104,7 @@ namespace SA3D.Modeling.Blender
         public void Write(EndianWriter writer)
         {
             uint pathAddr = writer.PointerPosition;
-            foreach (PathDataEntry entry in Path)
+            foreach(PathDataEntry entry in Path)
             {
                 entry.Write(writer);
             }
@@ -114,7 +114,7 @@ namespace SA3D.Modeling.Blender
             writer.WriteSingle(TotalDistance);
             writer.WriteUInt32(pathAddr);
         }
-    
+
         public void ToCode(string name, bool usePathStructs, out string entries, out string head)
         {
             string arrayType;
@@ -143,7 +143,7 @@ namespace SA3D.Modeling.Blender
                 entries += $"\n\t{entry.ToStruct(usePathStructs)},";
             }
 
-            if (Path.Count > 0)
+            if(Path.Count > 0)
             {
                 // removing last comma
                 entries = entries[..^1];
@@ -208,7 +208,7 @@ namespace SA3D.Modeling.Blender
             var floatToString = IOType.Float.GetFloatPrinter();
 
             string positionStruct = Position.ToStruct();
-            if (usePathStructs)
+            if(usePathStructs)
             {
                 // removing the curly brackets
                 positionStruct = positionStruct[2..^2];
