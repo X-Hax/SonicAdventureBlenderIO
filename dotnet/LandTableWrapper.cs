@@ -13,14 +13,14 @@ using System.Linq;
 
 namespace SAIO.NET
 {
-    public class BLandTable
+    public class LandTableWrapper
     {
         public LandTable LandTable { get; }
         public LandEntryStruct[] LandEntries { get; }
         public WeightedMesh[] Attaches { get; }
         public int? VisualCount { get; }
 
-        public BLandTable(LandTable landTable, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount)
+        public LandTableWrapper(LandTable landTable, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount)
         {
             LandTable = landTable;
             LandEntries = landEntries;
@@ -191,7 +191,7 @@ namespace SAIO.NET
             LevelFile.WriteToFile(filepath, landtable, metaData);
         }
 
-        public static BLandTable Import(string filepath, bool optimize)
+        public static LandTableWrapper Import(string filepath, bool optimize)
         {
             LevelFile level = LevelFile.ReadFromFile(filepath);
 
