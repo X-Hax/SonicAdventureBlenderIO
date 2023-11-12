@@ -111,9 +111,6 @@ class NodeProcessor:
 
     def _create_bones(self, nodes, matrices: list[Matrix]):
         for index, node in enumerate(nodes):
-            if node.IsVirtualRoot:
-                continue
-
             bone = self._armature.edit_bones.new(
                 self._eval_name(index, node.Label))
 
@@ -296,8 +293,8 @@ class NodeProcessor:
         if len(nodes) == 1:
             self.ensure_order = False
 
-        matrices = i_matrix.net_to_bpy_matrices(
-            nodes[0].GetWorldMatrices())
+        net_matrices = [node_matrix.Item2 for node_matrix in nodes[0].GetWorldMatrixTree()]
+        matrices = i_matrix.net_to_bpy_matrices(net_matrices)
 
         self._setup_armature(name)
 
@@ -385,7 +382,7 @@ class NodeProcessor:
             mat_name
         )
 
-        nodes = import_data.Root.GetNodes()
+        nodes = import_data.Root.GetTreeNodes()
         if force_armature or import_data.Weighted:
             self.process_as_armature(nodes, name)
         else:
