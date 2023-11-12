@@ -76,36 +76,31 @@ class MeshProcessor:
         props.specular_exponent = int(material.SpecularExponent)
         props.ambient = self._to_color(material.Ambient)
 
-        props.flat_shading, \
-            props.ignore_ambient, \
-            props.ignore_diffuse, \
-            props.ignore_specular, \
-            props.use_texture, \
-            props.use_environment = SAIO_NET.FLAGS.DecomposeMaterialAttributes(
-                material.MaterialAttributes)
+        props.texture_id = material.TextureIndex
+        props.texture_filtering = i_enum.from_filter_mode(material.TextureFiltering)
+        props.mipmap_distance_multiplier = material.MipmapDistanceMultiplier
+        props.source_alpha = i_enum.from_blend_mode(material.SourceBlendMode)
+        props.destination_alpha = i_enum.from_blend_mode(material.DestinationBlendmode)
 
+        props.anisotropic_filtering = material.AnisotropicFiltering
         props.use_alpha = material.UseAlpha
         props.double_sided = not material.BackfaceCulling
-        props.source_alpha = i_enum.from_blend_mode(material.SourceBlendMode)
-        props.destination_alpha = i_enum.from_blend_mode(
-            material.DestinationBlendmode)
-
-        props.texture_id = material.TextureIndex
-        props.texture_filtering = i_enum.from_filter_mode(
-            material.TextureFiltering)
-        props.anisotropic_filtering = material.AnisotropicFiltering
-        props.mipmap_distance_multiplier = material.MipmapDistanceAdjust
-
+        props.flat_shading = material.Flat
+        props.ignore_ambient = material.NoAmbient
+        props.ignore_diffuse = material.NoLighting
+        props.ignore_specular = material.NoSpecular
+        props.use_texture = material.UseTexture
+        props.use_environment = material.NormalMapping
         props.clamp_u = material.ClampU
         props.mirror_u = material.MirrorU
         props.clamp_v = material.ClampV
         props.mirror_v = material.MirrorV
 
-        props.shadow_stencil = material.ShadowStencil
-        props.texgen_coord_id = i_enum.from_tex_coord_id(material.TexCoordID)
-        props.texgen_type = i_enum.from_tex_gen_type(material.TexGenType)
-        props.texgen_source = i_enum.from_tex_gen_source(material.TexGenSrc)
-        props.texgen_matrix_id = i_enum.from_tex_gen_matrix(material.MatrixID)
+        props.shadow_stencil = material.GCShadowStencil
+        props.texgen_coord_id = i_enum.from_tex_coord_id(material.GCTexCoordID)
+        props.texgen_type = i_enum.from_tex_gen_type(material.GCTexCoordType)
+        props.texgen_source = i_enum.from_tex_gen_source(material.GCTexCoordSource)
+        props.texgen_matrix_id = i_enum.from_tex_gen_matrix(material.GCMatrixID)
 
         return bpy_material
 
