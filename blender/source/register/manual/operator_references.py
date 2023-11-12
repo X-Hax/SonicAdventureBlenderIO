@@ -1,4 +1,16 @@
-from ..operators import *
+from ..operators import (
+    import_operators,
+    path_operators,
+    anim_import_operators,
+    export_operators,
+    anim_export_operators,
+    material_operators,
+    tool_operators,
+    material_mass_edit_operators,
+    migration_operators,
+    texture_operators,
+    texture_name_operators,
+)
 
 IMPORT = "/ui/toolbar/tools/import/"
 EXPORT = "/ui/toolbar/tools/export/"

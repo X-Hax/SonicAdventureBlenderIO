@@ -1,5 +1,6 @@
 import bpy
 from . import texture_manager, general
+from ..exceptions import SAIOException
 
 LIGHTING_PROPERTIES = [
     ("light_ambient_color", "Ambient Color", "NodeSocketColor"),
@@ -63,7 +64,7 @@ def _get_node_template(context: bpy.types.Context) -> bpy.types.NodeTree:
                 and general.is_from_template(group)):
             return group
 
-    raise Exception("Template not found")
+    raise SAIOException("Template not found")
 
 
 def _get_scene_lighting_node(context: bpy.types.Context):
@@ -76,8 +77,8 @@ def _get_scene_lighting_node(context: bpy.types.Context):
         node_tree = bpy.data.node_groups.new(node_tree_name, 'ShaderNodeTree')
         node_tree.nodes.new("NodeGroupOutput")
 
-        for property in LIGHTING_PROPERTIES:
-            node_tree.outputs.new(property[2], property[1])
+        for prop in LIGHTING_PROPERTIES:
+            node_tree.outputs.new(prop[2], prop[1])
 
     update_scene_lighting(context)
 
@@ -126,11 +127,11 @@ def _setup_material(
                 node.node_tree = tnode.node_tree
 
         for tinput in tnode.inputs:
-            input = get_socket_by_identifier(node.inputs, tinput.identifier)
-            mapping[tinput] = input
-            input.hide = tinput.hide
-            if input.type != 'SHADER':
-                input.default_value = tinput.default_value
+            input_socket = get_socket_by_identifier(node.inputs, tinput.identifier)
+            mapping[tinput] = input_socket
+            input_socket.hide = tinput.hide
+            if input_socket.type != 'SHADER':
+                input_socket.default_value = tinput.default_value
 
         for toutput in tnode.outputs:
             output = get_socket_by_identifier(node.outputs, toutput.identifier)
@@ -204,12 +205,12 @@ def _material_connect_texture(
         texture_output = texture.outputs[output_index]
 
         if use_link:
-            for input in inputs:
-                node_tree.links.new(texture_output, input)
+            for input_socket in inputs:
+                node_tree.links.new(texture_output, input_socket)
         else:
             links = []
-            for input in inputs:
-                for link in input.links:
+            for input_socket in inputs:
+                for link in input_socket.links:
                     links.append(link)
 
             for link in links:
@@ -405,11 +406,11 @@ def setup_and_update_materials(
         node_tree = material.node_tree
 
         # validate that the nodes exist
-        for name, type in template_nodes.items():
+        for name, tree in template_nodes.items():
             node = node_tree.nodes.get(name)
             if (node is None
-                    or node.type != type[0]
-                    or (node.type == 'GROUP' and node.node_tree != type[1])):
+                    or node.type != tree[0]
+                    or (node.type == 'GROUP' and node.node_tree != tree[1])):
 
                 _setup_material(material, template, lighting_node_tree)
                 _update_material_texture(texlist_manager, material)

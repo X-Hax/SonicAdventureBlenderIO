@@ -10,6 +10,8 @@ from .base_export_operators import (
     NodeAnimExportOperator
 )
 
+from ...dotnet import SA3D_Modeling
+
 
 class ExportMDLOperator(ExportModelOperator):
 
@@ -55,6 +57,9 @@ class ExportMDLOperator(ExportModelOperator):
 
     filename_ext = ".nj"
 
+    model_file_extension: str
+
+
     @classmethod
     def poll(cls, context: Context):
         return context.mode == 'OBJECT'
@@ -82,11 +87,11 @@ class ExportMDLOperator(ExportModelOperator):
         from ...exporting.o_model import ModelEvaluator
         evaluator = ModelEvaluator(
             context,
-            self.format,
+            self.format, # pylint: disable=no-member
             self.auto_root,
             self.optimize,
-            self.ignore_weights,
-            self.write_specular,
+            self.ignore_weights, # pylint: disable=no-member
+            self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.apply_posing,
             self.auto_node_attributs,
@@ -94,19 +99,15 @@ class ExportMDLOperator(ExportModelOperator):
 
         data = evaluator.evaluate(objects)
 
-        from SA3D.Modeling.ObjectData import MetaData, ModelFile
-
-        metadata = MetaData()
+        metadata = SA3D_Modeling.META_DATA()
         metadata.Author = context.scene.saio_scene.author
         metadata.Description = context.scene.saio_scene.description
 
-        bytes = ModelFile.Write(
-            self.nj_file,
+        SA3D_Modeling.MODEL_FILE.WriteToFile(
+            self.filepath,
             data.outdata,
+            self.nj_file,
             metadata)
-
-        from System.IO import File
-        File.WriteAllBytes(self.filepath, bytes)
 
         if self.debug_output:
             evaluator.save_debug(self.filepath + ".json")
@@ -188,9 +189,9 @@ class ExportLVLOperator(ExportModelOperator):
 
         evaluator = o_landtable.LandtableEvaluator(
             context,
-            self.format,
+            self.format, # pylint: disable=no-member
             self.optimize,
-            self.write_specular,
+            self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.fallback_surface_attributes,
             self.auto_node_attributs)

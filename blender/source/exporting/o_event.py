@@ -1,16 +1,15 @@
 import bpy
 from bpy.types import Object as BObject
 
-from .o_shapemotion import (
-    check_is_shape_motion_viable,
-    ShapeActionCollection,
-    ShapeMotionEvaluator
-)
+from .o_event_cutinfo import CutInfo
+from .o_shapemotion import ShapeMotionEvaluator
 from .o_model import ModelEvaluator, ModelData
-from ..utility.event_lut import *
+
+from ..utility.event_lut import OVERLAY_UPGRADE_LUT, INTEGRATED_UPGRADE_LUT
 from ..utility.anim_parameters import AnimParameters
-from ..utility import camera_utils
 from ..exceptions import UserException
+
+from ..dotnet import System, SAIO_NET, SA3D_Modeling, SA3D_SA2Event
 
 
 def get_base_scene(context: bpy.types.Context):
@@ -20,7 +19,7 @@ def get_base_scene(context: bpy.types.Context):
 
     result = None
     for bscene in bpy.data.scenes:
-        if (bscene.saio_scene.scene_type != 'EVR'):
+        if bscene.saio_scene.scene_type != 'EVR':
             continue
 
         found = False
@@ -42,419 +41,6 @@ def get_base_scene(context: bpy.types.Context):
         raise UserException("No base scene found!")
 
     return result
-
-
-class CutInfo:
-
-    context: bpy.types.Context
-    scene: bpy.types.Scene
-    index: int
-    particles: list[BObject]
-    models: dict[BObject, ModelData]
-    anim_parameters: AnimParameters
-    shape_motion_evaluators: dict[BObject, ShapeMotionEvaluator]
-
-    entries: list[BObject]
-    duration: int
-
-    temp_actions: list[bpy.types.Action]
-    output_actions: dict[BObject, bpy.types.Action]
-    output_shape_actions: dict[BObject, ShapeActionCollection]
-    action_setup_dict: dict[bpy.types.FCurve, any]
-
-    camera_setup: camera_utils.CameraSetup
-    camera_actions: camera_utils.CameraActionSet
-
-    motions: dict[BObject, any]
-    shape_motions: dict[BObject, any]
-    camera_motion: any
-
-    def __init__(
-            self,
-            context: bpy.types.Context,
-            scene: bpy.types.Scene,
-            index: int,
-            models: dict[BObject, ModelData],
-            anim_parameters: AnimParameters,
-            shape_motion_evaluators: dict):
-
-        self.context = context
-        self.scene = scene
-        self.index = index
-        self.entries = []
-        self.particles = []
-        self.anim_parameters = anim_parameters
-        self.models = models
-        self.shape_motion_evaluators = shape_motion_evaluators
-
-        self.duration = scene.frame_end - scene.frame_start
-
-        self.temp_actions = []
-        self.output_actions = {}
-        self.output_shape_actions = {}
-        self.action_setup_dict = {}
-
-        self.camera_setup = camera_utils.CameraSetup.get_setup(
-            self.scene.camera)
-
-        if self.camera_setup is None:
-            raise UserException(
-                f"Camera setup in scene {self.scene.name} is invalid!")
-
-        self.camera_actions = None
-
-        self.motions = {}
-        self.shape_motions = {}
-        self.camera_motion = None
-
-    @property
-    def framecount(self):
-        # a scene from 0 to 1 has 2 frames, but 1 - 0 is 1, so we gotta add 1
-        return self.duration + 1
-
-    def _setup_motion_scene(self):
-
-        self.context.window.scene = self.scene
-        self.scene.frame_current = self.scene.frame_start
-
-    ######################################################################
-
-    def _is_animated(self, animdata):
-        if animdata is None:
-            return False
-
-        stripcount = sum([
-            len(track.strips)
-            for track
-            in animdata.nla_tracks]
-        )
-
-        return stripcount > 0
-
-    def _get_matching_action(self, anim: bpy.types.AnimData):
-
-        tracks = [track for track in anim.nla_tracks if len(track.strips) > 0]
-        if len(tracks) != 1:
-            return None
-        track = tracks[0]
-
-        matching_strip = None
-        for strip in track.strips:
-            if (strip.frame_start == self.scene.frame_start
-                    and strip.frame_end == self.scene.frame_end):
-                matching_strip = strip
-                break
-
-        if matching_strip is None or matching_strip.type != 'CLIP':
-            return None
-
-        frame_range = matching_strip.action.frame_range
-        frame_length = frame_range[1] - frame_range[0]
-        if (frame_length == self.duration
-                and len(matching_strip.modifiers) == 0
-                and matching_strip.scale == 1):
-            return matching_strip.action
-
-        return None
-
-    def _setup_action(self, animdata, name, on_create, ensure_action=False):
-        if not self._is_animated(animdata) and not ensure_action:
-            return None
-
-        action = self._get_matching_action(animdata)
-
-        if action is None:
-            action = bpy.data.actions.new(
-                f"SAIO_{self.scene.name}_{name}")
-            self.temp_actions.append(action)
-
-            on_create(action)
-
-        return action
-
-    ######################################################################
-
-    def _setup_temp_armature_action(
-            self,
-            action: bpy.types.Action,
-            object: BObject):
-
-        for bone in object.pose.bones:
-
-            def create_curve(field, len):
-                for i in range(len):
-                    curve = action.fcurves.new(
-                        f"pose.bones[\"{bone.name}\"].{field}",
-                        index=i,
-                        action_group=bone.name)
-                    self.action_setup_dict[curve] = (bone, field, i)
-
-            create_curve("location", 3)
-            create_curve("scale", 3)
-
-            if bone.rotation_mode == 'QUATERNION':
-                create_curve("rotation_quaternion", 4)
-            else:
-                create_curve("rotation_euler", 3)
-
-    def _setup_temp_object_action(
-            self,
-            action: bpy.types.Action,
-            object: BObject,
-            only_location: bool = False):
-
-        def create_curve(field, len):
-            for i in range(len):
-                curve = action.fcurves.new(
-                    field,
-                    index=i,
-                    action_group="transforms")
-                self.action_setup_dict[curve] = (object, field, i)
-
-        create_curve("location", 3)
-
-        if only_location:
-            return
-
-        create_curve("scale", 3)
-
-        if object.rotation_mode == 'QUATERNION':
-            create_curve("rotation_quaternion", 4)
-        else:
-            create_curve("rotation_euler", 3)
-
-    def _setup_temp_target_action(self, action: bpy.types.Action, object):
-
-        def create_curve(field, index):
-            curve = action.fcurves.new(
-                field,
-                index=index,
-                action_group="transforms")
-            self.action_setup_dict[curve] = (object, field, index)
-
-        for i in range(3):
-            create_curve("location", i)
-        create_curve("rotation_euler", 2)
-
-    def _setup_temp_fov_action(self, action: bpy.types.Action, object):
-        action.id_root = 'CAMERA'
-        curve = action.fcurves.new(
-            "lens",
-            action_group="camera")
-        self.action_setup_dict[curve] = (object, "lens", None)
-
-    ######################################################################
-
-    def _get_shape_action(self, object: BObject):
-        if object.type != 'MESH':
-            return None
-
-        from ..utility.general import get_armature_modifier
-        if get_armature_modifier(object) is not None:
-            return None
-
-        keys: bpy.types.Key = object.data.shape_keys
-        if keys is None or keys.animation_data is None:
-            return None
-
-        target_track = None
-        for track in keys.animation_data.nla_tracks:
-            if len(track.strips) == 0:
-                continue
-
-            if target_track is not None:
-                raise UserException(
-                    f"Object {object.name} has multiple NLA tracks on its"
-                    " shape data!")
-
-            target_track = track
-
-        if target_track is None:
-            return None
-
-        target_strip = None
-        for strip in target_track.strips:
-            if (strip.frame_start == self.scene.frame_start
-                    and strip.frame_end == self.scene.frame_end):
-                target_strip = strip
-                continue
-
-            if not (strip.frame_start > self.scene.frame_end
-                    or strip.frame_end < self.scene.frame_start):
-                raise UserException(
-                    "All shape actions on an nla track have to fit"
-                    " exactly onto the scene they are played in! Object"
-                    f" {object.name} does not comply!")
-
-        if target_strip is None or target_strip.type != 'CLIP':
-            return None
-
-        frame_range = target_strip.action.frame_range
-        frame_length = frame_range[1] - frame_range[0]
-        if (frame_length != self.duration
-                or len(target_strip.modifiers) != 0
-                or target_strip.scale != 1):
-
-            raise UserException(
-                f"Shape action {target_strip.action.name}"
-                f" on object {object.name} does not match with its strip"
-                " or is not \"vanilla\"!")
-
-        return target_strip.action
-
-    def _collect_shape_actions(self, entry: BObject):
-        shape_actions = ShapeActionCollection()
-
-        if entry.type == 'ARMATURE':
-            for child in entry.children:
-                if child.parent_type != 'BONE':
-                    continue
-                action = self._get_shape_action(child)
-                if action is not None:
-                    shape_actions.actions[child] = action
-
-            if len(shape_actions.actions) > 0:
-                check_is_shape_motion_viable(entry)
-
-        else:
-            action = self._get_shape_action(entry)
-            if action is not None:
-                shape_actions.actions[entry] = action
-
-        if len(shape_actions.actions) > 0:
-            shape_actions.name = f"Event{self.index}_{entry.name}_Shape"
-            self.output_shape_actions[entry] = shape_actions
-
-    def _prepare_entry_actions(self):
-
-        for entry in self.entries:
-            if entry.type != 'ARMATURE' and len(entry.children) > 0:
-                continue
-
-            # Node animation
-
-            def create(x):
-                if entry.type == 'ARMATURE':
-                    self._setup_temp_armature_action(x, entry)
-                else:
-                    self._setup_temp_object_action(x, entry)
-
-            action = self._setup_action(
-                entry.animation_data,
-                f"Scene{self.index:02}_{entry.name}",
-                create)
-
-            if action is not None:
-                self.output_actions[entry] = action
-
-            self._collect_shape_actions(entry)
-
-    def _prepare_particle_actions(self):
-
-        for particle in self.particles:
-
-            action = self._setup_action(
-                particle.animation_data,
-                particle.name,
-                lambda x: self._setup_temp_object_action(x, particle, True))
-
-            if action is not None:
-                self.output_actions[particle] = action
-
-    def _prepare_camera_actions(self):
-
-        camera_action = self._setup_action(
-            self.camera_setup.camera.animation_data,
-            "camera",
-            lambda x: self._setup_temp_object_action(
-                x, self.camera_setup.camera, True),
-            True)
-
-        target_action = self._setup_action(
-            self.camera_setup.target.animation_data,
-            "target",
-            lambda x: self._setup_temp_target_action(
-                x, self.camera_setup.target),
-            True)
-
-        fov_action = self._setup_action(
-            self.camera_setup.camera_data.animation_data,
-            "fov",
-            lambda x: self._setup_temp_fov_action(
-                x, self.camera_setup.camera_data),
-            True)
-
-        self.camera_actions = camera_utils.CameraActionSet(
-            camera_action,
-            target_action,
-            fov_action)
-
-    ######################################################################
-
-    def _eval_action_keyframes(self):
-        if len(self.action_setup_dict) == 0:
-            return
-
-        for i in range(self.framecount):
-            self.context.view_layer.update()
-
-            for curve, params in self.action_setup_dict.items():
-                value = getattr(params[0], params[1])
-                if params[2] is not None:
-                    value = value[params[2]]
-                curve.keyframe_points.insert(i, value).interpolation = 'LINEAR'
-
-            self.scene.frame_current += 1
-
-    def _convert_actions(self):
-        from .o_motion import convert_to_node_motion, convert_to_camera_motion
-
-        self.camera_motion = convert_to_camera_motion(
-            self.camera_setup,
-            self.camera_actions,
-            f"Scene{self.index:02}_Camera",
-            self.anim_parameters
-        )
-
-        for object, action in self.output_actions.items():
-            self.motions[object] = convert_to_node_motion(
-                object,
-                False,
-                action.fcurves,
-                action.frame_range,
-                action.name,
-                self.anim_parameters
-            )
-
-        if len(self.output_shape_actions) > 0:
-
-            for object, actions in self.output_shape_actions.items():
-                if object not in self.shape_motion_evaluators:
-                    evaluator = ShapeMotionEvaluator(
-                        self.models[object],
-                        self.context,
-                        'NONE')
-                    self.shape_motion_evaluators[object] = evaluator
-                else:
-                    evaluator = self.shape_motion_evaluators[object]
-
-                self.shape_motions[object] = evaluator.evaluate(actions)
-
-    def _cleanup(self):
-        for action in self.temp_actions:
-            bpy.data.actions.remove(action)
-
-    def evaluate_motions(self):
-        self._setup_motion_scene()
-
-        self._prepare_entry_actions()
-        self._prepare_camera_actions()
-        self._prepare_particle_actions()
-
-        self._eval_action_keyframes()
-
-        self._convert_actions()
-        self._cleanup()
 
 
 class EventExporter:
@@ -555,27 +141,27 @@ class EventExporter:
 
     def _collect_objects(self):
 
-        for object in self.base_scene.objects:
-            if object.parent is not None:
+        for obj in self.base_scene.objects:
+            if obj.parent is not None:
                 continue
 
-            type = object.saio_event_entry.entry_type
+            entry_type = obj.saio_event_entry.entry_type
 
-            if type == "NONE":
+            if entry_type == "NONE":
                 continue
-            elif type == "SHADOW":
-                self.shadows.append(object)
-            elif type == "REFLECTION":
-                self.reflections.append(object)
-            elif type != "PARTICLE":
-                self.shared_entries.append(object)
+            elif entry_type == "SHADOW":
+                self.shadows.append(obj)
+            elif entry_type == "REFLECTION":
+                self.reflections.append(obj)
+            elif entry_type != "PARTICLE":
+                self.shared_entries.append(obj)
 
-            self.entry_source_scene[object] = self.base_scene
+            self.entry_source_scene[obj] = self.base_scene
 
         self.shared_entries.sort(key=lambda x: x.name)
 
         event_properties = self.base_scene.saio_scene.event
-        for name in ATTACH_UPGRADE_LUT.values():
+        for name in OVERLAY_UPGRADE_LUT.values():
             if not isinstance(name, str):
                 continue
 
@@ -603,23 +189,23 @@ class EventExporter:
 
         for cutinfo in self.cut_scenes:
 
-            for object in cutinfo.scene.objects:
-                if (object.parent is not None
-                        or object.name in self.base_scene.objects):
+            for obj in cutinfo.scene.objects:
+                if (obj.parent is not None
+                        or obj.name in self.base_scene.objects):
                     continue
 
-                type = object.saio_event_entry.entry_type
+                entry_type = obj.saio_event_entry.entry_type
 
-                if type == "PARTICLE":
-                    cutinfo.particles.append(object)
-                elif type in ["CHUNK", "GC"]:
-                    cutinfo.entries.append(object)
+                if entry_type == "PARTICLE":
+                    cutinfo.particles.append(obj)
+                elif entry_type in ["CHUNK", "GC"]:
+                    cutinfo.entries.append(obj)
 
-                    if object.saio_event_entry.blare:
-                        self.blare.append(object)
+                    if obj.saio_event_entry.blare:
+                        self.blare.append(obj)
 
-                if object not in self.entry_source_scene:
-                    self.entry_source_scene[object] = cutinfo.scene
+                if obj not in self.entry_source_scene:
+                    self.entry_source_scene[obj] = cutinfo.scene
 
         if len(self.blare) > 64:
             raise UserException("Can't have more than 64 blare models!")
@@ -628,29 +214,29 @@ class EventExporter:
 
     def _get_children(
             self,
-            object: BObject,
+            obj: BObject,
             output: list[BObject]):
 
-        output.append(object)
-        for child in object.children:
+        output.append(obj)
+        for child in obj.children:
             self._get_children(child, output)
 
-    def _convert_model(self, object: bpy.types.Object):
+    def _convert_model(self, obj: bpy.types.Object):
         objects = []
-        self._get_children(object, objects)
+        self._get_children(obj, objects)
 
-        event_props = object.saio_event_entry
+        event_props = obj.saio_event_entry
         evaluator = (self.sa2b_evaluator
                      if event_props.entry_type == 'GC'
                      else self.sa2_evaluator)
 
         # to ensure the correct depsgraph. otherwise triangulating
         # may not always work (or other related functionalities)
-        self.context.window.scene = self.entry_source_scene[object]
+        self.context.window.scene = self.entry_source_scene[obj]
 
         model_data = evaluator.evaluate(objects)
 
-        self.models[object] = model_data
+        self.models[obj] = model_data
 
         nodes = model_data.outdata.GetNodes()
         mapping = model_data.node_data.node_mapping
@@ -659,10 +245,10 @@ class EventExporter:
             self.nodes[node_source] = nodes[node_index]
 
         uv_meshes = []
-        for object in objects:
-            uv_anims = object.saio_eventnode_uvanims
+        for obj in objects:
+            uv_anims = obj.saio_eventnode_uvanims
             if len(uv_anims) > 0:
-                uv_meshes.append(object)
+                uv_meshes.append(obj)
 
         if len(uv_meshes) > 0:
             if event_props.entry_type == 'GC':
@@ -673,7 +259,7 @@ class EventExporter:
                 raise UserException(
                     f"Error on {uv_meshes[0].name}:"
                     " Shadow models cannot have uv animations")
-            elif object.type == 'ARMATURE':
+            elif obj.type == 'ARMATURE':
                 raise UserException(
                     f"Error on {uv_meshes[0].name}:"
                     " Armature models do not support uv animations"
@@ -708,8 +294,6 @@ class EventExporter:
     ######################################################################
 
     def _setup_texture_dimensions(self):
-        from System import ValueTuple, Int16
-
         if self.base_scene.saio_scene.texture_world is None:
             raise UserException("Base scene has no texture list")
 
@@ -720,7 +304,8 @@ class EventExporter:
                 "Base scene has no textures in texture list")
 
         texture_sizes = []
-        type = ValueTuple[Int16, Int16]
+
+        dimension_type = System.VALUE_TUPLE[System.INT16, System.INT16]
 
         for texture in textures:
             width = texture.override_width
@@ -737,7 +322,7 @@ class EventExporter:
                 if height == 0:
                     height = 1
 
-            texture_sizes.append(type(width, height))
+            texture_sizes.append(dimension_type(width, height))
 
         self.event_data.TextureDimensions = texture_sizes
 
@@ -761,10 +346,10 @@ class EventExporter:
 
         raise UserException("Base scene has no textures in texture list")
 
-    def _setup_attach_upgrades(self):
+    def _setup_overlay_upgrades(self):
 
         event_properties = self.base_scene.saio_scene.event
-        for index, name in ATTACH_UPGRADE_LUT.items():
+        for index, name in OVERLAY_UPGRADE_LUT.items():
             if not isinstance(index, int):
                 continue
 
@@ -799,7 +384,7 @@ class EventExporter:
 
                     if bone_name == "":
                         raise UserException(
-                            "Bone name of attach upgrade"
+                            "Bone name of overlay upgrade"
                             f" {name}-target{sub_index + 1} is empty!")
 
                     bone = target.pose.bones[bone_name]
@@ -820,7 +405,7 @@ class EventExporter:
 
                 if root1 is not None and root2 is not None and root1 != root2:
                     raise UserException(
-                        f"Attach upgrade {name} has targets from different"
+                        f"Overlay upgrade {name} has targets from different"
                         " entries!")
 
                 root = root1
@@ -828,7 +413,7 @@ class EventExporter:
                     root = root2
                 root_node = self.models[root].outdata
 
-                upgrade_structure = self.event_data.Upgrades[index]
+                upgrade_structure = self.event_data.OverlayUpgrades[index]
 
                 upgrade_structure.Root = root_node
                 upgrade_structure.Target1 = targets[0]
@@ -836,13 +421,13 @@ class EventExporter:
                 upgrade_structure.Target2 = targets[1]
                 upgrade_structure.Model2 = models[1]
 
-                self.event_data.Upgrades[index] = upgrade_structure
+                self.event_data.OverlayUpgrades[index] = upgrade_structure
 
-    def _setup_override_upgrades(self):
+    def _setup_integrated_upgrades(self):
 
         event_properties = self.base_scene.saio_scene.event
 
-        for index, name in UPGRADE_LUT.items():
+        for index, name in INTEGRATED_UPGRADE_LUT.items():
             if not isinstance(index, int):
                 continue
 
@@ -872,7 +457,7 @@ class EventExporter:
 
                     if bone_name == "":
                         raise UserException(
-                            "Bone name of override upgrade"
+                            "Bone name of integrated upgrade"
                             f" {name}-{fieldname} is empty!")
 
                     bone = target_object.pose.bones[bone_name]
@@ -881,7 +466,7 @@ class EventExporter:
                     node = self.nodes[target_object]
 
                 # real_index = index * 3 + sub_index
-                self.event_data.OverrideUpgrades[index, sub_index] = node
+                self.event_data.IntegratedUpgrades[index, sub_index] = node
 
     def _setup_blare_models(self):
 
@@ -889,14 +474,10 @@ class EventExporter:
             self.event_data.BlareModels[index] = self.models[blare].outdata
 
     def _setup_reflection_models(self):
-
         if len(self.reflections) == 0:
             return
 
-        from SA3D.Event.SA2.Model import ReflectionData, Reflection
-        from System.Numerics import Vector3
-
-        reflections = ReflectionData()
+        reflections = SA3D_SA2Event.REFLECTION_DATA()
 
         for entry in self.reflections:
 
@@ -909,17 +490,23 @@ class EventExporter:
                 raise UserException(
                     f"Object {entry.name} has more/less than 4 vertices!")
 
-            reflection = Reflection()
-
             matrix = entry.matrix_world
+            vertices = []
 
-            for index, vertex in enumerate(mesh.vertices):
+            for vertex in mesh.vertices:
                 position = matrix @ vertex.co
-                reflection.Quad[index] = Vector3(
+                vertices.append(System.VECTOR3(
                     position.x,
                     position.z,
                     -position.y,
-                )
+                ))
+
+            reflection = SA3D_SA2Event.REFLECTION()
+            reflection.Transparency = entry.color[3]
+            reflection.Vertex1 = vertices[0]
+            reflection.Vertex2 = vertices[1]
+            reflection.Vertex3 = vertices[2]
+            reflection.Vertex4 = vertices[3]
 
             reflections.Reflections.Add(reflection)
 
@@ -940,19 +527,11 @@ class EventExporter:
         self.event_data.TailsTails = self.nodes[tt_target]
 
     def _setup_uv_animations(self):
-        from SA3D.Modeling.Blender import Cutscene
-        from SA3D.Event.SA2.Animation import (
-            UVAnimationData,
-            UVAnimTextureSequence,
-            UVAnimationBlock,
-            UVAnimation
-        )
-
-        uvanim_data = UVAnimationData()
+        uvanim_data = SA3D_SA2Event.SURFACE_ANIMATION_DATA()
 
         # texture sequences
         for uv_anim in self.base_scene.saio_scene.event.uv_animations:
-            texture_sequence = UVAnimTextureSequence(
+            texture_sequence = SA3D_SA2Event.TEXTURE_ANIM_SEQUENCE(
                 uv_anim.texture_index,
                 uv_anim.texture_count)
 
@@ -960,49 +539,47 @@ class EventExporter:
 
         for uv_animated_object in self.uv_animated_objects:
             node = self.nodes[uv_animated_object]
-            block = UVAnimationBlock(node)
+            block = SA3D_SA2Event.SURFACE_ANIMATION_BLOCK(node)
             uvanim_data.AnimationBlocks.Add(block)
 
             for anim in uv_animated_object.saio_eventnode_uvanims:
 
-                texture_chunk = Cutscene.GetTextureChunkFromMaterialIndex(
+                texture_chunk = SAIO_NET.CUTSCENE.GetTextureChunkFromMaterialIndex(
                     node, anim.material_index)
                 texture_index = texture_chunk.TextureID
 
-                block.Animations.Add(UVAnimation(
+                block.Animations.Add(SA3D_SA2Event.SURFACE_ANIMATION(
                     texture_index, texture_chunk, None))
 
         if (uvanim_data.TextureSequences.Count > 0
                 or uvanim_data.AnimationBlocks.Count > 0):
-            self.event_data.UVAnimationData = uvanim_data
+            self.event_data.SurfaceAnimations = uvanim_data
 
     ######################################################################
 
-    def _setup_event_entry(self, object: BObject):
-        from SA3D.Event.SA2.Model import EventEntry
-        from System.Numerics import Vector3
+    def _setup_event_entry(self, obj: BObject):
         from . import o_enum
 
-        entry = EventEntry()
+        entry = SA3D_SA2Event.EVENT_ENTRY()
 
-        properties = object.saio_event_entry
+        properties = obj.saio_event_entry
         if properties.entry_type == 'GC':
-            entry.GCModel = self.models[object].outdata
+            entry.GCModel = self.models[obj].outdata
         else:
-            entry.Model = self.models[object].outdata
+            entry.Model = self.models[obj].outdata
 
         if properties.shadow_model is not None:
             if properties.shadow_model not in self.shadows:
                 raise UserException(
                     f"Shadow model \"{properties.shadow_model.name}\" for"
-                    f" entry \"{object.name}\" is not part of the base"
+                    f" entry \"{obj.name}\" is not part of the base"
                     " scene and/or not marked to be a shadow model.")
             entry.ShadowModel = self.models[properties.shadow_model].outdata
 
-        entry.Position = Vector3(
-            object.location.x,
-            object.location.z,
-            -object.location.y,
+        entry.Position = System.VECTOR3(
+            obj.location.x,
+            obj.location.z,
+            -obj.location.y,
         )
         entry.Layer = properties.layer
 
@@ -1011,63 +588,55 @@ class EventExporter:
         return entry
 
     def _setup_base_scene(self):
-        from SA3D.Event.SA2.Model import Scene
 
-        result = Scene(self.total_framecount)
-        for object in self.shared_entries:
-            entry = self._setup_event_entry(object)
+        result = SA3D_SA2Event.SCENE(self.total_framecount)
+        for obj in self.shared_entries:
+            entry = self._setup_event_entry(obj)
             result.Entries.Add(entry)
 
         return result
 
     def _setup_animated_scene(self, cutinfo: CutInfo):
-        from SA3D.Event.SA2.Model import Scene, BigTheCat
-        from SA3D.Event.SA2.Animation import EventMotion
-        from SA3D.Modeling.ObjectData.Animation import AnimationAttributes
+        posrot = SA3D_Modeling.KEYFRAME_ATTRIBUTES.Position.op_BitwiseOr(
+            SA3D_Modeling.KEYFRAME_ATTRIBUTES.Rotation)
 
-        posrot = AnimationAttributes.Position.op_BitwiseOr(
-            AnimationAttributes.Rotation)
-
-        result = Scene(cutinfo.framecount)
-        result.Big = BigTheCat(None, 0)
+        result = SA3D_SA2Event.SCENE(cutinfo.framecount)
+        result.Big = SA3D_SA2Event.BIG_THE_CAT_ENTRY(None, 0)
 
         result.CameraAnimations.Add(
-            EventMotion.CreateFromMotion(cutinfo.camera_motion))
+            SA3D_SA2Event.EVENT_MOTION.CreateFromMotion(cutinfo.camera_motion))
 
-        for object in cutinfo.entries:
-            entry = self._setup_event_entry(object)
+        for obj in cutinfo.entries:
+            entry = self._setup_event_entry(obj)
 
-            if object in cutinfo.motions:
-                entry.Animation = cutinfo.motions[object]
+            if obj in cutinfo.motions:
+                entry.Animation = cutinfo.motions[obj]
                 entry.Animation.EnsureNodeKeyframes(
                     entry.DisplayModel, posrot, True)
 
-            if object in cutinfo.shape_motions:
-                entry.ShapeAnimation = cutinfo.shape_motions[object]
+            if obj in cutinfo.shape_motions:
+                entry.ShapeAnimation = cutinfo.shape_motions[obj]
 
             entry.AutoAnimFlags()
             result.Entries.Add(entry)
 
-        for object in cutinfo.particles:
+        for obj in cutinfo.particles:
             motion = None
-            if object in cutinfo.motions:
-                motion = cutinfo.motions[object]
+            if obj in cutinfo.motions:
+                motion = cutinfo.motions[obj]
             result.ParticleMotions.Add(motion)
 
         return result
 
     def _setup_eventdata(self):
-        from SA3D.Event.SA2 import EventType
-        from SA3D.Event.SA2.Model import ModelData
-
-        self.event_data = ModelData(EventType.battle)
+        self.event_data = SA3D_SA2Event.MODEL_DATA(SA3D_SA2Event.EVENT_TYPE.gc)
         self.event_data.DropShadowControl = \
             self.base_scene.saio_scene.event.drop_shadow_control
 
         self._setup_texture_dimensions()
         self._setup_texture_names()
-        self._setup_attach_upgrades()
-        self._setup_override_upgrades()
+        self._setup_overlay_upgrades()
+        self._setup_integrated_upgrades()
         self._setup_blare_models()
         self._setup_reflection_models()
         self._setup_tails_tails()
@@ -1095,9 +664,8 @@ class EventExporter:
 
     def export(self, filepath: str, export_textures: bool):
 
-        from SA3D.Event.SA2 import Event
-
-        event = Event(self.event_data, None, self.event_data.TextureNameList)
+        event = SA3D_SA2Event.EVENT(self.event_data, None,
+                                self.event_data.TextureNameList)
         event.WriteToFiles(filepath)
 
         if export_textures:

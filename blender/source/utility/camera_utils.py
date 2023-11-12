@@ -26,14 +26,14 @@ class CameraSetup:
         self.target = target
 
     @staticmethod
-    def _get_setup(object: bpy.types.Object) -> 'CameraSetup':
-        if (object is None
-                or object.type != 'EMPTY'
-                or len(object.children) != 2):
+    def _get_setup(obj: bpy.types.Object) -> 'CameraSetup':
+        if (obj is None
+                or obj.type != 'EMPTY'
+                or len(obj.children) != 2):
             return None
 
-        camera = object.children[0]
-        target = object.children[1]
+        camera = obj.children[0]
+        target = obj.children[1]
 
         if camera.type != 'CAMERA':
             t = target
@@ -43,15 +43,15 @@ class CameraSetup:
         if camera.type != 'CAMERA' or target.type != 'EMPTY':
             return None
 
-        return CameraSetup(object, camera, target)
+        return CameraSetup(obj, camera, target)
 
     @staticmethod
-    def get_setup(object: bpy.types.Object) -> 'CameraSetup':
-        if object is not None:
-            if object.parent is None:
-                return CameraSetup._get_setup(object)
-            elif object.parent.parent is None:
-                return CameraSetup._get_setup(object.parent)
+    def get_setup(obj: bpy.types.Object) -> 'CameraSetup':
+        if obj is not None:
+            if obj.parent is None:
+                return CameraSetup._get_setup(obj)
+            elif obj.parent.parent is None:
+                return CameraSetup._get_setup(obj.parent)
         return None
 
     @staticmethod
@@ -84,8 +84,8 @@ class CameraSetup:
 
         result = (camera_controller, camera_object, camera_target)
 
-        for object in result:
-            collection.objects.link(object)
+        for obj in result:
+            collection.objects.link(obj)
 
         track_to: bpy.types.TrackToConstraint \
             = camera_object.constraints.new("TRACK_TO")

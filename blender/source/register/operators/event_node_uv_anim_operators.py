@@ -8,7 +8,7 @@ class EventNodeUVAnimOperator(SAIOBaseOperator):
 
     def _execute(self, context: bpy.types.Context):
         anims = context.active_object.saio_eventnode_uvanims
-        self.list_execute(context, anims)
+        self.list_execute(context, anims)  # pylint: disable=no-member
         return {'FINISHED'}
 
 

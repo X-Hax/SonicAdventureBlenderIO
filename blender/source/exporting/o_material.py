@@ -2,7 +2,7 @@ import bpy
 
 from ..register.property_groups.material_properties import SAIO_Material
 from ..utility.texture_manager import TexlistManager
-
+from ..dotnet import SA3D_Modeling
 
 def _get_texture_id(
         material: bpy.types.Material,
@@ -26,43 +26,12 @@ def _get_texture_id(
 
 
 def default_material_struct():
-    from SA3D.Modeling.Blender import MaterialStruct, Flags
-    from SA3D.Modeling.ModelData import BlendMode, FilterMode
-    from SA3D.Modeling.ModelData.GC import (
-        TexCoordID, TexGenType, TexGenSrc, TexGenMatrix)
-
-    material_attributes = Flags.ComposeMaterialAttributes(
-        False, False, False, False, False, False)
-
-    return MaterialStruct(
-        1, 1, 1, 1,  # white
-        1, 1, 1, 1,  # white
-        3,
-        0.3, 0.3, 0.3, 1,  # dark gray
-        material_attributes,
-        False,
-        False,
-        BlendMode.SrcAlpha,
-        BlendMode.SrcAlphaInverted,
-        0,
-        FilterMode.Bilinear,
-        False,
-        0,
-        False, False,
-        False, False,
-        0,
-        TexCoordID.TexCoord0,
-        TexGenType.Matrix2x4,
-        TexGenSrc.TexCoord0,
-        TexGenMatrix.Matrix0
-    )
+    return SA3D_Modeling.BUFFER_MATERIAL.DefaultValues
 
 
 def convert_material_to_struct(
-        material: bpy.types.Material,
+        material: bpy.types.Material | None,
         texlist_manager: TexlistManager):
-
-    from . import o_enum
 
     if material is None:
         return default_material_struct()
@@ -75,47 +44,40 @@ def convert_material_to_struct(
 
     texture_id = _get_texture_id(material, texlist_manager)
 
-    from SA3D.Modeling.Blender import Flags
+    from . import o_enum
 
-    material_attributes = Flags.ComposeMaterialAttributes(
-        props.flat_shading,
-        props.ignore_ambient,
-        props.ignore_diffuse,
-        props.ignore_specular,
-        props.use_texture,
-        props.use_environment
-    )
+    result = SA3D_Modeling.BUFFER_MATERIAL()
 
-    filter_mode = o_enum.to_filter_mode(props.texture_filtering)
-    source_blend_mode = o_enum.to_blend_mode(props.source_alpha)
-    destination_blend_mode = o_enum.to_blend_mode(
+    result.Diffuse = SA3D_Modeling.COLOR(dc[0], dc[1], dc[2], dc[3])
+    result.Specular = SA3D_Modeling.COLOR(sc[0], sc[1], sc[2], sc[3])
+    result.SpecularExponent = props.specular_exponent
+    result.Ambient = SA3D_Modeling.COLOR(ac[0], ac[1], ac[2], ac[3])
+    result.TextureIndex = texture_id
+    result.MipmapDistanceMultiplier = props.mipmap_distance_multiplier
+
+    result.TextureFiltering = o_enum.to_filter_mode(props.texture_filtering)
+    result.SourceBlendMode = o_enum.to_blend_mode(props.source_alpha)
+    result.DestinationBlendmode = o_enum.to_blend_mode(
         props.destination_alpha)
 
-    tex_coord_id = o_enum.to_tex_coord_id(props.texgen_coord_id)
-    tex_gen_type = o_enum.to_tex_gen_type(props.texgen_type)
-    tex_gen_source = o_enum.to_tex_gen_source(props.texgen_source)
-    tex_gen_matrix = o_enum.to_tex_gen_matrix(props.texgen_matrix_id)
+    result.Flat = props.flat_shading
+    result.NoLighting = props.ignore_diffuse
+    result.NoAmbient = props.ignore_ambient
+    result.NoSpecular = props.ignore_specular
+    result.UseTexture = props.use_texture
+    result.NormalMapping = props.use_environment
+    result.ClampU = props.clamp_u
+    result.ClampV = props.clamp_v
+    result.MirrorU = props.mirror_u
+    result.MirrorV = props.mirror_v
+    result.UseAlpha = props.use_alpha
+    result.BackfaceCulling = not props.double_sided
+    result.AnisotropicFiltering = props.anisotropic_filtering
 
-    from SA3D.Modeling.Blender import MaterialStruct
-    return MaterialStruct(
-        dc[0], dc[1], dc[2], dc[3],
-        sc[0], sc[1], sc[2], sc[3],
-        props.specular_exponent,
-        ac[0], ac[1], ac[2], ac[3],
-        material_attributes,
-        props.use_alpha,
-        not props.double_sided,
-        source_blend_mode,
-        destination_blend_mode,
-        texture_id,
-        filter_mode,
-        props.anisotropic_filtering,
-        props.mipmap_distance_multiplier,
-        props.clamp_u, props.mirror_u,
-        props.clamp_v, props.mirror_v,
-        props.shadow_stencil,
-        tex_coord_id,
-        tex_gen_type,
-        tex_gen_source,
-        tex_gen_matrix
-    )
+    result.GCShadowStencil = props.shadow_stencil
+    result.GCTexCoordID = o_enum.to_texcoord_id(props.texgen_coord_id)
+    result.GCTexCoordType = o_enum.to_texcoord_type(props.texgen_type)
+    result.GCTexCoordSource = o_enum.to_texcoord_source(props.texgen_source)
+    result.GCMatrixID = o_enum.to_texcoord_matrix(props.texgen_matrix_id)
+
+    return result

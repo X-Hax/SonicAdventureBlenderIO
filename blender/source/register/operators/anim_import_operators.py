@@ -9,10 +9,11 @@ from bpy.props import (
 )
 
 from .base import SAIOBaseFileLoadOperator
-from ...utility import dll_utils, bone_utils, camera_utils
+from ...dotnet import load_dotnet, SA3D_Modeling
+from ...utility import bone_utils, camera_utils
 from ...utility.general import target_anim_editor
-from ...importing import i_motion
 from ...utility.draw import expand_menu
+from ...importing import i_motion
 
 
 class MotionImportOperator(SAIOBaseFileLoadOperator):
@@ -105,7 +106,7 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
-        dll_utils.load_library()
+        load_dotnet()
 
         node_num = 1
         if context.active_object.type == "ARMATURE":
@@ -115,13 +116,12 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
         if context.active_object.animation_data is None:
             context.active_object.animation_data_create()
 
-        from SA3D.Modeling.ObjectData.Animation import Motion
-
         for file in self.files:
 
             filepath = os.path.join(directory, file.name)
             try:
-                motion = Motion.ReadFile(filepath, node_num, self.short_rot)
+                motion = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(
+                    filepath, node_num, self.short_rot)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -165,9 +165,7 @@ class SAIO_OT_Import_Camera_Animation(MotionImportOperator):
         camera_setup = camera_utils.CameraSetup.get_setup(
             context.active_object)
 
-        dll_utils.load_library()
-
-        from SA3D.Modeling.ObjectData.Animation import Motion
+        load_dotnet()
 
         def setup_animdata(data: bpy.types.ID):
             if data.animation_data is None:
@@ -181,7 +179,7 @@ class SAIO_OT_Import_Camera_Animation(MotionImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                motion = Motion.ReadFile(filepath, 1, False)
+                motion = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(filepath, 1, False)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -226,9 +224,7 @@ class SAIO_OT_Import_Shape_Animation(MotionImportOperator):
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
-        dll_utils.load_library()
-
-        from SA3D.Modeling.ObjectData.Animation import Motion
+        load_dotnet()
 
         node_num = 1
         if context.active_object.type == "ARMATURE":
@@ -239,7 +235,7 @@ class SAIO_OT_Import_Shape_Animation(MotionImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                motion = Motion.ReadFile(filepath, node_num, False)
+                motion = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(filepath, node_num, False)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error

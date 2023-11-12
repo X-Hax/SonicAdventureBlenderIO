@@ -17,7 +17,7 @@ from .base import (
 
 from ..property_groups.texturename_properties import SAIO_TextureNameList
 
-from ...utility import dll_utils
+from ...dotnet import load_dotnet, SA3D_Texturing
 
 
 class TextureNameOperator(SAIOBaseOperator):
@@ -47,7 +47,7 @@ class TextureNameOperator(SAIOBaseOperator):
     def _execute(self, context):
         texture_names = self.get_texture_list(context)
         if texture_names is not None:
-            self.list_execute(context, texture_names)
+            self.list_execute(context, texture_names) # pylint: disable=no-member
         return {'FINISHED'}
 
 
@@ -86,13 +86,12 @@ class SAIO_OT_TextureNames_Import(
         options={'HIDDEN'},
     )
 
-    def list_execute(self, context, texture_names: SAIO_TextureNameList):
-        dll_utils.load_library()
+    def list_execute(self, context, texture_names: SAIO_TextureNameList): # pylint: disable=unused-argument
+        load_dotnet()
 
-        from SA3D.Texturing.NJS import NjsTexList
         from ...importing import i_texture
 
-        njs_texlist = NjsTexList.Load(self.filepath)
+        njs_texlist = SA3D_Texturing.TEXTURE_NAME_LIST.Load(self.filepath)
         i_texture.process_texture_names(njs_texlist, texture_names)
 
 
@@ -104,8 +103,8 @@ class SAIO_OT_TextureNames_Export(
 
     filename_ext = '.satex'
 
-    def list_execute(self, context, texture_names: SAIO_TextureNameList):
-        dll_utils.load_library()
+    def list_execute(self, context, texture_names: SAIO_TextureNameList): # pylint: disable=unused-argument
+        load_dotnet()
         from ...exporting import o_texture
 
         filename = os.path.basename(self.filepath)

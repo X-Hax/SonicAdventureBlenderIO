@@ -11,7 +11,8 @@ class EventSceneListOperator(SAIOBaseOperator):
         return context.scene.saio_scene.scene_type == 'EVR'
 
     def _execute(self, context):
-        self.list_execute(context, context.scene.saio_scene.event)
+        self.list_execute(  # pylint: disable=no-member
+            context, context.scene.saio_scene.event)
         return {'FINISHED'}
 
 

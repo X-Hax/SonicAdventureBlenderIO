@@ -65,7 +65,7 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
     # == Event ==
 
     expanded_override_upgrade_menu: BoolProperty(
-        name="Override Upgrades",
+        name="Integrated Upgrades",
         default=False
     )
 
@@ -112,7 +112,7 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
     )
 
     expanded_attach_upgrade_menu: BoolProperty(
-        name="Attach Upgrades",
+        name="Overlay Upgrades",
         default=False
     )
 

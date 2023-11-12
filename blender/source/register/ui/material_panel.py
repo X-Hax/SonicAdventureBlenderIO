@@ -242,14 +242,14 @@ class SAIO_PT_Material(PropertiesPanel):
 
     @classmethod
     def verify(cls, context: bpy.types.Context):
-        object = context.active_object
-        if object is None:
+        obj = context.active_object
+        if obj is None:
             return "No active object"
 
-        if object.type != 'MESH':
+        if obj.type != 'MESH':
             return "Active object not a mesh"
 
-        if object.active_material is None:
+        if obj.active_material is None:
             return "No active material"
 
         return None

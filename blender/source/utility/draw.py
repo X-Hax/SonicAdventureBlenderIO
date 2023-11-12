@@ -1,5 +1,5 @@
-import bpy
 from typing import Callable
+import bpy
 
 
 def prop_advanced(
@@ -62,7 +62,7 @@ def draw_list(
         layout: bpy.types.UILayout,
         ui_list: bpy.types.UIList,
         context_menu: bpy.types.Menu | None,
-        list,
+        target_list,
         tools: list[TOOL_PROPERTY],
         per_op: Callable[[bpy.types.Operator, int], None] | None):
 
@@ -70,9 +70,9 @@ def draw_list(
     row.template_list(
         ui_list.bl_rna.identifier,
         "",
-        list,
+        target_list,
         "elements",
-        list,
+        target_list,
         "active_index")
 
     column = row.column()

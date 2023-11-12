@@ -5,8 +5,10 @@ from bpy.types import Object as BObject
 from mathutils import Vector, Matrix
 
 from . import o_keyframes
-from ..utility import dll_utils, camera_utils, bone_utils
+from ..utility import camera_utils, bone_utils
 from ..utility.anim_parameters import AnimParameters
+
+from ..dotnet import load_dotnet, SA3D_Modeling
 
 
 def get_action(
@@ -78,14 +80,14 @@ def get_frame_range(actions: list[bpy.types.Action]):
 
 
 def convert_to_node_motion(
-        object: BObject,
+        obj: BObject,
         force_sort_bones: bool,
         fcurves: bpy.types.ActionFCurves,
         frame_range: tuple[float, float],
         name: str,
         anim_parameters: AnimParameters):
 
-    dll_utils.load_library()
+    load_dotnet()
 
     start = math.ceil(frame_range[0])
     end = math.floor(frame_range[1])
@@ -94,20 +96,18 @@ def convert_to_node_motion(
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)
 
-    from SA3D.Modeling.ObjectData.Animation import Motion
+    if obj.type == "ARMATURE":
 
-    if object.type == "ARMATURE":
-
-        bone_nodes = bone_utils.get_bone_map(object, force_sort_bones, False)
-        motion = Motion(frame_number, len(bone_nodes))
+        bone_nodes = bone_utils.get_bone_map(obj, force_sort_bones, False)
+        motion = SA3D_Modeling.MOTION(frame_number, len(bone_nodes))
 
         for index, bone_name in enumerate(bone_nodes):
             if index == 0 and not anim_parameters.bone_localspace:
-                base_matrix = object.matrix_world.copy()
+                base_matrix = obj.matrix_world.copy()
             else:
                 base_matrix = Matrix.Identity(4)
 
-            bone = object.pose.bones[bone_name]
+            bone = obj.pose.bones[bone_name]
             bone_data_prefix = f"pose.bones[\"{bone_name}\"]."
 
             position_offset, rotation_matrix \
@@ -127,14 +127,14 @@ def convert_to_node_motion(
                 motion.Keyframes.Add(index, keyframes)
 
     else:
-        motion = Motion(frame_number, 1)
+        motion = SA3D_Modeling.MOTION(frame_number, 1)
 
         keyframes = evaluator.evaluate_node_keyframe_set(
             fcurves,
             "",
             Matrix.Identity(4),
-            object.rotation_mode,
-            object.saio_node.rotate_zyx,
+            obj.rotation_mode,
+            obj.saio_node.rotate_zyx,
             Vector(),
             Matrix.Identity(4)
         )
@@ -153,7 +153,7 @@ def convert_to_camera_motion(
         name: str,
         anim_parameters: AnimParameters):
 
-    dll_utils.load_library()
+    load_dotnet()
 
     start, end = get_frame_range(camera_actions.as_list())
     frame_number = end - start + 1
@@ -161,8 +161,7 @@ def convert_to_camera_motion(
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)
 
-    from SA3D.Modeling.ObjectData.Animation import Motion
-    motion = Motion(frame_number, 1)
+    motion = SA3D_Modeling.MOTION(frame_number, 1)
 
     keyframes = evaluator.evaluate_camera_keyframe_set(
         camera_setup, camera_actions)

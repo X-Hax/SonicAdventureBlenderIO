@@ -109,7 +109,7 @@ class SAIO_OT_MaterialMassEdit_Set(SAIOBaseOperator):
                         setattr(target, name, False)
 
         else:  # All
-            def set_prop(properties, apply_name, name):
+            def set_prop(properties, apply_name, name): # pylint: disable=unused-argument
                 value = getattr(properties, name)
                 for target in targets:
                     setattr(target, name, value)

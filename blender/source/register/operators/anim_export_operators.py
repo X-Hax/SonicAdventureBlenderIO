@@ -103,6 +103,10 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
 
     filename_ext = ".saanim"
 
+    camera_setup: camera_utils.CameraSetup
+    action_setup: camera_utils.CameraActionSet | None
+    motion_name: str
+
     @staticmethod
     def _get_action_setup(camera_setup: camera_utils.CameraSetup, frame: int):
         if camera_setup is None:
@@ -115,6 +119,7 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
             camera_setup.camera_data)
 
         action = None
+        postfix = None
         for idd, postfix in zip(id_data, camera_utils.ACTION_POSTFIX):
             action = o_motion.get_action(idd, frame)
             if action is not None:
@@ -178,7 +183,7 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
         layout = self.layout
         layout.separator()
         layout.label(text=f"Action to export: {self.motion_name}")
-        layout.label(text=f"Using:")
+        layout.label(text="Using:")
 
         for action, postfix in zip(
                 self.action_setup.as_list(),
@@ -204,6 +209,8 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
     bl_description = "Export the active shape animation"
 
     filename_ext = ".saanim"
+
+    _actions: o_shapemotion.ShapeActionCollection | None
 
     filter_glob: StringProperty(
         default="*.saanim;",
@@ -248,14 +255,14 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
     def _invoke(self, context: bpy.types.Context, event):
         sac = o_shapemotion.ShapeActionCollector
         try:
-            self.actions = sac.collect_shape_actions(
+            self._actions = sac.collect_shape_actions(
                 context.active_object, context.scene.frame_current)
         except UserException as e:
             self.report({'ERROR'}, e.message)
             return {'CANCELLED'}
 
-        for object, action in self.actions.actions.items():
-            self.actions.name = action.name[:-(1 + len(object.name))]
+        for obj, action in self._actions.actions.items():
+            self._actions.name = action.name[:-(1 + len(obj.name))]
             break
 
         return super()._invoke(context, event)
@@ -265,11 +272,11 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
         layout.prop(self, "normal_mode")
         layout.separator()
 
-        layout.label(text=f"Action to export: {self.actions.name}")
-        layout.label(text=f"Using:")
+        layout.label(text=f"Action to export: {self._actions.name}")
+        layout.label(text="Using:")
 
-        for object, action in self.actions.actions.items():
-            layout.label(text=f"\"{action.name}\" for \"{object.name}\"")
+        for obj, action in self._actions.actions.items():
+            layout.label(text=f"\"{action.name}\" for \"{obj.name}\"")
 
     def export(self, context: bpy.types.Context):
         objects = list(context.active_object.children_recursive)
@@ -286,5 +293,5 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
             context,
             self.normal_mode)
 
-        evaluator.evaluate(self.actions).WriteFile(self.filepath)
+        evaluator.evaluate(self._actions).WriteFile(self.filepath)
         return {'FINISHED'}

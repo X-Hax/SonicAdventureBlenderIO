@@ -184,7 +184,7 @@ FILTER_MODE = {
 
 }
 
-TEX_COORD_ID = {
+GC_TEXCOORD_ID = {
     'TEXCOORD0': "TexCoord0",
     "TexCoord0": 'TEXCOORD0',
 
@@ -217,41 +217,41 @@ TEX_COORD_ID = {
 
 }
 
-TEX_GEN_TYPE = {
+GC_TEXCOORD_TYPE = {
     'MATRIX3X4': "Matrix3x4",
     "Matrix3x4": 'MATRIX3X4',
 
     'MATRIX2X4': "Matrix2x4",
     "Matrix2x4": 'MATRIX2X4',
 
-    'BITMAP0': "Bitmap0",
-    "Bitmap0": 'BITMAP0',
+    'BUMP0': "Bump0",
+    "Bump0": 'BUMP0',
 
-    'BITMAP1': "Bitmap1",
-    "Bitmap1": 'BITMAP1',
+    'BUMP1': "Bump1",
+    "Bump1": 'BUMP1',
 
-    'BITMAP2': "Bitmap2",
-    "Bitmap2": 'BITMAP2',
+    'BUMP2': "Bump2",
+    "Bump2": 'BUMP2',
 
-    'BITMAP3': "Bitmap3",
-    "Bitmap3": 'BITMAP3',
+    'BUMP3': "Bump3",
+    "Bump3": 'BUMP3',
 
-    'BITMAP4': "Bitmap4",
-    "Bitmap4": 'BITMAP4',
+    'BUMP4': "Bump4",
+    "Bump4": 'BUMP4',
 
-    'BITMAP5': "Bitmap5",
-    "Bitmap5": 'BITMAP5',
+    'BUMP5': "Bump5",
+    "Bump5": 'BUMP5',
 
-    'BITMAP6': "Bitmap6",
-    "Bitmap6": 'BITMAP6',
+    'BUMP6': "Bump6",
+    "Bump6": 'BUMP6',
 
-    'BITMAP7': "Bitmap7",
-    "Bitmap7": 'BITMAP7',
+    'BUMP7': "Bump7",
+    "Bump7": 'BUMP7',
 
     'SRTG': "SRTG",
 }
 
-TEX_GEN_SOURCE = {
+GC_TEXCOORD_SOURCE = {
     'POSITION': "Position",
     "Position": 'POSITION',
 
@@ -263,30 +263,6 @@ TEX_GEN_SOURCE = {
 
     'TANGENT': "Tangent",
     "Tangent": 'TANGENT',
-
-    'TEX0': "Tex0",
-    "Tex0": 'TEX0',
-
-    'TEX1': "Tex1",
-    "Tex1": 'TEX1',
-
-    'TEX2': "Tex2",
-    "Tex2": 'TEX2',
-
-    'TEX3': "Tex3",
-    "Tex3": 'TEX3',
-
-    'TEX4': "Tex4",
-    "Tex4": 'TEX4',
-
-    'TEX5': "Tex5",
-    "Tex5": 'TEX5',
-
-    'TEX6': "Tex6",
-    "Tex6": 'TEX6',
-
-    'TEX7': "Tex7",
-    "Tex7": 'TEX7',
 
     'TEXCOORD0': "TexCoord0",
     "TexCoord0": 'TEXCOORD0',
@@ -309,6 +285,30 @@ TEX_GEN_SOURCE = {
     'TEXCOORD6': "TexCoord6",
     "TexCoord6": 'TEXCOORD6',
 
+    'TEXCOORD7': "TexCoord7",
+    "TexCoord7": 'TEXCOORD7',
+
+    'BUMPTEXCOORD0': "BumpTexCoord0",
+    "BumpTexCoord0": 'BUMPTEXCOORD0',
+
+    'BUMPTEXCOORD1': "BumpTexCoord1",
+    "BumpTexCoord1": 'BUMPTEXCOORD1',
+
+    'BUMPTEXCOORD2': "BumpTexCoord2",
+    "BumpTexCoord2": 'BUMPTEXCOORD2',
+
+    'BUMPTEXCOORD3': "BumpTexCoord3",
+    "BumpTexCoord3": 'BUMPTEXCOORD3',
+
+    'BUMPTEXCOORD4': "BumpTexCoord4",
+    "BumpTexCoord4": 'BUMPTEXCOORD4',
+
+    'BUMPTEXCOORD5': "BumpTexCoord5",
+    "BumpTexCoord5": 'BUMPTEXCOORD5',
+
+    'BUMPTEXCOORD6': "BumpTexCoord6",
+    "BumpTexCoord6": 'BUMPTEXCOORD6',
+
     'COLOR0': "Color0",
     "Color0": 'COLOR0',
 
@@ -317,7 +317,7 @@ TEX_GEN_SOURCE = {
 
 }
 
-TEX_GEN_MATRIX = {
+GC_TEXCOORD_MATRIX = {
     'MATRIX0': "Matrix0",
     "Matrix0": 'MATRIX0',
 

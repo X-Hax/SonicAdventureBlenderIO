@@ -3,6 +3,7 @@ import bpy
 from . import o_node, o_enum
 from .o_mesh import ModelMesh
 
+from ..dotnet import SAIO_NET
 
 class ModelData:
 
@@ -125,9 +126,7 @@ class ModelEvaluator:
             convert)
 
     def _convert_structures(self):
-        from SA3D.Modeling.Blender import Model
-
-        self._output.outdata = Model.ToNodeStructure(
+        self._output.outdata = SAIO_NET.MODEL.ToNodeStructure(
             self._output.node_data.nodes,
             self._output.mesh_structs,
             self._output.attach_format,
@@ -138,17 +137,17 @@ class ModelEvaluator:
             self._automatic_node_attributes)
 
     def save_debug(self, filepath: str):
-        from SA3D.Modeling.Blender import DebugModel
-        DebugModel(
-            self._output.node_data.nodes,
-            self._output.mesh_structs,
-            self._output.attach_format,
-            self._optimize,
-            self._ignore_weights,
-            self._ignore_root,
-            self._write_specular,
-            self._automatic_node_attributes
-        ).ToFile(filepath)
+        print("Debug model currently not implemented")
+        # SAIO_NET.DEBUG_MODEL(
+        #     self._output.node_data.nodes,
+        #     self._output.mesh_structs,
+        #     self._output.attach_format,
+        #     self._optimize,
+        #     self._ignore_weights,
+        #     self._ignore_root,
+        #     self._write_specular,
+        #     self._automatic_node_attributes
+        # ).ToFile(filepath)
 
     def evaluate(self, objects: list[bpy.types.Object], convert: bool = True):
         self._setup()

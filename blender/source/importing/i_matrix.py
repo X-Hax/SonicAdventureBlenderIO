@@ -14,7 +14,9 @@ def parse_net_to_bpy_matrix(matrix):
 
 def net_to_bpy_matrix(matrix):
     '''Converts a .NET matrix to a Blender matrix'''
-    position, rotation, scale = parse_net_to_bpy_matrix(matrix).decompose()
+
+    # in the current fake module version (3.4), the decompose function is incorrectly declared
+    position, rotation, scale = parse_net_to_bpy_matrix(matrix).decompose()  # pylint: disable=assignment-from-no-return
 
     new_pos = Vector((position.x, -position.z, position.y))
     new_scale = Vector((scale.x, scale.z, scale.y))
@@ -22,7 +24,9 @@ def net_to_bpy_matrix(matrix):
     euler_rotation: Euler = rotation.to_euler('XZY')
     new_euler_rotation = Euler(
         (euler_rotation.x, -euler_rotation.z, euler_rotation.y))
-    new_rotation = new_euler_rotation.to_quaternion()
+
+    # It is not declared incorrectly here, but still throws the same error. Weird.
+    new_rotation = new_euler_rotation.to_quaternion() # pylint: disable=assignment-from-no-return
 
     return Matrix.LocRotScale(new_pos, new_rotation, new_scale)
 

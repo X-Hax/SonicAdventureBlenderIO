@@ -1,6 +1,6 @@
 import bpy
 from . import o_enum, o_matrix, o_mesh
-
+from ..dotnet import SAIO_NET
 
 class LandtableEvaluator:
 
@@ -74,8 +74,7 @@ class LandtableEvaluator:
 
         mtx = o_matrix.bpy_to_net_matrix(object.matrix_world)
 
-        from SA3D.Modeling.Blender import LandEntryStruct
-        landentry = LandEntryStruct(
+        landentry = SAIO_NET.LAND_ENTRY_STRUCT(
             object.name,
             mesh_index,
             node_attributes,
@@ -128,9 +127,7 @@ class LandtableEvaluator:
         landtable_prop = self._context.scene.saio_scene.landtable
         texlist_pointer = int(landtable_prop.tex_list_pointer, base=16)
 
-        from SA3D.Modeling.Blender import BLandTable
-
-        BLandTable.Export(
+        SAIO_NET.LANDTABLE_WRAPPER.Export(
             self._land_entries,
             self._mesh_structs,
             model_format,

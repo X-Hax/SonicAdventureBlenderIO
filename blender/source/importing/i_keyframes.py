@@ -1,7 +1,10 @@
 import bpy
+from mathutils import Vector, Matrix, Euler
 
-from mathutils import Vector, Matrix, Euler, Quaternion
 from . import i_matrix
+
+from ..dotnet import SA3D_Modeling
+from ..exceptions import SAIOException
 
 
 class TransformKeyframeProcessor:
@@ -41,7 +44,7 @@ class TransformKeyframeProcessor:
         self.quaternion_conversion_deviation = quaternion_conversion_deviation
 
         if rotation_mode not in ["ANIM", "KEEP"]:
-            raise Exception("Rotation mode invalid!")
+            raise SAIOException("Rotation mode invalid!")
 
     def _create_keyframe_points(self, name: str, index: int):
         '''Creates a new fcurve on the action and
@@ -119,12 +122,8 @@ class TransformKeyframeProcessor:
             rotation_matrix: Matrix,
             use_quaternion: bool):
 
-        from SA3D.Modeling.ObjectData.Animation.Utils import (
-            KeyframeSetRotationUtils
-        )
-
         matrix_keyframes, converted, complementary = \
-            KeyframeSetRotationUtils.GetMatrixRotations(
+            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.GetRotationMatrices(
                 keyframe_set,
                 use_quaternion,
                 0,
@@ -339,13 +338,13 @@ class ShapeKeyframeProcessor:
     shape_mapping: dict[any, bpy.types.ShapeKey]
     '''Mapping .NET vector arrays to shape keys for reuse'''
 
-    def __init__(self, object: bpy.types.Object, optimize: bool):
-        self._object = object
+    def __init__(self, obj: bpy.types.Object, optimize: bool):
+        self._object = obj
         self._optimize = optimize
         self.shape_mapping = {}
 
         if self._object.type != "MESH":
-            raise Exception("Object doesnt support shape motions!")
+            raise SAIOException("Object doesnt support shape motions!")
 
         if self._key is None:
             self._object.shape_key_add(name="basis")
@@ -356,7 +355,7 @@ class ShapeKeyframeProcessor:
 
     def _verify(self, keyframe_set):
         if keyframe_set.Vertex.Count == 0:
-            raise Exception("Motion import failure!")
+            raise SAIOException("Motion import failure!")
 
     def _find_matching_shapekey(self, verts: list[Vector]):
         for shape_key in self._key.key_blocks:
@@ -393,8 +392,8 @@ class ShapeKeyframeProcessor:
                 f"Warning: {self._object.name} has"
                 " more vertices than shape anim!")
 
-        vertCount = min(vectors.Length, len(self._object.data.vertices))
-        for i in range(vertCount):
+        vert_count = min(vectors.Length, len(self._object.data.vertices))
+        for i in range(vert_count):
             co = vectors[i]
             verts.append(Vector((co.X, -co.Z, co.Y)))
 
@@ -460,7 +459,11 @@ class ShapeKeyframeProcessor:
         for curve in curves:
             if curve[0].co.x != 0:
                 curve.insert(0, 0).interpolation = "LINEAR"
-            last_frame = max(last_frame_number, kf.Key)
+
+            last_frame = max(
+                last_frame_number,
+                kf.Key)  # pylint: disable=undefined-loop-variable
+
             if curve[-1].co.x != last_frame:
                 curve.insert(last_frame, curve[-1].co.y
                              ).interpolation = "LINEAR"

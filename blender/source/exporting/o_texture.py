@@ -1,42 +1,34 @@
-from ..register.property_groups.texture_properties import (
-    SAIO_TextureList
-)
-
-from ..register.property_groups.texturename_properties import (
-    SAIO_TextureNameList
-)
+from ..register.property_groups.texture_properties import SAIO_TextureList
+from ..register.property_groups.texturename_properties import SAIO_TextureNameList
+from ..dotnet import System, SA3D_Texturing, SA3D_Archival, SAIO_NET
+from ..exceptions import SAIOException
 
 
 def create_texnames_from_names(
         texture_names: SAIO_TextureNameList,
         name: str):
 
-    from SA3D.Texturing.NJS import NjsTexList, NjsTexName
-
-    list = []
+    texname_list = []
     for texture_name in texture_names:
         texname = texture_name.name if texture_name.name != '!NULL' else None
-        list.append(NjsTexName(texname.lower(), 0, 0))
+        texname_list.append(SA3D_Texturing.TEXTURE_NAME(texname.lower(), 0, 0))
 
-    return NjsTexList(name, name + "_names", list)
+    return SA3D_Texturing.TEXTURE_NAME_LIST(name, name + "_names", texname_list)
 
 
 def create_texnames_from_textures(
         textures: SAIO_TextureList,
         name: str):
 
-    from SA3D.Texturing.NJS import NjsTexList, NjsTexName
-    list = []
+    texname_list = []
     for texture in textures:
-        list.append(NjsTexName(texture.name.lower().ljust(28), 0, 0))
+        texname_list.append(SA3D_Texturing.TEXTURE_NAME(
+            texture.name.lower().ljust(28), 0, 0))
 
-    return NjsTexList(name, name + "_names", list)
+    return SA3D_Texturing.TEXTURE_NAME_LIST(name, name + "_names", texname_list)
 
 
 def create_texture_set(texture_list: SAIO_TextureList):
-    from SA3D.Modeling.Blender import Texture
-    from SA3D.Texturing import TextureSet
-
     sa3d_textures = []
     for texture in texture_list:
 
@@ -47,7 +39,7 @@ def create_texture_set(texture_list: SAIO_TextureList):
             is_index4 = False
 
         if texture.image is None or not texture.image.has_data:
-            sa3d_texture = Texture.Create(
+            sa3d_texture = SAIO_NET.TEXTURE.Create(
                 texture.name.lower(),
                 texture.global_index,
                 2,
@@ -59,7 +51,7 @@ def create_texture_set(texture_list: SAIO_TextureList):
                  255, 255, 255, 255]
             )
         else:
-            sa3d_texture = Texture.Create(
+            sa3d_texture = SAIO_NET.TEXTURE.Create(
                 texture.name.lower(),
                 texture.global_index,
                 texture.image.size[0],
@@ -73,7 +65,7 @@ def create_texture_set(texture_list: SAIO_TextureList):
 
         sa3d_textures.append(sa3d_texture)
 
-    return TextureSet(sa3d_textures)
+    return SA3D_Texturing.TEXTURE_SET(sa3d_textures)
 
 
 def save_texture_archive(
@@ -97,29 +89,23 @@ def save_texture_archive(
         else:
             pak_path = "..\\..\\..\\sonic2\\resource\\gd_pc\\prs\\"
 
-        from SA3D.Archival.PAK import PAKArchive
-        archive = PAKArchive.FromTextureSet(
+        archive = SA3D_Archival.PAK_ARCHIVE.FromTextureSet(
             texture_set, file_name, pak_path)
 
     elif archive_type == "PVMX":
-        from SA3D.Archival.Tex.PVMX import PVMXArchive
-        archive = PVMXArchive.PVMXFromTextureSet(texture_set)
+        archive = SA3D_Archival.PVMX.PVMXFromTextureSet(texture_set)
 
     elif archive_type == "PVM":
-        from SA3D.Archival.Tex.PV import PVM
-        archive = PVM.FromTextureSet(texture_set)
+        archive = SA3D_Archival.PVM.FromTextureSet(texture_set)
 
     elif archive_type == "GVM":
-        from SA3D.Archival.Tex.GV import GVM
-        archive = GVM.FromTextureSet(texture_set)
+        archive = SA3D_Archival.GVM.FromTextureSet(texture_set)
 
     else:
-        raise Exception(f"Invalid Archive type \"{archive_type}\"")
+        raise SAIOException(f"Invalid Archive type \"{archive_type}\"")
 
     file_data = archive.Write()
     if compress:
-        from SA3D.Archival import PRS
-        file_data = PRS.CompressPRS(file_data)
+        file_data = SA3D_Archival.PRS.CompressPRS(file_data)
 
-    from System.IO import File
-    File.WriteAllBytes(filepath, file_data)
+    System.FILE.WriteAllBytes(filepath, file_data)

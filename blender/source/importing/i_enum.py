@@ -1,8 +1,18 @@
-from ..utility.enum_lut import *
+from ..utility.enum_lut import (
+    SURFACE_ATTRIBUTES,
+    BLEND_MODE,
+    FILTER_MODE,
+    GC_TEXCOORD_ID,
+    GC_TEXCOORD_TYPE,
+    GC_TEXCOORD_SOURCE,
+    GC_TEXCOORD_MATRIX,
+    ATTACH_FORMAT,
+    MODEL_FORMAT
+)
+from ..dotnet import SAIO_NET
 
 
 def from_node_attributes(node_properties, attributes):
-    from SA3D.Modeling.Blender import Flags
     node_properties.ignore_position, \
         node_properties.ignore_rotation, \
         node_properties.ignore_scale, \
@@ -11,11 +21,10 @@ def from_node_attributes(node_properties, attributes):
         node_properties.rotate_zyx, \
         node_properties.no_animate, \
         node_properties.no_morph \
-        = Flags.DecomposeNodeAttributes(attributes)
+        = SAIO_NET.FLAGS.DecomposeNodeAttributes(attributes)
 
 
-def from_evententry_attributes(evententry_properties, attributes):
-    from SA3D.Modeling.Blender import Flags
+def from_evententry_attributes(evententry_properties, attributes: any):
     evententry_properties.unk0, \
         evententry_properties.enable_lighting, \
         evententry_properties.unk2, \
@@ -26,12 +35,11 @@ def from_evententry_attributes(evententry_properties, attributes):
         evententry_properties.reflection, \
         evententry_properties.blare, \
         evententry_properties.unk9 \
-        = Flags.DecomposeEventEntryAttributes(attributes)
+        = SAIO_NET.FLAGS.DecomposeEventEntryAttributes(attributes)
 
 
-def from_surface_attributes(attributes, saio_land_entry):
-    from SA3D.Modeling.Blender import Flags
-    mapping = Flags.DecomposeSurfaceAttributes(attributes)
+def from_surface_attributes(attributes: any, saio_land_entry):
+    mapping = SAIO_NET.FLAGS.DecomposeSurfaceAttributes(attributes)
 
     for value in mapping:
         attribute = SURFACE_ATTRIBUTES[value]
@@ -39,33 +47,33 @@ def from_surface_attributes(attributes, saio_land_entry):
             setattr(saio_land_entry, attribute, True)
 
 
-def from_blend_mode(enum):
+def from_blend_mode(enum: any):
     return BLEND_MODE[enum.ToString()]
 
 
-def from_filter_mode(enum):
+def from_filter_mode(enum: any):
     return FILTER_MODE[enum.ToString()]
 
 
-def from_tex_coord_id(enum):
-    return TEX_COORD_ID[enum.ToString()]
+def from_tex_coord_id(enum: any):
+    return GC_TEXCOORD_ID[enum.ToString()]
 
 
-def from_tex_gen_type(enum):
-    return TEX_GEN_TYPE[enum.ToString()]
+def from_tex_gen_type(enum: any):
+    return GC_TEXCOORD_TYPE[enum.ToString()]
 
 
-def from_tex_gen_matrix(enum):
-    return TEX_GEN_MATRIX[enum.ToString()]
+def from_tex_gen_matrix(enum: any):
+    return GC_TEXCOORD_MATRIX[enum.ToString()]
 
 
-def from_tex_gen_source(enum):
-    return TEX_GEN_SOURCE[enum.ToString()]
+def from_tex_gen_source(enum: any):
+    return GC_TEXCOORD_SOURCE[enum.ToString()]
 
 
-def from_attach_format(enum):
+def from_attach_format(enum: any):
     return ATTACH_FORMAT[enum.ToString()]
 
 
-def from_landtable_format(enum):
+def from_landtable_format(enum: any):
     return MODEL_FORMAT[enum.ToString()]

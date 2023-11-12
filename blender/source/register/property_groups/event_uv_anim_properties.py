@@ -28,6 +28,10 @@ class SAIO_Event_UVAnimList(BaseList):
         name="UV Animations"
     )
 
+    @classmethod
+    def _get_index_comparator(cls, value):
+        raise NotImplementedError()
+
     @ classmethod
     def register(cls):
         pass

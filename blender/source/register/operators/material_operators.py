@@ -33,9 +33,9 @@ class MaterialOperator(SAIOBasePopupOperator):
 
         results = set()
 
-        def add(object: bpy.types.Object):
-            if object.type == 'MESH':
-                for mat in object.data.materials:
+        def add(obj: bpy.types.Object):
+            if obj.type == 'MESH':
+                for mat in obj.data.materials:
                     results.add(mat)
 
         if targetmode == 'ACTIVE':
@@ -230,9 +230,9 @@ class SAIO_OT_Material_AssembleTextureList(SAIOBasePopupOperator):
             objects.update(scene.objects)
 
         materials = set()
-        for object in objects:
-            if object.type == 'MESH':
-                materials.update(object.data.materials)
+        for obj in objects:
+            if obj.type == 'MESH':
+                materials.update(obj.data.materials)
 
         world = assemble_texture_list(
             materials, self.global_index_offset)

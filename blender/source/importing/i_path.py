@@ -1,6 +1,7 @@
-import bpy
-from mathutils import Vector, Euler
 import math
+import bpy
+import bmesh
+from mathutils import Vector, Euler
 
 
 def _normal_to_xz_angles(normal: Vector):
@@ -71,8 +72,7 @@ class PathProcessor:
     def _get_current_normals(self):
         mesh = self._curve_object.to_mesh()
 
-        import bmesh
-        bm = bmesh.new()
+        bm = bmesh.new() # pylint: disable=assignment-from-no-return
         bm.from_mesh(mesh)
 
         result: list[Vector] = [None] * int(len(mesh.vertices) / 2)

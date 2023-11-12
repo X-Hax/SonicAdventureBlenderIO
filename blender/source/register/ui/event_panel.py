@@ -37,7 +37,7 @@ EVENTLIST_TOOLS = [
 
 class SAIO_UL_EventSceneList(bpy.types.UIList):
 
-    def draw_item(
+    def draw_item( # pylint: disable=signature-differs
             self,
             context: bpy.types.Context,
             layout: bpy.types.UILayout,
@@ -45,7 +45,7 @@ class SAIO_UL_EventSceneList(bpy.types.UIList):
             item,
             icon: str,
             active_data,
-            active_propname,
+            active_property,
             index,
             flt_flag):
 
@@ -118,6 +118,7 @@ class SAIO_PT_Event(PropertiesPanel):
             layout.prop(eventscene, "name")
             layout.prop_search(eventscene, "scene", bpy.data, "scenes")
 
+    @staticmethod
     def draw_object_bone(
             layout: bpy.types.UILayout,
             properties,
@@ -130,12 +131,12 @@ class SAIO_PT_Event(PropertiesPanel):
             "objects"
         )
 
-        object = getattr(properties, name)
-        if object is not None and object.type == "ARMATURE":
+        obj = getattr(properties, name)
+        if obj is not None and obj.type == "ARMATURE":
             layout.prop_search(
                 properties,
                 name + "_bone",
-                object.data,
+                obj.data,
                 "bones"
             )
 
@@ -161,6 +162,7 @@ class SAIO_PT_Event(PropertiesPanel):
         SAIO_PT_Event.draw_object_bone(
             layout, upgrade_properties, "override2")
 
+    @staticmethod
     def draw_attach_upgrade_menu(
             layout: bpy.types.UILayout,
             event_properties: SAIO_Event,
@@ -193,6 +195,7 @@ class SAIO_PT_Event(PropertiesPanel):
         SAIO_PT_Event.draw_object_bone(
             layout, upgrade_properties, "target2")
 
+    @staticmethod
     def draw_event_properties(
             layout: bpy.types.UILayout,
             event_properties: SAIO_Event,

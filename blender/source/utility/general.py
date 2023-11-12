@@ -19,8 +19,7 @@ def get_template_path():
 
 
 def compare_path(a: str, b: str):
-    import os
-    absolute = bpy.path.abspath(b)
+    absolute = bpy.path.abspath(b) # pylint: disable=assignment-from-no-return
     absolute = os.path.abspath(absolute)
     return a == absolute
 
@@ -82,11 +81,9 @@ def target_anim_editor(context):
         bpy.ops.nla.tweakmode_enter(isolate_action=True)
 
 
-def get_armature_modifier(
-        object: bpy.types.Object
-) -> bpy.types.ArmatureModifier | None:
+def get_armature_modifier(obj: bpy.types.Object) -> bpy.types.ArmatureModifier | None:
 
-    for modifier in object.modifiers:
+    for modifier in obj.modifiers:
         if modifier.type == 'ARMATURE':
             return modifier
     return None

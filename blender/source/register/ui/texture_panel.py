@@ -34,7 +34,7 @@ TEXTURELIST_TOOLS: list[TOOL_PROPERTY] = [
 
 class SAIO_UL_TextureList(bpy.types.UIList):
 
-    def draw_item(
+    def draw_item( # pylint: disable=signature-differs
             self,
             context: bpy.types.Context,
             layout: bpy.types.UILayout,
@@ -42,7 +42,7 @@ class SAIO_UL_TextureList(bpy.types.UIList):
             item,
             icon: str,
             active_data,
-            active_propname,
+            active_property,
             index,
             flt_flag):
 
@@ -91,7 +91,7 @@ def draw_texture_list_panel(
 
     texture_list = world.saio_texture_list
 
-    def set_op(operator, i):
+    def set_op(operator, i): # pylint: disable=unused-argument
         if is_object:
             operator.mode = "OBJECT"
 

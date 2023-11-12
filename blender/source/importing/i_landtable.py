@@ -76,37 +76,37 @@ class LandtableProcessor:
         from . import i_matrix
 
         mesh_data = self._meshes[landentry.MeshIndex]
-        object = bpy.data.objects.new(landentry.Label, mesh_data.mesh)
+        obj = bpy.data.objects.new(landentry.Label, mesh_data.mesh)
 
-        object.saio_land_entry.sf_visible = False
+        obj.saio_land_entry.sf_visible = False
 
         i_enum.from_surface_attributes(
-            landentry.SurfaceAttributes, object.saio_land_entry)
+            landentry.SurfaceAttributes, obj.saio_land_entry)
 
         i_enum.from_node_attributes(
-            object.saio_node, landentry.NodeAttributes)
+            obj.saio_node, landentry.NodeAttributes)
 
-        object.matrix_world = i_matrix.net_to_bpy_matrix(
+        obj.matrix_world = i_matrix.net_to_bpy_matrix(
             landentry.WorldMatrix)
 
-        return object
+        return obj
 
-    def _assign_collection(self, index: int, object: bpy.types.Object):
+    def _assign_collection(self, index: int, obj: bpy.types.Object):
         if self._import_data.VisualCount is not None:
             is_visual = index < self._import_data.VisualCount
             is_collision = not is_visual
         else:
-            is_visual = object.saio_land_entry.is_visual
-            is_collision = object.saio_land_entry.is_collision
+            is_visual = obj.saio_land_entry.is_visual
+            is_collision = obj.saio_land_entry.is_collision
 
         if is_visual:
-            self._visual_collection.objects.link(object)
+            self._visual_collection.objects.link(obj)
 
         if is_collision:
-            self._collision_collection.objects.link(object)
+            self._collision_collection.objects.link(obj)
 
         if not is_visual and not is_collision:
-            self._collection.objects.link(object)
+            self._collection.objects.link(obj)
 
     def process(self, import_data, name: str):
 
@@ -119,8 +119,8 @@ class LandtableProcessor:
         self._process_meshes()
 
         for index, landentry in enumerate(self._import_data.LandEntries):
-            object = self._setup_object(landentry)
-            self._assign_collection(index, object)
+            obj = self._setup_object(landentry)
+            self._assign_collection(index, obj)
 
     @staticmethod
     def process_landtable(

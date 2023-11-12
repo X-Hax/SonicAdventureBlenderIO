@@ -35,7 +35,7 @@ class TOPBAR_MT_SAIO_Export(bpy.types.Menu):
         layout.operator(SAIO_OT_Export_Event.bl_idname)
 
     @staticmethod
-    def menu_func(self, context):
+    def menu_func(self, context): # pylint: disable=unused-argument
         self.layout.menu(TOPBAR_MT_SAIO_Export.__name__)
 
     @classmethod
@@ -60,7 +60,7 @@ class TOPBAR_MT_SAIO_Import(bpy.types.Menu):
         layout.operator(SAIO_OT_Import_Event.bl_idname)
 
     @staticmethod
-    def menu_func(self, context):
+    def menu_func(self, context): # pylint: disable=unused-argument
         self.layout.menu(TOPBAR_MT_SAIO_Import.__name__)
 
     @classmethod

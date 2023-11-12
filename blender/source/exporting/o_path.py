@@ -1,7 +1,8 @@
 import bpy
 
-from ..utility import dll_utils, math_utils
+from ..utility import math_utils
 from ..exceptions import UserException
+from ..dotnet import load_dotnet, System, SAIO_NET
 
 DEFAULT_CURVE_CONFIG = {
     "offset": 0,
@@ -42,9 +43,7 @@ class PathEvaluator:
 
     def evaluate_path(self, curve_object: bpy.types.Object):
 
-        dll_utils.load_library()
-        from SA3D.Modeling.Blender import CurvePath
-        from System.Numerics import Vector3
+        load_dotnet()
 
         self._curve_object = curve_object
         self._curve = curve_object.data
@@ -68,10 +67,10 @@ class PathEvaluator:
                 pos = matrix @ ((v1.co + v2.co) * 0.5)
                 nrm = normal_matrix @ ((v1.normal + v2.normal).normalized())
 
-                positions.append(Vector3(pos.x, pos.z, -pos.y))
-                normals.append(Vector3(nrm.x, nrm.z, -nrm.y))
+                positions.append(System.VECTOR3(pos.x, pos.z, -pos.y))
+                normals.append(System.VECTOR3(nrm.x, nrm.z, -nrm.y))
 
-            result = CurvePath.FromPoints(positions, normals)
+            result = SAIO_NET.CURVE_PATH.FromPoints(positions, normals)
 
             self._curve_object.to_mesh_clear()
         finally:

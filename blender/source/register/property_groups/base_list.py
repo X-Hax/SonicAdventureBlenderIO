@@ -11,14 +11,14 @@ class BaseList(bpy.types.PropertyGroup):
     )
 
     def __iter__(self):
-        return self.elements.__iter__()
+        return self.elements.__iter__()  # pylint: disable=no-member
 
     def __len__(self):
-        return self.elements.__len__()
+        return self.elements.__len__()  # pylint: disable=no-member
 
     def __getitem__(self, key: int | str):
         if isinstance(key, int):
-            return self.elements[key]
+            return self.elements[key]  # pylint: disable=no-member
         return super().__getitem__(key)
 
     @classmethod
@@ -40,7 +40,7 @@ class BaseList(bpy.types.PropertyGroup):
         return None
 
     def new(self, **args):
-        result = self.elements.add()
+        result = self.elements.add()  # pylint: disable=no-member
         self._on_created(result, **args)
         self.active_index = len(self) - 1
         return result
@@ -54,7 +54,7 @@ class BaseList(bpy.types.PropertyGroup):
         if index is None or index >= len(self):
             return
 
-        self.elements.remove(index)
+        self.elements.remove(index)  # pylint: disable=no-member
 
         if self.active_index == index:
             self.active_index -= 1
@@ -65,7 +65,7 @@ class BaseList(bpy.types.PropertyGroup):
             self.active_index = 0
 
     def move(self, old_index: int, new_index: int):
-        self.elements.move(
+        self.elements.move(  # pylint: disable=no-member
             old_index,
             new_index)
 
@@ -74,5 +74,5 @@ class BaseList(bpy.types.PropertyGroup):
 
     def clear(self):
         self._on_clear()
-        self.elements.clear()
+        self.elements.clear()  # pylint: disable=no-member
         self.active_index = -1

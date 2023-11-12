@@ -8,6 +8,7 @@ from bpy.props import (
     CollectionProperty
 )
 from .base_list import BaseList
+from ...exceptions import SAIOException
 
 
 class SAIO_Texture(bpy.types.PropertyGroup):
@@ -61,13 +62,13 @@ class SAIO_Texture(bpy.types.PropertyGroup):
         path = repr(self)
         end = path.rfind(".")
         path = path[:end]
-        textures = self.path_resolve(path)
+        textures = self.path_resolve(path) # pylint: disable=assignment-from-no-return
 
         for index, texture in enumerate(textures):
             if texture == self:
                 return index
 
-        raise Exception("Texture has no index")
+        raise SAIOException("Texture has no index")
 
     @classmethod
     def register(cls):
@@ -128,12 +129,12 @@ class SAIO_TextureList(BaseList):
 
     @ classmethod
     def register(cls):
-        bpy.types.World.saio_texture_list = PointerProperty(
+        bpy.types.World.saio_texture_list = PointerProperty( # pylint: disable=assignment-from-no-return
             type=cls,
             name="SAIO Texture Lists"
         )
 
-        bpy.types.Object.saio_texture_world = PointerProperty(
+        bpy.types.Object.saio_texture_world = PointerProperty( # pylint: disable=assignment-from-no-return
             type=bpy.types.World,
             name="SAIO Texture World",
             description="Used as texture list storage"

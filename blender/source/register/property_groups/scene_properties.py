@@ -23,11 +23,11 @@ from ...utility.material_setup import (
 )
 
 
-def _update_scene_lighting(self, context):
+def _update_scene_lighting(self, context): # pylint: disable=unused_argument
     update_scene_lighting(context)
 
 
-def _update_material_outputs(self, context):
+def _update_material_outputs(self, context): # pylint: disable=unused_argument
     update_material_outputs(
         bpy.data.materials,
         context.scene.saio_scene.use_principled
@@ -198,7 +198,7 @@ class SAIO_Scene(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Scene.saio_scene = bpy.props.PointerProperty(type=cls)
+        bpy.types.Scene.saio_scene = bpy.props.PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
 
     @property
     def texture_list(self) -> SAIO_TextureList | None:

@@ -1,10 +1,7 @@
 import bpy
-
+from ..dotnet import SA3D_Texturing, SAIO_NET
 
 def process_texture_set(texture_set, texture_list):
-    from SA3D.Modeling.Blender import Texture
-    from SA3D.Texturing import IndexTexture
-
     for texture in texture_set.Textures:
         img = bpy.data.images.new(
             texture.Name,
@@ -12,7 +9,7 @@ def process_texture_set(texture_set, texture_list):
             texture.Height,
             alpha=True)
 
-        img.pixels = Texture.GetData(texture)
+        img.pixels = SAIO_NET.TEXTURE.GetData(texture)
         img.update()
         img.use_fake_user = True
         img.pack()
@@ -22,7 +19,7 @@ def process_texture_set(texture_set, texture_list):
         tex.override_width = texture.OverrideWidth
         tex.override_height = texture.OverrideHeight
 
-        if isinstance(tex, IndexTexture):
+        if isinstance(tex, SA3D_Texturing.INDEX_TEXTURE):
             tex.texture_type = "ID4" if tex.IsIndex4 else "ID8"
         else:
             tex.texture_type = "RGBA"

@@ -8,7 +8,7 @@ class EventUVAnimOperator(SAIOBaseOperator):
 
     def _execute(self, context: bpy.types.Context):
         anims = context.scene.saio_scene.event.uv_animations
-        self.list_execute(context, anims)
+        self.list_execute(context, anims)  # pylint: disable=no-member
         return {'FINISHED'}
 
 

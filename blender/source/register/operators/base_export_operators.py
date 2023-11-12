@@ -12,12 +12,16 @@ from ...utility.anim_parameters import AnimParameters
 
 def _collect_objects(mode: str, context: bpy.types.Context):
 
-    def check(x: bpy.types.Object): return True
 
     if mode == 'VISIBLE':
-        def check(x: bpy.types.Object): return not x.hide_get()
+        def check(x: bpy.types.Object):
+            return not x.hide_get()
     elif mode == 'SELECTED':
-        def check(x: bpy.types.Object): return x.select_get()
+        def check(x: bpy.types.Object):
+            return x.select_get()
+    else:
+        def check(x: bpy.types.Object): # pylint: disable=unused-argument
+            return True
 
     return [obj for obj in context.scene.objects if check(obj)]
 
@@ -25,7 +29,7 @@ def _collect_objects(mode: str, context: bpy.types.Context):
 class ExportOperator(SAIOBaseFileSaveOperator):
     bl_options = {'PRESET', 'UNDO'}
 
-    def export(self, context: bpy.types.Context):
+    def export(self, context: bpy.types.Context): # pylint: disable=unused-argument
         return {'FINISHED'}
 
     def _execute(self, context):
@@ -33,8 +37,8 @@ class ExportOperator(SAIOBaseFileSaveOperator):
         if len(self.filepath) == 0 or self.filepath.endswith(path.sep):
             self.filepath += "unnamed" + self.filename_ext
 
-        from ...utility import dll_utils
-        dll_utils.load_library()
+        from ...dotnet import load_dotnet
+        load_dotnet()
 
         return self.export(context)
 
@@ -72,7 +76,7 @@ class ExportModelOperator(ExportOperator):
         default=True
     )
 
-    def export_models(self, context, objects):
+    def export_models(self, context, objects): # pylint: disable=unused-argument
         return {'FINISHED'}
 
     def export(self, context):

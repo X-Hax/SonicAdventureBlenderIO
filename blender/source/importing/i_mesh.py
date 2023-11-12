@@ -6,6 +6,7 @@ from . import i_enum
 from ..utility import material_setup
 from ..register.property_groups.material_properties import SAIO_Material
 from ..utility.color_utils import srgb_to_linear
+from ..dotnet import SAIO_NET
 
 
 class MeshData:
@@ -20,7 +21,7 @@ class MeshData:
     def __init__(self, weight_group_num: int, node_indices: list[int]):
         self.mesh = None
         self.weights = []
-        for i in range(weight_group_num):
+        for _ in range(weight_group_num):
             self.weights.append([])
         self.node_indices = node_indices
 
@@ -75,14 +76,12 @@ class MeshProcessor:
         props.specular_exponent = int(material.SpecularExponent)
         props.ambient = self._to_color(material.Ambient)
 
-        from SA3D.Modeling.Blender import Flags
-
         props.flat_shading, \
             props.ignore_ambient, \
             props.ignore_diffuse, \
             props.ignore_specular, \
             props.use_texture, \
-            props.use_environment = Flags.DecomposeMaterialAttributes(
+            props.use_environment = SAIO_NET.FLAGS.DecomposeMaterialAttributes(
                 material.MaterialAttributes)
 
         props.use_alpha = material.UseAlpha
@@ -180,13 +179,13 @@ class MeshProcessor:
     def _process_materials(self):
 
         for material in self.weighted_buffer.Materials:
-            hash = material.GetHashCode()
-            if hash in self.material_lut:
-                bpy_material = self.material_lut[hash]
+            hashcode = material.GetHashCode()
+            if hashcode in self.material_lut:
+                bpy_material = self.material_lut[hashcode]
             else:
                 bpy_material = self._net_to_bpy_material(
                     material, f"{self.mat_name}_{len(self.material_lut)}")
-                self.material_lut[hash] = bpy_material
+                self.material_lut[hashcode] = bpy_material
 
             self.materials.append(bpy_material)
 
@@ -197,13 +196,13 @@ class MeshProcessor:
         if len(self.poly_material_lengths) > 1:
 
             poly_mat_index = 0
-            next = self.poly_material_lengths[poly_mat_index]
+            next_material_offset = self.poly_material_lengths[poly_mat_index]
 
             for i, polygon in enumerate(self.output.mesh.polygons):
 
-                if i >= next:
+                if i >= next_material_offset:
                     poly_mat_index += 1
-                    next += self.poly_material_lengths[poly_mat_index]
+                    next_material_offset += self.poly_material_lengths[poly_mat_index]
 
                 polygon.use_smooth = True
                 polygon.material_index = poly_mat_index

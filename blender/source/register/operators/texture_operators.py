@@ -17,8 +17,8 @@ from .base import (
     ListClear
 )
 from ..property_groups.texture_properties import SAIO_TextureList
-from ...utility import dll_utils
 from ...exporting import o_texture
+from ...dotnet import load_dotnet, SA3D_Texturing, SA3D_Archival
 
 
 class TextureOperator(SAIOBaseOperator):
@@ -48,7 +48,7 @@ class TextureOperator(SAIOBaseOperator):
     def _execute(self, context):
         texture_list = self.get_texture_list(context)
         if texture_list is not None:
-            self.list_execute(context, texture_list)
+            self.list_execute(context, texture_list) # pylint: disable=no-member
         return {'FINISHED'}
 
 
@@ -81,7 +81,7 @@ class SAIO_OT_Textures_Autoname(TextureOperator):
     bl_label = "Autoname entries"
     bl_description = "Renames all entries to the assigned texture"
 
-    def list_execute(
+    def list_execute( # pylint: disable=unused-argument
             self,
             context: bpy.types.Context,
             texture_list: SAIO_TextureList):
@@ -91,13 +91,15 @@ class SAIO_OT_Textures_Autoname(TextureOperator):
 class TextureImportOperator(TextureOperator, SAIOBaseFileLoadOperator):
 
     def _get_texture_set(self):
-        return
+        raise NotImplementedError()
 
-    def list_execute(
+    def list_execute( # pylint: disable=unused-argument
             self,
             context: bpy.types.Context,
             texture_list: SAIO_TextureList):
-        dll_utils.load_library()
+
+        load_dotnet()
+
         try:
             texture_set = self._get_texture_set()
         except Exception:
@@ -118,9 +120,8 @@ class SAIO_OT_Textures_Import_Pack(TextureImportOperator):
     )
 
     def _get_texture_set(self):
-        from SA3D.Texturing import TextureSet
         folder = os.path.dirname(self.filepath)
-        return TextureSet.ImportTexturePack(folder)
+        return SA3D_Texturing.TEXTURE_SET.ImportTexturePack(folder)
 
 
 class SAIO_OT_Textures_Import_Archive(TextureImportOperator):
@@ -133,18 +134,17 @@ class SAIO_OT_Textures_Import_Archive(TextureImportOperator):
     )
 
     def _get_texture_set(self):
-        from SA3D.Archival import Archive
-        archive = Archive.ReadArchiveFromFile(self.filepath)
+        archive = SA3D_Archival.ARCHIVE.ReadArchiveFromFile(self.filepath)
         return archive.ToTextureSet()
 
 
 class TextureExportOperator(TextureOperator, SAIOBaseFileSaveOperator):
 
     def _get_extension(self):
-        return ""
+        raise NotImplementedError()
 
-    def _save_texture_set(self, texture_set):
-        return
+    def _save_texture_set(self, texture_set): # pylint: disable=unused-argument
+        raise NotImplementedError()
 
     def check(self, context):
         extension = self._get_extension()
@@ -156,14 +156,14 @@ class TextureExportOperator(TextureOperator, SAIOBaseFileSaveOperator):
 
         return False
 
-    def list_execute(
+    def list_execute( # pylint: disable=unused-argument
             self,
             context: bpy.types.Context,
             texture_list: SAIO_TextureList):
-        dll_utils.load_library()
+        load_dotnet()
 
         texture_set = o_texture.create_texture_set(texture_list)
-        return self._save_texture_set(texture_set)
+        self._save_texture_set(texture_set)
 
 
 class SAIO_OT_Textures_Export_Archive(TextureExportOperator):
@@ -211,8 +211,6 @@ class SAIO_OT_Textures_Export_Archive(TextureExportOperator):
             self.archive_type,
             self.compress)
 
-        return {'FINISHED'}
-
 
 class SAIO_OT_Textures_Export_Pack(TextureExportOperator):
     bl_idname = "saio.textures_exportpack"
@@ -227,11 +225,12 @@ class SAIO_OT_Textures_Export_Pack(TextureExportOperator):
             return True
         return False
 
+    def _get_extension(self):
+        return ".txt"
+
     def _save_texture_set(self, texture_set):
         outdir = os.path.dirname(self.filepath)
         texture_set.ExportTexturePack(outdir)
-
-        return {'FINISHED'}
 
 
 class SAIO_OT_Texture_ToAssetLibrary(TextureOperator):

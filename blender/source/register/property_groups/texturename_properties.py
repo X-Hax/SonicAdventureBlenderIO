@@ -44,12 +44,12 @@ class SAIO_TextureNameList(BaseList):
 
     @classmethod
     def register(cls):
-        bpy.types.World.saio_texturename_list = PointerProperty(
+        bpy.types.World.saio_texturename_list = PointerProperty( # pylint: disable=assignment-from-no-return
             type=cls,
             name="SAIO Texture Lists"
         )
 
-        bpy.types.Object.saio_texturename_world = PointerProperty(
+        bpy.types.Object.saio_texturename_world = PointerProperty( # pylint: disable=assignment-from-no-return
             type=bpy.types.World,
             name="SAIO Texture Name World",
             description="Used as texture name list storage"

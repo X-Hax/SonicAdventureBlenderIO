@@ -32,7 +32,7 @@ EVENT_UVANIM_TOOLS: list[TOOL_PROPERTY] = [
 
 class SAIO_UL_EventUVAnimList(bpy.types.UIList):
 
-    def draw_item(
+    def draw_item( # pylint: disable=signature-differs
             self,
             context: bpy.types.Context,
             layout: bpy.types.UILayout,
@@ -40,7 +40,7 @@ class SAIO_UL_EventUVAnimList(bpy.types.UIList):
             item,
             icon: str,
             active_data,
-            active_propname,
+            active_property,
             index,
             flt_flag):
 

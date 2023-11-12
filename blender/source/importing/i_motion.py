@@ -7,7 +7,7 @@ from .i_keyframes import (
 )
 from . import i_matrix
 from ..utility.camera_utils import CameraActionSet, CameraSetup
-from ..exceptions import UserException
+from ..exceptions import UserException, SAIOException
 
 
 class ObjectMotionProcessor:
@@ -32,9 +32,9 @@ class ObjectMotionProcessor:
 
     def _verify(self):
         if self._bobject is None:
-            raise Exception("No object set!")
+            raise SAIOException("No object set!")
         elif self._motion is None:
-            raise Exception("No motion set!")
+            raise SAIOException("No motion set!")
 
         elif self._bobject.type == "ARMATURE":
 
@@ -51,9 +51,9 @@ class ObjectMotionProcessor:
                 "Target has children! Can only apply this animation"
                 " to armatures or standalone objects"))
 
-    def process(self, motion, object: bpy.types.Object):
+    def process(self, motion, obj: bpy.types.Object):
         self._motion = motion
-        self._bobject = object
+        self._bobject = obj
         self._bonemap.clear()
         self._verify()
 
@@ -86,7 +86,7 @@ class NodeMotionProcessor(ObjectMotionProcessor):
         super()._verify()
 
         if not self._motion.IsNodeMotion:
-            raise Exception("Motion is not a node motion")
+            raise SAIOException("Motion is not a node motion")
 
     def _create_action(self):
         self._action = bpy.data.actions.new(self._motion.Label)
@@ -124,8 +124,8 @@ class NodeMotionProcessor(ObjectMotionProcessor):
                 self._motion.Keyframes[0],
                 self._bobject.rotation_mode)
 
-    def process(self, motion, object: bpy.types.Object):
-        super().process(motion, object)
+    def process(self, motion, obj: bpy.types.Object):
+        super().process(motion, obj)
 
         self._create_action()
 
@@ -139,7 +139,7 @@ class NodeMotionProcessor(ObjectMotionProcessor):
     @staticmethod
     def process_motion(
             motion: any,
-            object: bpy.types.Object,
+            obj: bpy.types.Object,
             force_sort_bones: bool,
             rotation_mode: str,
             quaternion_conversion_deviation: float):
@@ -149,7 +149,7 @@ class NodeMotionProcessor(ObjectMotionProcessor):
             quaternion_conversion_deviation,
             force_sort_bones)
 
-        return processor.process(motion, object)
+        return processor.process(motion, obj)
 
 
 class ShapeMotionProcessor(ObjectMotionProcessor):
@@ -173,7 +173,7 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
         super()._verify()
 
         if not self._motion.IsShapeMotion:
-            raise Exception("Motion is not a shape motion")
+            raise SAIOException("Motion is not a shape motion")
 
     def _convert(
             self,

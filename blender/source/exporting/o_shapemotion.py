@@ -3,10 +3,10 @@ from bpy.types import Object as BObject, Action
 
 from . import o_motion
 from .o_model import ModelData
-from .o_mesh import ModelMesh
 from .o_keyframes import ShapeKeyframeEvaluator
 
-from ..exceptions import UserException
+from ..dotnet import SA3D_Modeling
+from ..exceptions import UserException, SAIOException
 
 
 class ShapeActionCollection:
@@ -60,12 +60,12 @@ class ShapeActionCollector:
         self.starter_action = None
         self.result = ShapeActionCollection()
 
-    def _should_be_skipped(self, object: BObject):
+    def _should_be_skipped(self, obj: BObject):
         from ..utility.general import get_armature_modifier
         return (
-            object.type != 'MESH'
-            or object.data.shape_keys is None
-            or get_armature_modifier(object) is not None
+            obj.type != 'MESH'
+            or obj.data.shape_keys is None
+            or get_armature_modifier(obj) is not None
         )
 
     def _find_starter_action(self, model: BObject):
@@ -187,20 +187,19 @@ class ShapeMotionEvaluator:
                 index += 1
 
     def _setup_output(self, name: str):
-        from SA3D.Modeling.ObjectData.Animation import Motion
 
         node_count = 1 if self._node_map is None else len(self._node_map)
 
-        self._output = Motion(self._duration, node_count)
+        self._output = SA3D_Modeling.MOTION(self._duration, node_count)
         self._output.Label = name
 
-    def _convert_action(self, action: Action, object: BObject, index: int):
-        if object not in self._shape_evaluators:
-            modelmesh = self._model_data.meshes[object]
+    def _convert_action(self, action: Action, obj: BObject, index: int):
+        if obj not in self._shape_evaluators:
+            modelmesh = self._model_data.meshes[obj]
             evaluator = ShapeKeyframeEvaluator(modelmesh, self._normal_mode)
-            self._shape_evaluators[object] = evaluator
+            self._shape_evaluators[obj] = evaluator
         else:
-            evaluator = self._shape_evaluators[object]
+            evaluator = self._shape_evaluators[obj]
 
         keyframes = evaluator.evaluate(
             action,
@@ -216,15 +215,15 @@ class ShapeMotionEvaluator:
                 raise UserException(
                     f"Bone {bone_name} Has more than one mesh!")
 
-            object, _ = objects[0]
-            if (object.parent_bone not in self._node_map
-                    or object not in self._actions):
+            obj, _ = objects[0]
+            if (obj.parent_bone not in self._node_map
+                    or obj not in self._actions):
                 continue
 
             self._convert_action(
-                self._actions[object],
-                object,
-                self._node_map[object.parent_bone])
+                self._actions[obj],
+                obj,
+                self._node_map[obj.parent_bone])
 
     def evaluate(self, actions: ShapeActionCollection):
 
@@ -234,16 +233,15 @@ class ShapeMotionEvaluator:
         self._setup_output(actions.motion_name)
 
         if self._normal_mode == 'TYPED':
-            from SA3D.Modeling.ObjectData.Animation import AnimationAttributes
-            self._output.ManualType = AnimationAttributes.Normal
+            self._output.ManualKeyframeTypes = SA3D_Modeling.KEYFRAME_ATTRIBUTES.Normal
 
         if self._node_map is not None:
             self._evaluate_for_armature()
         else:
             if len(self._actions) > 1:
-                raise Exception("More than one action to convert")
+                raise SAIOException("More than one action to convert")
 
-            for object, action in self._actions.items():
-                self._convert_action(action, object, 0)
+            for obj, action in self._actions.items():
+                self._convert_action(action, obj, 0)
 
         return self._output

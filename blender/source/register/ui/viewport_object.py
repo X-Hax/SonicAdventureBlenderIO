@@ -18,7 +18,7 @@ class ViewportObjectPanel(bpy.types.Panel):
     bl_category = "SAIO Object"
     bl_options = {"DEFAULT_CLOSED"}
 
-    def draw_target_header(self, context: bpy.types.Context):
+    def draw_target_header(self, context: bpy.types.Context): # pylint: disable=unused-argument
         return
 
     def get_target_name(self, context: bpy.types.Context):
@@ -26,15 +26,15 @@ class ViewportObjectPanel(bpy.types.Panel):
 
     @classmethod
     def verify(cls, context):
-        return cls.base.verify(context)
+        return cls.base.verify(context) # pylint: disable=no-member
 
     def draw(self, context):
         self.draw_target_header(context)
-        return self.base.draw(self, context)
+        return self.base.draw(self, context) # pylint: disable=no-member
 
     def draw_panel(self, context):
         self.layout.label(text=self.get_target_name(context))
-        return self.base.draw_panel(self, context)
+        return self.base.draw_panel(self, context) # pylint: disable=no-member
 
 
 class SAIO_PT_VOP_LandEntry(ViewportObjectPanel):
@@ -64,8 +64,8 @@ class SAIO_PT_VOP_Node(ViewportObjectPanel):
             self.layout.box().label(text="Active object is not a Node")
             return
 
-        type = "Object" if context.active_object.mode == "OBJECT" else "Bone"
-        self.layout.label(text=f"Active {type}: {properties[0]}")
+        object_type = "Object" if context.active_object.mode == "OBJECT" else "Bone"
+        self.layout.label(text=f"Active {object_type}: {properties[0]}")
 
         node_panel.SAIO_PT_Node.draw_node_properties(
             self.layout, properties[1])
@@ -93,11 +93,12 @@ class SAIO_PT_VPMaterial(ViewportObjectPanel):
     bl_label = "Material"
     base = material_panel.SAIO_PT_Material
 
+    @staticmethod
     def draw_material_list(
             layout: bpy.types.UILayout,
-            object: bpy.types.Object):
+            obj: bpy.types.Object):
 
-        is_sortable = len(object.material_slots) > 1
+        is_sortable = len(obj.material_slots) > 1
         rows = 3
         if is_sortable:
             rows = 5
@@ -107,9 +108,9 @@ class SAIO_PT_VPMaterial(ViewportObjectPanel):
         row.template_list(
             "MATERIAL_UL_matslots",
             "",
-            object,
+            obj,
             "material_slots",
-            object,
+            obj,
             "active_material_index",
             rows=rows)
 
@@ -135,17 +136,17 @@ class SAIO_PT_VPMaterial(ViewportObjectPanel):
                 text="").direction = 'DOWN'
 
         row = layout.row()
-        row.template_ID(object, "active_material", new="material.new")
+        row.template_ID(obj, "active_material", new="material.new")
 
         slot = None
-        if object.active_material_index < len(object.material_slots):
-            slot = object.material_slots[object.active_material_index]
+        if obj.active_material_index < len(obj.material_slots):
+            slot = obj.material_slots[obj.active_material_index]
 
         if slot:
             icon_link = 'MESH_DATA' if slot.link == 'DATA' else 'OBJECT_DATA'
             row.prop(slot, "link", icon=icon_link, icon_only=True)
 
-        if object.mode == 'EDIT':
+        if obj.mode == 'EDIT':
             row = layout.row(align=True)
             row.operator("object.material_slot_assign", text="Assign")
             row.operator("object.material_slot_select", text="Select")

@@ -14,6 +14,8 @@ from ..property_groups.node_properties import SAIO_Node
 
 from ...utility.draw import expand_menu
 from ...utility.general import target_anim_editor
+from ...exceptions import SAIOException
+from ...dotnet import load_dotnet, TextCopy
 
 
 class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
@@ -358,8 +360,8 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
         fake_nodes[0].matrices = matrices
 
         name_map = {}
-        for index, object in enumerate(objects):
-            name_map[object.name] = index
+        for index, obj in enumerate(objects):
+            name_map[obj.name] = index
 
         from ...importing.i_node import NodeProcessor
         from ...importing.i_mesh import MeshData
@@ -432,12 +434,12 @@ class SAIO_OT_ArmaturCorrectVisual(SAIOBasePopupOperator):
         from ...utility import general
         general.load_template_blend(context)
 
-        for object in bpy.data.objects:
-            if (object.name.startswith("SAIO Bone Shape")
-                    and general.is_from_template(object)):
-                return object
+        for obj in bpy.data.objects:
+            if (obj.name.startswith("SAIO Bone Shape")
+                    and general.is_from_template(obj)):
+                return obj
 
-        raise Exception("Bone shape not found")
+        raise SAIOException("Bone shape not found")
 
     @staticmethod
     def _set_bone_shapes(
@@ -615,11 +617,9 @@ class SAIO_OT_CopyVertexIndicesToClipboard(SAIOBaseOperator):
 
         text = text[:-1]
 
-        from ...utility import dll_utils
-        dll_utils.load_library()
+        load_dotnet()
 
-        from TextCopy import ClipboardService
-        ClipboardService.SetText(text)
+        TextCopy.CLIPBOARD_SERVICE.SetText(text)
 
         return {'FINISHED'}
 
@@ -645,16 +645,21 @@ class SAIO_OT_AutoNodeAttributes(SAIOBasePopupOperator):
     )
 
     def _get_objects(self, context: Context):
-        def check(x: bpy.types.Object): return True
 
         source = context.scene.objects
 
         if self.mode == 'VISIBLE':
-            def check(x: bpy.types.Object): return not x.hide_get()
+            def check(x: bpy.types.Object):
+                return not x.hide_get()
         elif self.mode == 'SELECTED':
-            def check(x: bpy.types.Object): return x.select_get()
-        elif self.mode == 'ALL':
-            source = bpy.data.objects
+            def check(x: bpy.types.Object):
+                return x.select_get()
+        else:
+            def check(x: bpy.types.Object): # pylint: disable=unused-argument
+                return True
+
+            if self.mode == 'ALL':
+                source = bpy.data.objects
 
         return [obj for obj in source if check(obj)]
 
@@ -699,14 +704,14 @@ class SAIO_OT_AutoNodeAttributes(SAIOBasePopupOperator):
         if len(objects) == 0:
             return {'FINISHED'}
 
-        for object in objects:
-            self._calc_node_flags(object)
+        for obj in objects:
+            self._calc_node_flags(obj)
 
-            if object.type == 'ARMATURE':
+            if obj.type == 'ARMATURE':
                 bpy.ops.object.mode_set(mode='POSE')
                 prev = context.view_layer.objects.active
-                context.view_layer.objects.active = object
-                for bone in object.data.bones:
+                context.view_layer.objects.active = obj
+                for bone in obj.data.bones:
                     self._calc_node_flags(bone)
                 bpy.ops.object.mode_set(mode='OBJECT')
                 context.view_layer.objects.active = prev

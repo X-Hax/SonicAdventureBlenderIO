@@ -16,10 +16,6 @@ IF EXIST %python% (
 	python.exe -m pip install --upgrade pip
 
 	rem now install the packages
-	pip.exe install pep8
-	pip.exe install autopep8
-	pip.exe install pycodestyle
-	pip.exe install pylint
 	pip.exe install pythonnet
 	pip.exe install fake-bpy-module-3.4
 

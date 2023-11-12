@@ -60,9 +60,9 @@ class SAIO_Node(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Object.saio_node = PointerProperty(type=cls)
-        bpy.types.Bone.saio_node = PointerProperty(type=cls)
-        bpy.types.EditBone.saio_node = PointerProperty(type=cls)
+        bpy.types.Object.saio_node = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
+        bpy.types.Bone.saio_node = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
+        bpy.types.EditBone.saio_node = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
 
     @staticmethod
     def get_active_node_properties(

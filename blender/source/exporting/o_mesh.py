@@ -6,6 +6,9 @@ from .o_node import NodeStructure
 from ..utility.texture_manager import TexlistManager
 from ..utility.color_utils import linear_to_srgb
 from ..utility.math_utils import get_normal_matrix
+from ..dotnet import System, SA3D_Modeling, SAIO_NET
+
+from ..exceptions import SAIOException
 
 
 class ModelMesh:
@@ -32,12 +35,12 @@ class ModelMesh:
     def __init__(
             self,
             node_structure: NodeStructure,
-            object: bpy.types.Object,
+            obj: bpy.types.Object,
             world_matrix: Matrix,
             attached_node_name: str):
 
         self.node_structure = node_structure
-        self.object = object
+        self.object = obj
         self.world_matrix = world_matrix
         self.attached_node_name = attached_node_name
 
@@ -102,15 +105,15 @@ class ModelMesh:
         self._triangulate_modifier.keep_custom_normals = True
 
     def _collect_depending_bones(self):
-        group_indices = {}
+        group_indices = set()
 
         for vertex in self.object.data.vertices:
             for group in vertex.groups:
                 if group.weight > 0:
-                    group_indices[group.group] = True
+                    group_indices.add(group.group)
 
         self._depending_bones = []
-        for index in group_indices.keys():
+        for index in group_indices:
             bone_name = self.object.vertex_groups[index].name
             if (bone_name in self._name_mapping
                     and self._bones[bone_name].bone.use_deform):
@@ -230,8 +233,6 @@ class ModelMesh:
         vertex_matrix, normal_matrix = self.get_matrices()
         normals = self._get_normals()
 
-        from SA3D.Modeling.ModelData.Weighted import WeightedBufferVertex
-        from System.Numerics import Vector3
         buffer_vertices = []
 
         groups: list[tuple[bpy.types.VertexGroup, int]] = []
@@ -248,9 +249,9 @@ class ModelMesh:
             pos = vertex_matrix @ vert.undeformed_co
             nrm = normal_matrix @ normals[index]
 
-            wbv = WeightedBufferVertex(
-                Vector3(pos.x, pos.z, -pos.y),
-                Vector3(nrm.x, nrm.z, -nrm.y),
+            wbv = SA3D_Modeling.WEIGHTED_VERTEX(
+                System.VECTOR3(pos.x, pos.z, -pos.y),
+                System.VECTOR3(nrm.x, nrm.z, -nrm.y),
                 self._weight_num)
 
             # getting weights
@@ -280,13 +281,10 @@ class ModelMesh:
         vertices = []
         normals = self._get_normals()
 
-        from SA3D.Modeling.ModelData.Weighted import WeightedBufferVertex
-        from System.Numerics import Vector3
-
         def add_vertex(pos, nrm):
-            vertices.append(WeightedBufferVertex(
-                Vector3(pos.x, pos.z, -pos.y),
-                Vector3(nrm.x, nrm.z, -nrm.y)
+            vertices.append(SA3D_Modeling.WEIGHTED_VERTEX(
+                System.VECTOR3(pos.x, pos.z, -pos.y),
+                System.VECTOR3(nrm.x, nrm.z, -nrm.y)
             ))
 
         if self.node_structure.armature_object is None:
@@ -313,14 +311,11 @@ class ModelMesh:
         vertices = []
         normals = self._get_normals()
 
-        from SA3D.Modeling.ModelData.Weighted import WeightedBufferVertex
-        from System.Numerics import Vector3
-
         for vertex, nrm in zip(self._evaluated_mesh.vertices, normals):
             pos = vertex.undeformed_co
-            vertices.append(WeightedBufferVertex(
-                Vector3(pos.x, pos.z, -pos.y),
-                Vector3(nrm.x, nrm.z, -nrm.y)
+            vertices.append(SA3D_Modeling.WEIGHTED_VERTEX(
+                System.VECTOR3(pos.x, pos.z, -pos.y),
+                System.VECTOR3(nrm.x, nrm.z, -nrm.y)
             ))
 
         return vertices
@@ -343,26 +338,29 @@ class ModelMesh:
 
         # Color obtainer
 
-        def get_color(loop, vertex): return (1, 1, 1, 1)
         vertex_colors = self._evaluated_mesh.color_attributes.active_color
         if vertex_colors is not None:
             if vertex_colors.domain == 'POINT':
-                def get_color(loop, vertex):
+                def get_color(loop, vertex): # pylint: disable=unused-argument
                     return linear_to_srgb(vertex_colors.data[vertex].color)
             else:
-                def get_color(loop, vertex):
+                def get_color(loop, vertex): # pylint: disable=unused-argument
                     return linear_to_srgb(vertex_colors.data[loop].color)
+        else:
+            def get_color(loop, vertex): # pylint: disable=unused-argument
+                return (1, 1, 1, 1)
 
         # UV Obtainer
 
-        def get_uv(x): return (0, 0)
         uv_layer = self._evaluated_mesh.uv_layers.active
         if uv_layer is not None:
-            def get_uv(x): return uv_layer.data[x].uv
+            def get_uv(x):
+                return uv_layer.data[x].uv
+        else:
+            def get_uv(x): # pylint: disable=unused-argument
+                return (0, 0)
 
         # Collecting the data
-
-        from SA3D.Modeling.ModelData.Buffer import BufferCorner
 
         for polygon in self._evaluated_mesh.polygons:
             cornerset = corners[polygon.material_index]
@@ -371,10 +369,10 @@ class ModelMesh:
                 vcol = get_color(loop, vert)
                 uv = get_uv(loop)
 
-                cornerset.append(BufferCorner(
+                cornerset.append(SA3D_Modeling.BUFFER_CORNER(
                     vert,
-                    vcol[0], vcol[1], vcol[2], vcol[3],
-                    uv[0], 1 - uv[1]
+                    SA3D_Modeling.COLOR(vcol[0], vcol[1], vcol[2], vcol[3]),
+                    System.VECTOR2(uv[0], 1 - uv[1])
                 ))
 
         result_materials = []
@@ -386,7 +384,7 @@ class ModelMesh:
                 result_corners.append(cornerset)
 
         if len(result_corners) == 0:
-            raise Exception("Empty mesh!")
+            raise SAIOException("Empty mesh!")
 
         return result_corners, result_materials
 
@@ -404,9 +402,7 @@ class ModelMesh:
 
         corners, materials = self._get_polygon_data(texlist_manager)
 
-        from SA3D.Modeling.Blender import MeshStruct
-
-        return MeshStruct(
+        return SAIO_NET.MESH_STRUCT(
             self._evaluated_mesh.name,
             vertices,
             corners,
@@ -424,7 +420,7 @@ class ModelMesh:
             convert: bool = True):
 
         for mesh in meshes:
-            mesh._prepare_modifiers(apply_modifiers)
+            mesh._prepare_modifiers(apply_modifiers) # pylint: disable=protected-access
 
         texlist_manager = TexlistManager()
         texlist_manager.evaluate_texlists(context.scene)
@@ -433,7 +429,7 @@ class ModelMesh:
 
         mesh_structs = []
         for mesh in meshes:
-            mesh._evaluate(depsgraph)
+            mesh._evaluate(depsgraph) # pylint: disable=protected-access
 
             if convert:
                 weighted_buffer = mesh.convert_to_weighted_buffer(
@@ -441,6 +437,6 @@ class ModelMesh:
                 mesh_structs.append(weighted_buffer)
 
         for mesh in meshes:
-            mesh._cleanup_modifiers()
+            mesh._cleanup_modifiers() # pylint: disable=protected-access
 
         return mesh_structs

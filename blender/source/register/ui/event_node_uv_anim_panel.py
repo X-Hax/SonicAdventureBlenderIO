@@ -1,4 +1,6 @@
+import typing
 import bpy
+from bpy.types import AnyType, Context, UILayout
 
 from .base_panel import PropertiesPanel
 
@@ -34,15 +36,15 @@ EVENT_NODE_UVANIM_TOOLS: list[TOOL_PROPERTY] = [
 
 class SAIO_UL_EventNodeUVAnimList(bpy.types.UIList):
 
-    def draw_item(
+    def draw_item( # pylint: disable=signature-differs
             self,
-            context: bpy.types.Context,
-            layout: bpy.types.UILayout,
+            context,
+            layout,
             data,
             item,
-            icon: str,
+            icon,
             active_data,
-            active_propname,
+            active_property,
             index,
             flt_flag):
 
@@ -51,7 +53,6 @@ class SAIO_UL_EventNodeUVAnimList(bpy.types.UIList):
             "material_index",
             text="",
             emboss=False)
-
 
 class SAIO_MT_EventNodeUVAnimContextMenu(bpy.types.Menu):
     bl_label = "Texture list operations"
@@ -91,8 +92,7 @@ class SAIO_PT_EventNodeUVAnimPanel(PropertiesPanel):
         if context.active_object is None:
             return "No active object"
 
-        object = context.active_object
-        if object.type != 'MESH':
+        if context.active_object.type != 'MESH':
             return "Object not a Mesh"
 
         return None

@@ -9,6 +9,7 @@ class SAIO_PT_Scene(PropertiesPanel):
     bl_label = "SAIO Settings"
     bl_context = "scene"
 
+    @staticmethod
     def draw_lighting_panel(
             layout: bpy.types.UILayout,
             setting_properties: SAIO_Scene,
@@ -36,6 +37,7 @@ class SAIO_PT_Scene(PropertiesPanel):
             lighting_prop("Viewport blend cutoff", "viewport_alpha_cutoff")
         lighting_prop("Enable Backface Culling", "enable_backface_culling")
 
+    @staticmethod
     def draw_scene_properties(
             layout: bpy.types.UILayout,
             scene: bpy.types.Scene,

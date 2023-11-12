@@ -5,7 +5,6 @@ from . import (
     anim_import_operators,
     material_mass_edit_operators,
     texture_operators,
-    texture_operators,
     texture_name_operators,
     event_operators,
     event_node_uv_anim_operators,

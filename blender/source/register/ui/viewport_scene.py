@@ -17,13 +17,13 @@ class ViewportScenePanel(bpy.types.Panel):
 
     @classmethod
     def verify(cls, context):
-        return cls.base.verify(context)
+        return cls.base.verify(context) # pylint: disable=no-member
 
     def draw(self, context):
-        return self.base.draw(self, context)
+        return self.base.draw(self, context) # pylint: disable=no-member
 
     def draw_panel(self, context):
-        return self.base.draw_panel(self, context)
+        return self.base.draw_panel(self, context) # pylint: disable=no-member
 
 
 class SAIO_PT_VSP_Settings(ViewportScenePanel):

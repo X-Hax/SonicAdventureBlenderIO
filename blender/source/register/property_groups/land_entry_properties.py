@@ -251,11 +251,11 @@ class SAIO_LandEntry(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Object.saio_land_entry = PointerProperty(type=cls)
+        bpy.types.Object.saio_land_entry = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
 
     @staticmethod
-    def check_is_land_entry(object: bpy.types.Object):
-        if object.type != 'MESH':
+    def check_is_land_entry(obj: bpy.types.Object):
+        if obj.type != 'MESH':
             return "Object is not a mesh"
 
         return None

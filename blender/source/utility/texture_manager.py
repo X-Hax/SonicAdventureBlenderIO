@@ -1,9 +1,11 @@
-import bpy
 from typing import Union
+import bpy
+
 from ..register.property_groups.texture_properties import (
     SAIO_Texture,
     SAIO_TextureList,
 )
+
 from ..register.property_groups.texturename_properties import (
     SAIO_TextureNameList
 )
@@ -47,11 +49,14 @@ class CompiledTexlist:
     def get_index(self, value: Union[str, SAIO_Texture, bpy.types.Image]):
 
         if isinstance(value, str):
-            def check(tex): return tex.name == value
+            def check(tex):
+                return tex.name == value
         elif isinstance(value, SAIO_Texture):
-            def check(tex): return tex == value
+            def check(tex):
+                return tex == value
         elif isinstance(value, bpy.types.Image):
-            def check(tex): return tex.image == value
+            def check(tex):
+                return tex.image == value
 
         for i, tex in enumerate(self.textures):
             if check(tex):
@@ -125,13 +130,13 @@ class TexlistManager:
 
     def _eval_obj_materials(
             self,
-            object: bpy.types.Object,
+            obj: bpy.types.Object,
             texture_list: SAIO_TextureList,
             texture_names: SAIO_TextureNameList,
             compiled_list: CompiledTexlist):
 
-        texture_world = object.saio_texture_world
-        texturename_world = object.saio_texturename_world
+        texture_world = obj.saio_texture_world
+        texturename_world = obj.saio_texturename_world
 
         recompile = False
         if (texture_world is not None
@@ -148,16 +153,16 @@ class TexlistManager:
             compiled_list = self._get_compiled_tex_list(
                 texture_list, texture_names)
 
-        if object.type == 'MESH':
+        if obj.type == 'MESH':
             if compiled_list not in self._list_mapping:
                 material_list = set()
                 self._list_mapping[compiled_list] = material_list
             else:
                 material_list = self._list_mapping[compiled_list]
 
-            material_list.update(object.data.materials)
+            material_list.update(obj.data.materials)
 
-        for child in object.children:
+        for child in obj.children:
             self._eval_obj_materials(
                 child, texture_list, texture_names, compiled_list)
 

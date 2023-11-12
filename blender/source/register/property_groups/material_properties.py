@@ -76,7 +76,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
 
     flat_shading: BoolProperty(
         name="Flat Shading",
-        description="Render without shading",
+        description="Use non-interpolated normals for rendering, making every polygon appear flat",
         update=_update_material_values,
         default=False
     )
@@ -89,8 +89,8 @@ class SAIO_Material(bpy.types.PropertyGroup):
     )
 
     ignore_diffuse: BoolProperty(
-        name="Ignore Diffuse Lighting",
-        description="Ignores diffuse lighting when rendering",
+        name="Ignore Lighting",
+        description="Ignores lighting when rendering",
         update=_update_material_values,
         default=False
     )
@@ -267,16 +267,16 @@ class SAIO_Material(bpy.types.PropertyGroup):
             " coordinates should be saved, so that they can be used"
         ),
         items=(
-            ('TEXCOORD0', 'TexCoord0', ""),
-            ('TEXCOORD1', 'TexCoord1', ""),
-            ('TEXCOORD2', 'TexCoord2', ""),
-            ('TEXCOORD3', 'TexCoord3', ""),
-            ('TEXCOORD4', 'TexCoord4', ""),
-            ('TEXCOORD5', 'TexCoord5', ""),
-            ('TEXCOORD6', 'TexCoord6', ""),
-            ('TEXCOORD7', 'TexCoord7', ""),
-            ('TEXCOORDMAX', 'TexCoordMax', ""),
-            ('TEXCOORDNULL', 'TexCoordNull', ""),
+            ('TEXCOORD0', 'Texcoord 0', ""),
+            ('TEXCOORD1', 'Texcoord 1', ""),
+            ('TEXCOORD2', 'Texcoord 2', ""),
+            ('TEXCOORD3', 'Texcoord 3', ""),
+            ('TEXCOORD4', 'Texcoord 4', ""),
+            ('TEXCOORD5', 'Texcoord 5', ""),
+            ('TEXCOORD6', 'Texcoord 6', ""),
+            ('TEXCOORD7', 'Texcoord 7', ""),
+            ('TEXCOORDMAX', 'Texcoord Max', ""),
+            ('TEXCOORDNULL', 'Texcoord Null', ""),
         ),
         default='TEXCOORD0'
     )
@@ -287,14 +287,14 @@ class SAIO_Material(bpy.types.PropertyGroup):
         items=(
             ('MATRIX3X4', 'Matrix 3x4', ""),
             ('MATRIX2X4', 'Matrix 2x4', ""),
-            ('BITMAP0', 'Bitmap 0', ""),
-            ('BITMAP1', 'Bitmap 1', ""),
-            ('BITMAP2', 'Bitmap 2', ""),
-            ('BITMAP3', 'Bitmap 3', ""),
-            ('BITMAP4', 'Bitmap 4', ""),
-            ('BITMAP5', 'Bitmap 5', ""),
-            ('BITMAP6', 'Bitmap 6', ""),
-            ('BITMAP7', 'Bitmap 7', ""),
+            ('BUMP0', 'Bump 0', ""),
+            ('BUMP1', 'Bump 1', ""),
+            ('BUMP2', 'Bump 2', ""),
+            ('BUMP3', 'Bump 3', ""),
+            ('BUMP4', 'Bump 4', ""),
+            ('BUMP5', 'Bump 5', ""),
+            ('BUMP6', 'Bump 6', ""),
+            ('BUMP7', 'Bump 7', ""),
             ('SRTG', 'SRTG', ""),
         ),
         default='MATRIX2X4'
@@ -311,23 +311,23 @@ class SAIO_Material(bpy.types.PropertyGroup):
             ('NORMAL', 'Normal', ""),
             ('BINORMAL', 'Binormal', ""),
             ('TANGENT', 'Tangent', ""),
-            ('TEX0', 'Tex0', ""),
-            ('TEX1', 'Tex1', ""),
-            ('TEX2', 'Tex2', ""),
-            ('TEX3', 'Tex3', ""),
-            ('TEX4', 'Tex4', ""),
-            ('TEX5', 'Tex5', ""),
-            ('TEX6', 'Tex6', ""),
-            ('TEX7', 'Tex7', ""),
-            ('TEXCOORD0', 'TexCoord0', ""),
-            ('TEXCOORD1', 'TexCoord1', ""),
-            ('TEXCOORD2', 'TexCoord2', ""),
-            ('TEXCOORD3', 'TexCoord3', ""),
-            ('TEXCOORD4', 'TexCoord4', ""),
-            ('TEXCOORD5', 'TexCoord5', ""),
-            ('TEXCOORD6', 'TexCoord6', ""),
-            ('COLOR0', 'Color0', ""),
-            ('COLOR1', 'Color1', ""),
+            ('TEXCOORD0', 'Texcoord 0', ""),
+            ('TEXCOORD1', 'Texcoord 1', ""),
+            ('TEXCOORD2', 'Texcoord 2', ""),
+            ('TEXCOORD3', 'Texcoord 3', ""),
+            ('TEXCOORD4', 'Texcoord 4', ""),
+            ('TEXCOORD5', 'Texcoord 5', ""),
+            ('TEXCOORD6', 'Texcoord 6', ""),
+            ('TEXCOORD7', 'Texcoord 7', ""),
+            ('BUMPTEXCOORD0', 'Bump TexCoord 0', ""),
+            ('BUMPTEXCOORD1', 'Bump TexCoord 1', ""),
+            ('BUMPTEXCOORD2', 'Bump TexCoord 2', ""),
+            ('BUMPTEXCOORD3', 'Bump TexCoord 3', ""),
+            ('BUMPTEXCOORD4', 'Bump TexCoord 4', ""),
+            ('BUMPTEXCOORD5', 'Bump TexCoord 5', ""),
+            ('BUMPTEXCOORD6', 'Bump TexCoord 6', ""),
+            ('COLOR0', 'Color 0', ""),
+            ('COLOR1', 'Color 1', ""),
         ),
         default='TEX0'
     )
@@ -356,4 +356,4 @@ class SAIO_Material(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Material.saio_material = PointerProperty(type=cls)
+        bpy.types.Material.saio_material = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return

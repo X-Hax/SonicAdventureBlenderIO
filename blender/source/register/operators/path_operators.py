@@ -7,9 +7,10 @@ from . import base
 
 from ...importing.i_path import PathProcessor
 from ...exporting.o_path import PathEvaluator
-from ...utility import dll_utils, math_utils
+from ...utility import math_utils
 from ...utility.draw import prop_advanced
 from ...exceptions import UserException
+from ...dotnet import load_dotnet, SAIO_NET
 
 
 PATH_CODE_LUT = {
@@ -21,7 +22,7 @@ PATH_CODE_LUT = {
 
 
 def _enable_curve_normals(context: bpy.types.Context):
-    for area in bpy.context.screen.areas:
+    for area in context.screen.areas:
         if area.type == 'VIEW_3D':
             for space in area.spaces:
                 if space.type == 'VIEW_3D':
@@ -44,11 +45,10 @@ class SAIO_OT_Import_Path(base.SAIOBaseFileLoadOperator):
         return context.mode == 'OBJECT'
 
     def _execute(self, context: bpy.types.Context):
-        dll_utils.load_library()
+        load_dotnet()
 
-        from SA3D.Modeling.Blender import CurvePath, PathData
-        pathdata = PathData.ReadINIFile(self.filepath)
-        points = CurvePath.ToPoints(pathdata)
+        pathdata = SAIO_NET.PATH_DATA.ReadINIFile(self.filepath)
+        points = SAIO_NET.CURVE_PATH.ToPoints(pathdata)
 
         positions = [Vector((p.X, -p.Z, p.Y)) for p in points.Item1]
         normals = [Vector((n.X, -n.Z, n.Y)) for n in points.Item2]
@@ -260,7 +260,7 @@ class SAIO_OT_Export_Path(base.SAIOBaseFileSaveOperator):
         return super().check(context)
 
     def _execute(self, context: bpy.types.Context):
-        dll_utils.load_library()
+        load_dotnet()
 
         evaluator = PathEvaluator()
         path = evaluator.evaluate_path(context.active_object)

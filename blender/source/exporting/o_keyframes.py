@@ -1,6 +1,6 @@
+import math
 import bpy
 from bpy.types import FCurve, Action
-import math
 from mathutils import Vector, Matrix, Quaternion, Euler
 
 from . import o_matrix
@@ -8,7 +8,7 @@ from .o_mesh import ModelMesh
 
 from ..utility import camera_utils
 from ..utility.anim_parameters import AnimParameters
-
+from ..dotnet import System, SA3D_Common, SA3D_Modeling
 from ..exceptions import UserException
 
 
@@ -17,13 +17,6 @@ class KeyframeEvaluator:
     _start: int
     _end: int
     _anim_parameters: AnimParameters
-
-    _keyframes: any
-    _rotation_utils: any
-    _vector3: any
-    _matrix4x4: any
-    _matrix_dict: any
-    _compl_matrix_dict: any
 
     _is_quat: bool
     _obj_rotation_mode: str
@@ -43,20 +36,6 @@ class KeyframeEvaluator:
         self._end = end
         self._anim_parameters = anim_parameters
 
-        from SA3D.Modeling.ObjectData.Animation import Keyframes
-        from SA3D.Modeling.ObjectData.Animation.Utils \
-            import KeyframeSetRotationUtils
-        from System.Numerics import Vector3, Matrix4x4
-        from System.Collections.Generic import SortedDictionary, Dictionary
-        from System import UInt32, Array
-
-        self._keyframes = Keyframes
-        self._rotation_utils = KeyframeSetRotationUtils
-        self._vector3 = Vector3
-        self._matrix4x4 = Matrix4x4
-        self._matrix_dict = SortedDictionary[UInt32, Matrix4x4]
-        self._compl_matrix_dict = Dictionary[UInt32, Array[Matrix4x4]]
-
     def _setup(self):
         self._is_quat = False
         self._obj_rotation_mode = 'XYZ'
@@ -64,7 +43,7 @@ class KeyframeEvaluator:
         self._position_offset = Vector()
         self._rotation_matrix = Matrix.Identity(4)
         self._rotation_matrix_inv = self._rotation_matrix.copy()
-        self._output = self._keyframes()
+        self._output = SA3D_Modeling.KEYFRAMES()
 
     def _eval_nonlinear_frames(
             self,
@@ -166,7 +145,7 @@ class KeyframeEvaluator:
 
             position = base_matrix @ position
 
-            net_position = self._vector3(
+            net_position = System.VECTOR3(
                 position.x,
                 position.z,
                 -position.y)
@@ -224,8 +203,8 @@ class KeyframeEvaluator:
             base_matrix: Matrix):
         rot_values = self._bake_keyframes(rot_curves)
 
-        matrices = self._matrix_dict()
-        compl_matrices = self._compl_matrix_dict()
+        matrices = SA3D_Modeling.GEN_MATRIX_KEYFRAMES()
+        compl_matrices = SA3D_Modeling.GEN_COMPLEMENTARY_MATRIX_DICT()
         base_rotation = base_matrix.to_quaternion().to_matrix().to_4x4()
 
         def add_rotation(index: int, mtx: Matrix):
@@ -261,14 +240,14 @@ class KeyframeEvaluator:
                 or self._anim_parameters.rotation_mode == 'KEEP'
                 and self._is_quat):
 
-            self._rotation_utils.QuaternionFromMatrixRotations(
+            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.MatrixToQuaternion(
                 self._output,
                 matrices,
                 self._is_quat,
                 self._anim_parameters.quaternion_threshold,
                 self._rotate_zyx)
         else:
-            self._rotation_utils.RotationFromMatrixRotations(
+            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.MatrixToEuler(
                 self._output,
                 matrices,
                 self._is_quat,
@@ -285,12 +264,12 @@ class KeyframeEvaluator:
 
         for i, val in scale_values.items():
             scale = Vector((val[0], val[1], val[2])) * base_scale
-            net_scale = self._vector3(scale[0], scale[2], scale[1])
+            net_scale = System.VECTOR3(scale[0], scale[2], scale[1])
             self._output.Scale.Add(i, net_scale)
 
     @staticmethod
-    def all_none(iter):
-        return all(v is None for v in iter)
+    def all_none(iterator):
+        return all(v is None for v in iterator)
 
     def _optimize_keyframes(self):
 
@@ -414,7 +393,7 @@ class KeyframeEvaluator:
             return False
 
         def evaluate_positions(curves, output, default_location):
-            vector = self._vector3(
+            vector = System.VECTOR3(
                 default_location.x,
                 default_location.z,
                 -default_location.y)
@@ -466,13 +445,21 @@ class ShapeKeyframeEvaluator:
 
     _shape_dict: dict[str, tuple[any, any]]
 
+    _depsgraph: bpy.types.Depsgraph
     _duration: int
+    _start: int
+    _frames: int
 
     def __init__(self, modelmesh: ModelMesh, normal_mode: str):
         self._modelmesh = modelmesh
         self._normal_mode = normal_mode
+
         self._shape_dict = {}
+
+        self._depsgraph = None
         self._duration = 0
+        self._start = 0
+        self._frames = 0
 
     def _verify_keyframe(
             self,
@@ -575,11 +562,7 @@ class ShapeKeyframeEvaluator:
 
     def _create_keyframes(self):
 
-        from SA3D.Modeling.ObjectData.Animation import Keyframes
-        from SA3D.Lookup import LabeledArray
-        from System.Numerics import Vector3
-
-        keyframes = Keyframes()
+        keyframes = SA3D_Modeling.KEYFRAMES()
 
         ref_name = self._modelmesh.object.data.shape_keys.reference_key.name
         vertex_matrix, normal_matrix = self._modelmesh.get_matrices()
@@ -595,13 +578,13 @@ class ShapeKeyframeEvaluator:
 
                 for vertex in shape_mesh.vertices:
                     position = vertex_matrix @ vertex.co
-                    shape_positions.append(Vector3(
+                    shape_positions.append(System.VECTOR3(
                         position.x,
                         position.z,
                         -position.y,
                     ))
 
-                vertex_array = LabeledArray[Vector3](
+                vertex_array = SA3D_Common.LABELED_ARRAY[System.VECTOR3](
                     shape_name.lower(), shape_positions)
 
                 if self._normal_mode not in ['NULLED', 'FULL']:
@@ -609,13 +592,13 @@ class ShapeKeyframeEvaluator:
                 else:
 
                     if self._normal_mode == 'NULLED':
-                        shape_normals = [Vector3(0, 0, 0)]
+                        shape_normals = [System.VECTOR3(0, 0, 0)]
                     else:  # 'FULL'
                         shape_normals = []
                         normals = ModelMesh.get_normals(shape_mesh)
                         for normal in normals:
                             normal = normal_matrix @ normal
-                            shape_normals.append(Vector3(
+                            shape_normals.append(System.VECTOR3(
                                 normal.x,
                                 normal.z,
                                 -normal.y,
@@ -632,7 +615,7 @@ class ShapeKeyframeEvaluator:
                     if normal_name == vertex_array.Label:
                         normal_name += "_normal"
 
-                    normal_array = LabeledArray[Vector3](
+                    normal_array = SA3D_Common.LABELED_ARRAY[System.VECTOR3](
                         normal_name, shape_normals)
 
                 self._shape_dict[shape_name] = (vertex_array, normal_array)

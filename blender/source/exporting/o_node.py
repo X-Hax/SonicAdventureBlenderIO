@@ -2,7 +2,10 @@ import bpy
 from bpy.types import Object as BObject, PoseBone
 from mathutils import Matrix
 
-VIRTUAL_MODELS = list[tuple[BObject, Matrix]]
+from ..dotnet import SAIO_NET
+from ..exceptions import SAIOException
+
+VirtualModels = list[tuple[BObject, Matrix]]
 
 
 class NodeStructure:
@@ -25,10 +28,10 @@ class NodeStructure:
     name_mapping: dict[str, int]
     '''Source Node name -> node index (used for weights and root indices)'''
 
-    weighted_models: VIRTUAL_MODELS
+    weighted_models: VirtualModels
     '''Armature children that are deformed with weights'''
 
-    bone_models: dict[str, VIRTUAL_MODELS]
+    bone_models: dict[str, VirtualModels]
     '''Armature children that are parented to bones //
     [name] = (object, vertex matrix)'''
 
@@ -76,8 +79,7 @@ class NodeStructure:
 
         # convert node attributes
         if source is None:
-            from SA3D.Modeling.Blender import Flags
-            node_attributes = Flags.ComposeNodeAttributes(
+            node_attributes = SAIO_NET.Flags.ComposeNodeAttributes(
                 False, False, False, False, False, False, False, False)
         else:
             from . import o_enum
@@ -92,27 +94,25 @@ class NodeStructure:
         net_mtx = o_matrix.bpy_to_net_matrix(
             model_matrix if apply_base_matrix else matrix)
 
-        from SA3D.Modeling.Blender import NodeStruct
-
-        self.nodes.append(NodeStruct(
+        self.nodes.append(SAIO_NET.NODE_STRUCT(
             node_name,
             parent_index,
             node_attributes,
             net_mtx))
 
-    def add_virtual_model(self, object: BObject):
-        root_parent = object
-        while object.parent is not self.armature_object:
-            root_parent = object.parent
+    def add_virtual_model(self, obj: BObject):
+        root_parent = obj
+        while obj.parent is not self.armature_object:
+            root_parent = obj.parent
 
         bone_name = None
         if root_parent.parent_type == 'BONE':
             bone_name = root_parent.parent_bone
-        elif root_parent != object or not any(
-                [x.type == 'ARMATURE' for x in object.modifiers]):
+        elif root_parent != obj or not any(
+                [x.type == 'ARMATURE' for x in obj.modifiers]):
             bone_name = self.root_bone_name
 
-        result = (object, object.matrix_world.copy())
+        result = (obj, obj.matrix_world.copy())
 
         if bone_name is not None:
             if bone_name not in self.bone_models:
@@ -220,34 +220,34 @@ class NodeEvaluator:
         self._parentless.clear()
         self._hierarchy_dictionary.clear()
 
-        for object in objects:
+        for obj in objects:
 
-            parent = object.parent
+            parent = obj.parent
             while parent is not None and parent not in objects:
                 parent = parent.parent
 
             if parent is not None:
                 if parent not in self._hierarchy_dictionary:
-                    self._hierarchy_dictionary[parent] = [object]
+                    self._hierarchy_dictionary[parent] = [obj]
                 else:
-                    self._hierarchy_dictionary[parent].append(object)
+                    self._hierarchy_dictionary[parent].append(obj)
             else:
-                self._parentless.append(object)
+                self._parentless.append(obj)
 
-            if object not in self._hierarchy_dictionary:
-                self._hierarchy_dictionary[object] = []
+            if obj not in self._hierarchy_dictionary:
+                self._hierarchy_dictionary[obj] = []
 
         for objects in self._hierarchy_dictionary.values():
             objects.sort(key=lambda x: x.name)
 
         self._parentless.sort(key=lambda x: x.name)
 
-    def _eval_object(self, object: BObject, parent_index: int):
+    def _eval_object(self, obj: BObject, parent_index: int):
 
         index = self._node_count
-        self._create_node(object, parent_index)
+        self._create_node(obj, parent_index)
 
-        for child in self._hierarchy_dictionary[object]:
+        for child in self._hierarchy_dictionary[obj]:
             self._eval_object(child, index)
 
     ################################################################
@@ -265,28 +265,28 @@ class NodeEvaluator:
         for child in children:
             self._eval_bone(child, index)
 
-    def _eval_armature_child(self, object: BObject):
+    def _eval_armature_child(self, obj: BObject):
         # Only adding meshes
-        if object.type == 'MESH' and len(object.data.polygons) > 0:
-            self._output.add_virtual_model(object)
+        if obj.type == 'MESH' and len(obj.data.polygons) > 0:
+            self._output.add_virtual_model(obj)
 
-        for child in self._hierarchy_dictionary[object]:
+        for child in self._hierarchy_dictionary[obj]:
             self._eval_armature_child(child)
 
-    def _eval_armature(self, object: BObject):
+    def _eval_armature(self, obj: BObject):
 
-        if len(object.data.bones) == 0:
-            raise Exception("Armature has no bones")
+        if len(obj.data.bones) == 0:
+            raise SAIOException("Armature has no bones")
 
-        self._output.armature_object = object
+        self._output.armature_object = obj
 
         if not self._apply_pose:
-            prev_pose_position = object.data.pose_position
-            object.data.pose_position = 'REST'
+            prev_pose_position = obj.data.pose_position
+            obj.data.pose_position = 'REST'
             self._context.view_layer.update()
 
         parentless_bones = [
-            bone for bone in object.pose.bones
+            bone for bone in obj.pose.bones
             if bone.parent is None]
 
         parent_index = -1
@@ -297,22 +297,22 @@ class NodeEvaluator:
         for bone in parentless_bones:
             self._eval_bone(bone, parent_index)
 
-        for child in self._hierarchy_dictionary[object]:
+        for child in self._hierarchy_dictionary[obj]:
             self._eval_armature_child(child)
 
         if not self._apply_pose:
-            object.data.pose_position = prev_pose_position
+            obj.data.pose_position = prev_pose_position
             self._context.view_layer.update()
 
     ################################################################
 
     def evaluate(self, objects: list[BObject]):
 
-        from ..utility import dll_utils
-        dll_utils.load_library()
+        from ..dotnet import load_dotnet
+        load_dotnet()
 
         if len(objects) == 0:
-            raise Exception("No objects to export")
+            raise SAIOException("No objects to export")
 
         self._setup()
         self._evaluate_object_tree(objects)

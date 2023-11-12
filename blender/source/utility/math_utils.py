@@ -45,11 +45,11 @@ def remove_deviations(
         while i < to_index:
             previous = frames[i - 1]
             current = frames[i]
-            next = frames[i + 1]
+            next_value = frames[i + 1]
 
-            linear_fac = (current - previous) / (next - previous)
+            linear_fac = (current - previous) / (next_value - previous)
 
-            linear = lerp(values[previous], values[next], linear_fac)
+            linear = lerp(values[previous], values[next_value], linear_fac)
             actual = values[current]
 
             deviation = calculate_deviation(linear, actual)

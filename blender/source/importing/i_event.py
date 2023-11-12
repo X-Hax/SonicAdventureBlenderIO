@@ -1,9 +1,15 @@
 import bpy
 
 from . import i_enum
+from .i_motion import ShapeMotionProcessor
 
 from ..utility.camera_utils import CameraSetup
-from ..utility.event_lut import *
+from ..utility.event_lut import (
+    OVERLAY_UPGRADE_LUT,
+    INTEGRATED_UPGRADE_LUT
+)
+
+from ..dotnet import SAIO_NET
 
 
 class EventImporter:
@@ -36,6 +42,8 @@ class EventImporter:
     particles: list[bpy.types.Object]
 
     model_name_lut: dict[str, str]
+
+    shape_motion_processor: ShapeMotionProcessor
 
     def __init__(
             self,
@@ -147,11 +155,6 @@ class EventImporter:
             self.camera_setup.camera_data.animation_data.nla_tracks[0],
         )
 
-        camera_data = (
-            self.scene_data[0]
-            .CameraAnimations[0]
-            .Camera)
-
         camera = self.camera_setup.camera_data
         camera.clip_start = 1
         camera.clip_end = 100000
@@ -230,42 +233,42 @@ class EventImporter:
 
             return clone
 
-        object = self._get_model(model.Label)
-        if object.name in collection.objects:
+        obj = self._get_model(model.Label)
+        if obj.name in collection.objects:
             append = 0
             while True:
                 append += 1
                 name = f"{model.Label}_{append:03}"
                 index = bpy.data.objects.find(name)
                 if index == -1:
-                    object = None
+                    obj = None
                     break
-                object = bpy.data.objects[index]
-                if object.name not in collection.objects:
+                obj = bpy.data.objects[index]
+                if obj.name not in collection.objects:
                     break
 
-            if object is None:
-                object = add_hierarchy_clone(
+            if obj is None:
+                obj = add_hierarchy_clone(
                     self._get_model(model.Label), append)
-                self.model_name_lut[name] = object.name
+                self.model_name_lut[name] = obj.name
             else:
-                add_hierarchy(object)
+                add_hierarchy(obj)
         else:
-            add_hierarchy(object)
+            add_hierarchy(obj)
 
-        return object
+        return obj
 
     def _add_entity_to_collection(
-            self, model, collection, type, attributes, layer, shadowmodel):
+            self, model, collection, entry_type, attributes, layer, shadowmodel):
         if model is None:
             return
 
-        object = self._add_model_to_collection(model, collection)
+        obj = self._add_model_to_collection(model, collection)
 
-        evententry_properties = object.saio_event_entry
-        evententry_properties.entry_type = type
+        evententry_properties = obj.saio_event_entry
+        evententry_properties.entry_type = entry_type
 
-        if type != 'SHADOW':
+        if entry_type != 'SHADOW':
             evententry_properties.shadow_model = shadowmodel
             evententry_properties.layer = layer
             i_enum.from_evententry_attributes(
@@ -293,13 +296,13 @@ class EventImporter:
         if model is None:
             return
 
-        object = self._add_model_to_collection(model, self.upgrades_collection)
+        obj = self._add_model_to_collection(model, self.upgrades_collection)
 
         upgrade_properties = getattr(
             self.base_scene.saio_scene.event,
-            "au_" + ATTACH_UPGRADE_LUT[index].lower())
+            "au_" + OVERLAY_UPGRADE_LUT[index].lower())
 
-        setattr(upgrade_properties, f"model{(2 if second else 1)}", object)
+        setattr(upgrade_properties, f"model{(2 if second else 1)}", obj)
 
         if target is None:
             return
@@ -316,18 +319,18 @@ class EventImporter:
                 f"target{(2 if second else 1)}_bone",
                 self._get_bone_name(target.Label))
 
-    def _setup_override_upgrade(self, model, index, type):
+    def _setup_override_upgrade(self, model, index, upgrade_type):
         if model is None:
             return
 
         upgrade_properties = getattr(
             self.base_scene.saio_scene.event,
-            "ou_" + UPGRADE_LUT[index].lower())
+            "ou_" + INTEGRATED_UPGRADE_LUT[index].lower())
 
         fieldname = "override2"
-        if type == 1:
+        if upgrade_type == 1:
             fieldname = "override1"
-        elif type == 2:
+        elif upgrade_type == 2:
             fieldname = "base"
 
         target_object = self._get_model(model.Label)
@@ -382,11 +385,11 @@ class EventImporter:
 
         for i in range(particle_count):
 
-            object = bpy.data.objects.new(f"{self.name}_particle_{i:03}", None)
-            object.saio_event_entry.entry_type = 'PARTICLE'
+            obj = bpy.data.objects.new(f"{self.name}_particle_{i:03}", None)
+            obj.saio_event_entry.entry_type = 'PARTICLE'
 
-            self.particle_collection.objects.link(object)
-            self.particles.append(object)
+            self.particle_collection.objects.link(obj)
+            self.particles.append(obj)
 
     def _setup_other_models(self):
         from mathutils import Vector
@@ -418,12 +421,12 @@ class EventImporter:
             mesh = bpy.data.meshes.new(f"{self.name}_refl_{i:03}")
             mesh.from_pydata(verts, [], tris)
 
-            object = bpy.data.objects.new(mesh.name, mesh)
-            object.location = center
-            object.saio_event_entry.entry_type = "REFLECTION"
-            object.color = (1, 1, 1, reflection.Transparency)
+            obj = bpy.data.objects.new(mesh.name, mesh)
+            obj.location = center
+            obj.saio_event_entry.entry_type = "REFLECTION"
+            obj.color = (1, 1, 1, reflection.Transparency)
 
-            self.reflections_collection.objects.link(object)
+            self.reflections_collection.objects.link(obj)
 
     ######################################################################
 
@@ -451,31 +454,31 @@ class EventImporter:
 
     def _setup_node_animation(
             self,
-            object: bpy.types.Object,
+            obj: bpy.types.Object,
             motion,
             frame: int):
         from .i_motion import NodeMotionProcessor
 
         action = NodeMotionProcessor.process_motion(
             motion,
-            object,
+            obj,
             False,
             "ANIM",
             0.01)
 
-        anim_data = object.animation_data
+        anim_data = obj.animation_data
         if anim_data is None:
-            anim_data = object.animation_data_create()
+            anim_data = obj.animation_data_create()
 
             # if bones have a default scale, we need to
             # add those in a lower nla track
-            if object.type == "ARMATURE" \
+            if obj.type == "ARMATURE" \
                 and any([not b.bone.saio_node.ignore_scale
-                        for b in object.pose.bones]):
+                        for b in obj.pose.bones]):
 
                 scale_action = bpy.data.actions.new(
-                    object.name + "_scales")
-                for b in object.pose.bones:
+                    obj.name + "_scales")
+                for b in obj.pose.bones:
                     if b.bone.saio_node.ignore_scale:
                         continue
 
@@ -505,16 +508,16 @@ class EventImporter:
 
     def _setup_entitity_shape_animation(
             self,
-            object: bpy.types.Object,
+            obj: bpy.types.Object,
             motion,
             frame: int,
             frame_num: int):
 
         actions = self.shape_motion_processor.process(
-            motion, object, frame_num)
+            motion, obj, frame_num)
 
-        for object, action in actions.items():
-            shape_keys: bpy.types.Key = object.data.shape_keys
+        for obj, action in actions.items():
+            shape_keys: bpy.types.Key = obj.data.shape_keys
             if shape_keys.animation_data is None:
                 shape_keys.animation_data_create()
                 nla = shape_keys.animation_data.nla_tracks.new()
@@ -544,22 +547,21 @@ class EventImporter:
                 num += 1
                 name = f"{model.Label}_{num:03}"
 
-        object = self._get_model(name)
+        obj = self._get_model(name)
 
         if entity.Animation is not None:
             self._setup_node_animation(
-                object, entity.Animation, start_frame)
+                obj, entity.Animation, start_frame)
 
         if entity.ShapeAnimation is not None:
             self._setup_entitity_shape_animation(
-                object,
+                obj,
                 entity.ShapeAnimation,
                 start_frame,
                 frame_num)
 
     def _setup_animations(self):
 
-        from .i_motion import ShapeMotionProcessor
         self.shape_motion_processor = ShapeMotionProcessor(self.optimize)
 
         for cut_scene, scene_data in zip(self.cuts, self.scene_data):
@@ -588,8 +590,6 @@ class EventImporter:
     ######################################################################
 
     def _setup_other(self):
-        from SA3D.Modeling.Blender import Cutscene
-
         self.base_scene.saio_scene.event.drop_shadow_control \
             = self.event_data.EventData.DropShadowControl
 
@@ -618,7 +618,7 @@ class EventImporter:
 
                     element = node_uv_anim_list.new()
 
-                    element.material_index = Cutscene.GetMaterialIndex(
+                    element.material_index = SAIO_NET.CUTSCENE.GetMaterialIndex(
                         block.Model, anim.TextureChunk)
 
     def process(self, event_data):

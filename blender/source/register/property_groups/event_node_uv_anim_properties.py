@@ -23,9 +23,13 @@ class SAIO_EventNode_UVAnimList(BaseList):
         name="UV Animations"
     )
 
+    @classmethod
+    def _get_index_comparator(cls, value):
+        raise NotImplementedError()
+
     @ classmethod
     def register(cls):
-        bpy.types.Object.saio_eventnode_uvanims = PointerProperty(
+        bpy.types.Object.saio_eventnode_uvanims = PointerProperty( # pylint: disable=assignment-from-no-return
             type=cls,
             name="SAIO Event Node UV Aims"
         )

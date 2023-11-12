@@ -9,10 +9,10 @@ class PropertiesPanel(bpy.types.Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     @classmethod
-    def verify(cls, context: bpy.types.Context) -> str | None:
+    def verify(cls, context: bpy.types.Context) -> str | None: # pylint: disable=unused-argument
         return None
 
-    def draw_panel(self, context: bpy.types.Context):
+    def draw_panel(self, context: bpy.types.Context): # pylint: disable=unused-argument
         return
 
     def draw(self, context: bpy.types.Context):

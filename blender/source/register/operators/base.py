@@ -8,7 +8,7 @@ from ...exceptions import UserException
 
 class SAIOBaseOperator(bpy.types.Operator):
 
-    def _invoke(self, context: Context, event: Event):
+    def _invoke(self, context: Context, event: Event): # pylint: disable=unused-argument
         return self._execute(context)
 
     def invoke(self, context: Context, event: Event):
@@ -18,7 +18,7 @@ class SAIOBaseOperator(bpy.types.Operator):
             self.report({'ERROR'}, e.message)
             return {'CANCELLED'}
 
-    def _execute(self, context: bpy.types.Context):
+    def _execute(self, context: bpy.types.Context): # pylint: disable=unused-argument
         return {'FINISHED'}
 
     def execute(self, context):
@@ -76,7 +76,7 @@ class SAIOBaseFileSaveOperator(SAIOBaseOperator):
             else:
                 filepath = os.path.splitext(filepath)[0]
 
-        filepath = bpy.path.ensure_ext(
+        filepath = bpy.path.ensure_ext(  # pylint: disable=assignment-from-no-return
             os.path.splitext(filepath)[0],
             self.filename_ext,
         )
@@ -96,14 +96,14 @@ class SAIOBaseFileSaveOperator(SAIOBaseOperator):
 
 class ListAdd:
 
-    def list_execute(self, context, list):
-        list.new()
+    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+        target_list.new()
 
 
 class ListRemove:
 
-    def list_execute(self, context, list):
-        list.remove(list.active_index)
+    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+        target_list.remove(target_list.active_index)
 
 
 class ListMove:
@@ -116,26 +116,26 @@ class ListMove:
         )
     )
 
-    def list_execute(self, context, list):
-        old_index = list.active_index
+    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+        old_index = target_list.active_index
 
         if old_index == -1:
             return
 
         new_index = (
-            list.active_index
+            target_list.active_index
             + (-1 if self.direction == 'UP'
                 else 1)
         )
 
-        if new_index < 0 or new_index >= len(list):
+        if new_index < 0 or new_index >= len(target_list):
             return
 
-        list.move(
+        target_list.move(
             old_index,
             new_index)
 
 
 class ListClear:
-    def list_execute(self, context, list):
-        list.clear()
+    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+        target_list.clear()

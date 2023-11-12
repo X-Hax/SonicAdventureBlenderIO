@@ -9,7 +9,7 @@ from . import (
     manual
 )
 
-from ..utility import dll_utils
+from ..dotnet import unload_dotnet
 
 classes = []
 
@@ -20,7 +20,7 @@ classes.extend(ui.to_register)
 
 def _install_pythondotnet():
     try:
-        import pythonnet
+        import pythonnet  # pylint: disable=unused-import
     except ModuleNotFoundError:
         import pip
         pip.main(["install", "pythonnet"])
@@ -47,7 +47,7 @@ def register_classes(bl_info):
 def unregister_classes():
     """Unloading classes loaded in register(), as well as various cleanup"""
 
-    dll_utils.unload_library()
+    unload_dotnet()
 
     addon_updater.unregister_addon_updater()
 
@@ -56,4 +56,3 @@ def unregister_classes():
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
-

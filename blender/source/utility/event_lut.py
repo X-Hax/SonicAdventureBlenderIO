@@ -1,4 +1,4 @@
-UPGRADE_LUT = {
+INTEGRATED_UPGRADE_LUT = {
     "SONLS": 0,
     0: "SONLS",
 
@@ -88,7 +88,7 @@ UPGRADE_LUT = {
 
 }
 
-ATTACH_UPGRADE_LUT = {
+OVERLAY_UPGRADE_LUT = {
     "SONLS": 0,
     0: "SONLS",
 

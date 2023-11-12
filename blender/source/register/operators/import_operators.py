@@ -9,7 +9,7 @@ from bpy.types import Context
 
 from .base import SAIOBaseFileLoadOperator
 
-from ...utility import dll_utils
+from ...dotnet import load_dotnet, SAIO_NET
 
 
 class ModelImportOperator(SAIOBaseFileLoadOperator):
@@ -74,9 +74,8 @@ class SAIO_OT_Import_Model(ModelImportOperator):
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
-        dll_utils.load_library()
+        load_dotnet()
 
-        from SA3D.Modeling.Blender import Model
         from ...importing import i_node
 
         scene = context.scene
@@ -84,7 +83,7 @@ class SAIO_OT_Import_Model(ModelImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                import_data = Model.Import(filepath, self.optimize)
+                import_data = SAIO_NET.MODEL.Import(filepath, self.optimize)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -133,15 +132,14 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
-        dll_utils.load_library()
-        from SA3D.Modeling.Blender import BLandTable
+        load_dotnet()
         from ...importing import i_landtable
 
         for file in self.files:
             filepath = os.path.join(directory, file.name)
 
             try:
-                import_data = BLandTable.Import(filepath, self.optimize)
+                import_data = SAIO_NET.LANDTABLE_WRAPPER.Import(filepath, self.optimize)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -181,11 +179,10 @@ class SAIO_OT_Import_Event(SAIOBaseFileLoadOperator):
         return context.mode == 'OBJECT'
 
     def _execute(self, context):
-        dll_utils.load_library()
+        load_dotnet()
 
-        from SA3D.Modeling.Blender import Cutscene
         try:
-            import_data = Cutscene.Import(self.filepath, self.optimize)
+            import_data = SAIO_NET.CUTSCENE.Import(self.filepath, self.optimize)
         except Exception as error:
             print(f"An error occured while importing {self.filepath}")
             raise error

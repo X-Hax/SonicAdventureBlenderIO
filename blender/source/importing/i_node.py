@@ -2,7 +2,7 @@ import bpy
 from mathutils import Matrix, Vector, Quaternion
 
 from . import i_enum, i_matrix, i_mesh
-
+from ..exceptions import SAIOException
 
 class NodeProcessor:
 
@@ -104,7 +104,7 @@ class NodeProcessor:
         self._pose_matrices.append(local_scale)
 
         # finding the unscaled bone matrix
-        bone_matrix = (parent_matrix @ local_space)
+        bone_matrix = parent_matrix @ local_space
         pos, rot, _ = bone_matrix.decompose()
 
         bone.matrix = Matrix.LocRotScale(pos, rot, None)
@@ -259,8 +259,6 @@ class NodeProcessor:
         self._setup_mesh_modifiers(mesh_obj)
 
     def _merge_armature_meshes(self):
-        from mathutils import Matrix
-
         pose_info = {}
         for bone in self._armature_obj.pose.bones:
             pose_info[bone.name] = bone.matrix_basis.copy()
@@ -340,7 +338,7 @@ class NodeProcessor:
         for mesh in self.meshes:
             for node_index in mesh.node_indices:
                 if node_index in mesh_dict:
-                    raise Exception("Duplicate node index in meshes!")
+                    raise SAIOException("Duplicate node index in meshes!")
                 mesh_dict[node_index] = mesh
 
         for index, node in enumerate(nodes):
@@ -355,22 +353,22 @@ class NodeProcessor:
             if len(nodes) > 1:
                 name = self._eval_name(index, node.Label)
 
-            object = bpy.data.objects.new(name, data)
-            self.node_name_lut[node.Label] = object.name
+            obj = bpy.data.objects.new(name, data)
+            self.node_name_lut[node.Label] = obj.name
 
-            object.empty_display_type = 'ARROWS'
-            self.object_map[node] = object
-            self._collection.objects.link(object)
+            obj.empty_display_type = 'ARROWS'
+            self.object_map[node] = obj
+            self._collection.objects.link(obj)
 
             i_enum.from_node_attributes(
-                object.saio_node,
+                obj.saio_node,
                 node.Attributes)
 
             if node.Parent in self.object_map:
                 parent_object = self.object_map[node.Parent]
-                object.parent = parent_object
+                obj.parent = parent_object
 
-            object.matrix_world = matrices[index]
+            obj.matrix_world = matrices[index]
 
         self.ensure_order = prev_ensure_order
 

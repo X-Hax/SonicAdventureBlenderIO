@@ -99,14 +99,15 @@ class SAIO_EventEntry(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Object.saio_event_entry = PointerProperty(type=cls)
+        bpy.types.Object.saio_event_entry = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
 
-    def check_is_event_entry(object: bpy.types.Object):
+    @staticmethod
+    def check_is_event_entry(obj: bpy.types.Object):
 
-        if object.type not in ['MESH', 'EMPTY', 'ARMATURE']:
+        if obj.type not in ['MESH', 'EMPTY', 'ARMATURE']:
             return "Object not a valid type to be entry"
 
-        if object.parent is not None:
+        if obj.parent is not None:
             return "Object not hierarchy root"
 
         return None
