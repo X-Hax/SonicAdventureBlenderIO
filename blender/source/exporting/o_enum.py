@@ -51,11 +51,11 @@ def to_surface_attributes(saio_land_entry):
 
 
 def to_blend_mode(blend_mode: str):
-    return getattr(SA3D_Modeling.BLENDMODE, BLEND_MODE[blend_mode])
+    return getattr(SA3D_Modeling.BLEND_MODE, BLEND_MODE[blend_mode])
 
 
 def to_filter_mode(filter_mode: str):
-    return getattr(SA3D_Modeling.FILTERMODE, FILTER_MODE[filter_mode])
+    return getattr(SA3D_Modeling.FILTER_MODE, FILTER_MODE[filter_mode])
 
 
 def to_texcoord_id(tex_coord_id: str):
@@ -75,8 +75,8 @@ def to_texcoord_source(texgen_source: str):
 
 
 def to_attach_format(attach_format: str):
-    return getattr(SA3D_Modeling.ATTACHFORMAT, ATTACH_FORMAT[attach_format])
+    return getattr(SA3D_Modeling.ATTACH_FORMAT, ATTACH_FORMAT[attach_format])
 
 
 def to_model_format(model_format: str):
-    return getattr(SA3D_Modeling.MODELFORMAT, MODEL_FORMAT[model_format])
+    return getattr(SA3D_Modeling.MODEL_FORMAT, MODEL_FORMAT[model_format])

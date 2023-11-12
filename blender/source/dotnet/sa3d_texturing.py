@@ -16,11 +16,14 @@ class SA3D_Texturing:
     @classmethod
     def load(cls):
 
-        from SA3D.Texturing.Texname import (  # pylint: disable=import-error
+        from SA3D.Texturing import (  # pylint: disable=import-error
             TextureSet,
+            IndexTexture
+        )
+
+        from SA3D.Texturing.Texname import (  # pylint: disable=import-error
             TextureNameList,
             TextureName,
-            IndexTexture
         )
 
         cls.TEXTURE_SET = TextureSet

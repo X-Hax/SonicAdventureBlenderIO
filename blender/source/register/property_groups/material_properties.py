@@ -329,7 +329,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             ('COLOR0', 'Color 0', ""),
             ('COLOR1', 'Color 1', ""),
         ),
-        default='TEX0'
+        default='TEXCOORD0'
     )
 
     texgen_matrix_id: EnumProperty(

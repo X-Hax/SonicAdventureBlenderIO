@@ -39,6 +39,7 @@ def load_dotnet():
     dll_paths = [
         "SAIO.NET.dll",
         "SA3D.Archival.dll",
+        "SA3D.SA2Event.dll",
         "TextCopy.dll",
     ]
 

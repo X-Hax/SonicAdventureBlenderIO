@@ -4,40 +4,40 @@ class SA3D_Modeling:
     '''SA3D.Modeling library types'''
 
     COLOR: any = None
-    '''Struct SA3D.Modeling.'''
+    '''Struct SA3D.Modeling.Structs.Color'''
 
-    ATTACHFORMAT: any = None
-    '''Enum SA3D.Modeling.'''
+    ATTACH_FORMAT: any = None
+    '''Enum SA3D.Modeling.Mesh.AttachFormat'''
 
-    BLENDMODE: any = None
-    '''Enum SA3D.Modeling.'''
+    BLEND_MODE: any = None
+    '''Enum SA3D.Modeling.Mesh.BlendMode'''
 
-    FILTERMODE: any = None
-    '''Enum SA3D.Modeling.'''
+    FILTER_MODE: any = None
+    '''Enum SA3D.Modeling.Mesh.FilterMode'''
 
     GC_TEXCOORD_ID: any = None
-    '''Enum SA3D.Modeling.'''
+    '''Enum SA3D.Modeling.Gamecube.Enums.GCTexCoordID'''
 
     GC_TEXCOORD_MATRIX: any = None
-    '''Enum SA3D.Modeling.'''
+    '''Enum SA3D.Modeling.Gamecube.Enums.GCTexCoordMatrix'''
 
     GC_TEXCOORD_SOURCE: any = None
-    '''Enum SA3D.Modeling.'''
+    '''Enum SA3D.Modeling.Gamecube.Enums.GCTexCoordSource'''
 
     GC_TEXCOORD_TYPE: any = None
-    '''Enum SA3D.Modeling.'''
+    '''Enum SA3D.Modeling.Gamecube.Enums.GCTexCoordType'''
 
     BUFFER_MATERIAL: any = None
-    '''Struct SA3D.Modeling.'''
+    '''Struct SA3D.Modeling.Mesh.Buffer.BufferMaterial'''
 
     BUFFER_CORNER: any = None
-    '''Struct SA3D.Modeling.'''
+    '''Struct SA3D.Modeling.Mesh.Buffer.BufferCorner'''
 
     WEIGHTED_VERTEX: any = None
-    '''Struct SA3D.Modeling.'''
+    '''Struct SA3D.Modeling.Mesh.Weighted.WeightedVertex'''
 
-    MODELFORMAT: any = None
-    '''Enum SA3D.Modeling.'''
+    MODEL_FORMAT: any = None
+    '''Enum SA3D.Modeling.ObjectData.Enums.ModelFormat'''
 
     MOTION: any = None
     '''Class SA3D.Modeling.Animation.Motion'''
@@ -49,7 +49,7 @@ class SA3D_Modeling:
     '''Enum SA3D.Modeling.Animation.KeyframeAttributes'''
 
     KEYFRAME_ROTATION_UTILS: any = None
-    '''Class SA3D.Modeling.Animation.Utils.KeyframeRotationUtils'''
+    '''Class SA3D.Modeling.Animation.Utilities.KeyframeRotationUtils'''
 
     MODEL_FILE: any = None
     '''Class SA3D.Modeling.File.ModelFile'''
@@ -79,9 +79,9 @@ class SA3D_Modeling:
             FilterMode,
         )
 
-        from SA3D.Modeling.Mesh.GC import (  # pylint: disable=import-error
+        from SA3D.Modeling.Mesh.Gamecube.Enums import (  # pylint: disable=import-error
             GCTexCoordID,
-            GCTexcoordMatrix,
+            GCTexCoordMatrix,
             GCTexCoordSource,
             GCTexCoordType,
         )
@@ -102,7 +102,7 @@ class SA3D_Modeling:
             KeyframeAttributes,
         )
 
-        from SA3D.Modeling.Animation.Utils import KeyframeRotationUtils  # pylint: disable=import-error
+        from SA3D.Modeling.Animation.Utilities import KeyframeRotationUtils  # pylint: disable=import-error
 
         from SA3D.Modeling.File import (  # pylint: disable=import-error
             ModelFile,
@@ -112,17 +112,17 @@ class SA3D_Modeling:
         )
 
         cls.COLOR = Color
-        cls.ATTACHFORMAT = AttachFormat
-        cls.BLENDMODE = BlendMode
-        cls.FILTERMODE = FilterMode
+        cls.ATTACH_FORMAT = AttachFormat
+        cls.BLEND_MODE = BlendMode
+        cls.FILTER_MODE = FilterMode
         cls.GC_TEXCOORD_ID = GCTexCoordID
-        cls.GC_TEXCOORD_MATRIX = GCTexcoordMatrix
+        cls.GC_TEXCOORD_MATRIX = GCTexCoordMatrix
         cls.GC_TEXCOORD_SOURCE = GCTexCoordSource
         cls.GC_TEXCOORD_TYPE = GCTexCoordType
         cls.BUFFER_MATERIAL = BufferMaterial
         cls.BUFFER_CORNER = BufferCorner
         cls.WEIGHTED_VERTEX = WeightedVertex
-        cls.MODELFORMAT = ModelFormat
+        cls.MODEL_FORMAT = ModelFormat
         cls.MOTION = Motion
         cls.KEYFRAMES = Keyframes
         cls.KEYFRAME_ATTRIBUTES = KeyframeAttributes
@@ -138,10 +138,10 @@ class SA3D_Modeling:
     @classmethod
     def unload(cls):
         cls.COLOR = None
-        cls.ATTACHFORMAT = None
-        cls.MODELFORMAT = None
-        cls.BLENDMODE = None
-        cls.FILTERMODE = None
+        cls.ATTACH_FORMAT = None
+        cls.MODEL_FORMAT = None
+        cls.BLEND_MODE = None
+        cls.FILTER_MODE = None
         cls.GC_TEXCOORD_ID = None
         cls.GC_TEXCOORD_MATRIX = None
         cls.GC_TEXCOORD_SOURCE = None

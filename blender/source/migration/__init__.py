@@ -14,10 +14,10 @@ TEXFILTER = [
     'POINT', 'BILINEAR', 'TRILINEAR', 'BLEND']
 
 TEXGEN_TYPE = [
-    'MATRIX3X4', 'MATRIX2X4', 'BITMAP0',
-    'BITMAP1', 'BITMAP2', 'BITMAP3',
-    'BITMAP4', 'BITMAP5', 'BITMAP6',
-    'BITMAP7', 'SRTG']
+    'MATRIX3X4', 'MATRIX2X4', 'BUMP0',
+    'BUMP1', 'BUMP2', 'BUMP3',
+    'BUMP4', 'BUMP5', 'BUMP6',
+    'BUMP7', 'SRTG']
 
 TEXGEN_COORD_ID = [
     'TEXCOORD0', 'TEXCOORD1', 'TEXCOORD2',
@@ -27,16 +27,16 @@ TEXGEN_COORD_ID = [
 
 TEXGEN_SRC_MATRIX = [
     'POSITION', 'NORMAL', 'BINORMAL', 'TANGENT',
-    'TEX0', 'TEX1', 'TEX2', 'TEX3',
-    'TEX4', 'TEX5', 'TEX6', 'TEX7']
+    'TEXCOORD0', 'TEXCOORD1', 'TEXCOORD2', 'TEXCOORD3',
+    'TEXCOORD4', 'TEXCOORD5', 'TEXCOORD6', 'TEXCOORD7']
 
 TEXGEN_SRC_SRTG = [
     'COLOR0', 'COLOR1']
 
-TEXGEN_SRC_BITMAP = [
-    'TEXCOORD0', 'TEXCOORD1', 'TEXCOORD2',
-    'TEXCOORD3', 'TEXCOORD4', 'TEXCOORD5',
-    'TEXCOORD6']
+TEXGEN_SRC_BUMP = [
+    'BUMPTEXCOORD0', 'BUMPTEXCOORD1', 'BUMPTEXCOORD2',
+    'BUMPTEXCOORD3', 'BUMPTEXCOORD4', 'BUMPTEXCOORD5',
+    'BUMPTEXCOORD6']
 
 TEXGEN_MATRIX_ID = [
     'MATRIX0', 'MATRIX1', 'MATRIX2',
@@ -271,7 +271,7 @@ def migrate_material(material: bpy.types.Material, remigrate: bool):
         out.texgen_source = TEXGEN_SRC_MATRIX[
             data.get("gc_texGenSourceMtx", 5)]
     elif out.texgen_type[0] == 'B':
-        out.texgen_source = TEXGEN_SRC_BITMAP[
+        out.texgen_source = TEXGEN_SRC_BUMP[
             data.get("gc_texGenSourceBmp", 0)]
     else:
         out.texgen_source = TEXGEN_SRC_SRTG[
