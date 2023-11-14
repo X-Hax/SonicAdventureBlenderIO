@@ -120,14 +120,14 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                motion = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(
+                animFile = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(
                     filepath, node_num, self.short_rot)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
 
             action = i_motion.NodeMotionProcessor.process_motion(
-                motion,
+                animFile.Animation,
                 context.active_object,
                 self.force_sort_bones,
                 self.rotation_mode,
@@ -179,13 +179,13 @@ class SAIO_OT_Import_Camera_Animation(MotionImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                motion = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(filepath, 1, False)
+                animFile = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(filepath, 1, False)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
 
             actions = i_motion.CameraMotionProcessor.process_motion(
-                motion,
+                animFile.Animation,
                 camera_setup)
 
             def setup_nla(data: bpy.types.ID, action: bpy.types.Action):
@@ -235,13 +235,13 @@ class SAIO_OT_Import_Shape_Animation(MotionImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                motion = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(filepath, node_num, False)
+                animFile = SA3D_Modeling.ANIMATION_FILE.ReadFromFile(filepath, node_num, False)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
 
             processor = i_motion.ShapeMotionProcessor(self.optimize)
-            actions = processor.process(motion, context.active_object)
+            actions = processor.process(animFile.Animation, context.active_object)
 
             for target, action in actions.items():
                 shape_keys: bpy.types.Key = target.data.shape_keys

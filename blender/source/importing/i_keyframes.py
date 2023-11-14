@@ -111,7 +111,7 @@ class TransformKeyframeProcessor:
     def _determine_rotation_mode(self, keyframe_set, default: str):
         if self.rotation_mode == 'KEEP':
             return default
-        elif keyframe_set.Rotation.Count == 0:
+        elif keyframe_set.EulerRotation.Count == 0:
             return 'QUATERNION'
         else:
             return 'XYZ'
@@ -258,8 +258,8 @@ class TransformKeyframeProcessor:
             out_rotation_mode: str,
             rotation_matrix: Matrix | None = None) -> str:
 
-        if (keyframe_set.Rotation.Count > 0
-                or keyframe_set.Quaternion.Count > 0):
+        if (keyframe_set.EulerRotation.Count > 0
+                or keyframe_set.QuaternionRotation.Count > 0):
 
             if rotation_matrix is None:
                 rotation_matrix = Matrix.Identity(4)
@@ -277,10 +277,10 @@ class TransformKeyframeProcessor:
             if converted:
                 if out_rotation_mode == 'QUATERNION':
                     unconverted_frames = [
-                        x.Key for x in keyframe_set.Rotation]
+                        x.Key for x in keyframe_set.EulerRotation]
                 else:
                     unconverted_frames = [
-                        x.Key for x in keyframe_set.Quaternion]
+                        x.Key for x in keyframe_set.QuaternionRotation]
 
             if out_rotation_mode == 'QUATERNION':
                 self._process_quaternion_rotation_keyframes(

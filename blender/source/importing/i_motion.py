@@ -1,5 +1,5 @@
-import bpy
 import math
+import bpy
 
 from .i_keyframes import (
     TransformKeyframeProcessor,
@@ -178,21 +178,21 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
     def _convert(
             self,
             keyframes,
-            object: bpy.types.Object,
+            obj: bpy.types.Object,
             last_frame_number: int):
 
         action = bpy.data.actions.new(
-            f"{self._motion.Label}_{object.data.name}")
+            f"{self._motion.Label}_{obj.data.name}")
         action.id_root = "KEY"
 
-        if object in self._processors:
-            processor = self._processors[object]
+        if obj in self._processors:
+            processor = self._processors[obj]
         else:
-            processor = ShapeKeyframeProcessor(object, self._optimize)
-            self._processors[object] = processor
+            processor = ShapeKeyframeProcessor(obj, self._optimize)
+            self._processors[obj] = processor
 
         processor.process(keyframes, action, last_frame_number)
-        self._actions[object] = action
+        self._actions[obj] = action
 
     def _verify_keyframes(self, keyframe_set):
 
@@ -204,6 +204,7 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
     def _get_mesh_object(self, node_index: int):
 
         bone_name = self._bonemap[node_index]
+        child = None
         for child in self._bobject.children:
             if child.parent_bone == bone_name:
                 break
@@ -223,16 +224,17 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
     def process(
             self,
             motion,
-            object: bpy.types.Object,
+            obj: bpy.types.Object,
             min_frame_count: int = 0):
 
-        super().process(motion, object)
+        super().process(motion, obj)
         self._actions = {}
 
         if min_frame_count > 0:
             min_frame_count -= 1
 
         for node_keyframes in self._motion.Keyframes:
+            last = None
             for last in node_keyframes.Value.Vertex.Keys:
                 pass
             if last > min_frame_count:
