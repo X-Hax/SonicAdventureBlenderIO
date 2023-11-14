@@ -124,7 +124,6 @@ class NodeProcessor:
                 bone.parent = self._node_map[node.Parent]
 
             i_enum.from_node_attributes(bone.saio_node, node.Attributes)
-            bone.layers[0] = True
 
             self._set_bone_transforms(bone, matrices)
 
