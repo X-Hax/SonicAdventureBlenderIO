@@ -16,13 +16,15 @@ namespace SAIO.NET
     public class LandTableWrapper
     {
         public LandTable LandTable { get; }
+        public MetaData MetaData { get; }
         public LandEntryStruct[] LandEntries { get; }
         public WeightedMesh[] Attaches { get; }
         public int? VisualCount { get; }
 
-        public LandTableWrapper(LandTable landTable, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount)
+        public LandTableWrapper(LandTable landTable, MetaData metaData, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount)
         {
             LandTable = landTable;
+            MetaData = metaData;
             LandEntries = landEntries;
             Attaches = attaches;
             VisualCount = visualCount;
@@ -237,7 +239,7 @@ namespace SAIO.NET
                 wbas[item.Value] = WeightedMesh.FromAttach(item.Key, BufferMode.None);
             }
 
-            return new(level.Level, landEntries.ToArray(), wbas, visualCount);
+            return new(level.Level, level.MetaData, landEntries.ToArray(), wbas, visualCount);
         }
 
     }

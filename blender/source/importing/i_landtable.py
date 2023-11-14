@@ -41,10 +41,10 @@ class LandtableProcessor:
         landtable_prop.name = self._landtable.Label
 
         scene.saio_scene.author = self._get_string(
-            self._landtable.MetaData.Author)
+            self._import_data.MetaData.Author)
 
         scene.saio_scene.description = self._get_string(
-            self._landtable.MetaData.Description)
+            self._import_data.MetaData.Description)
 
         landtable_prop.tex_file_name = self._get_string(
             self._landtable.TextureFileName)
