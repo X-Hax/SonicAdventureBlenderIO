@@ -25,7 +25,7 @@ MATERIAL_PROPERTIES = {
         ("Flat Shading", "flat_shading", None),
         ("Diffuse", "diffuse", _convert_to_gamma),
         ("Diffuse-Alpha", "diffuse", lambda value: value[3]),
-        ("Diffuse Factor", "ignore_diffuse",
+        ("Lighting Factor", "ignore_diffuse",
             lambda value: 0.0 if value else 1.0),
         ("Specular", "specular", _convert_to_gamma),
         ("Specular-Alpha", "specular", lambda value: value[3]),
@@ -78,13 +78,26 @@ def _get_scene_lighting_node(context: bpy.types.Context):
         node_tree.nodes.new("NodeGroupOutput")
 
         for prop in LIGHTING_PROPERTIES:
-            node_tree.outputs.new(prop[2], prop[1])
+            node_tree.interface.new_socket(
+                in_out='OUTPUT',
+                name=prop[1],
+                socket_type=prop[2]
+            )
 
     update_scene_lighting(context)
 
     return node_tree
 
 ###############################################################################
+
+def _get_socket_by_identifier(
+        sockets: list[bpy.types.NodeSocket],
+        identifier: str) -> bpy.types.NodeSocket:
+
+    for item in sockets:
+        if item.identifier == identifier:
+            return item
+    return None
 
 
 def _setup_material(
@@ -104,12 +117,6 @@ def _setup_material(
     node_tree.links.clear()
     node_tree.nodes.clear()
 
-    def get_socket_by_identifier(sockets, identifier):
-        for s in sockets:
-            if s.identifier == identifier:
-                return s
-        return None
-
     for tnode in template.nodes:
         node = node_tree.nodes.new(tnode.bl_idname)
         mapping[tnode] = node
@@ -127,14 +134,14 @@ def _setup_material(
                 node.node_tree = tnode.node_tree
 
         for tinput in tnode.inputs:
-            input_socket = get_socket_by_identifier(node.inputs, tinput.identifier)
+            input_socket = _get_socket_by_identifier(node.inputs, tinput.identifier)
             mapping[tinput] = input_socket
             input_socket.hide = tinput.hide
             if input_socket.type != 'SHADER':
                 input_socket.default_value = tinput.default_value
 
         for toutput in tnode.outputs:
-            output = get_socket_by_identifier(node.outputs, toutput.identifier)
+            output = _get_socket_by_identifier(node.outputs, toutput.identifier)
             mapping[toutput] = output
 
     for tlink in template.links:
@@ -162,7 +169,7 @@ def _material_connect_output(
     to_connect = principled if use_principled else shader
 
     try:
-        link = output.inputs[0].links[0]
+        link: bpy.types.NodeLink = output.inputs[0].links[0]
 
         if link.from_node == to_connect:
             return
