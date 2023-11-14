@@ -240,6 +240,9 @@ class MeshProcessor:
 
     def process(self, weighted_buffer, name: str, mat_name: str | None = None):
 
+        if weighted_buffer.Label is not None:
+            name = weighted_buffer.Label
+
         self.name = name
         self.mat_name = name if mat_name is None else mat_name
         self.weighted_buffer = weighted_buffer
@@ -264,9 +267,10 @@ class MeshProcessor:
             mat_name = name
 
         for weighted_buffer in weighted_buffers:
-            mesh_name = name
             if weighted_buffers.Length > 1:
-                mesh_name += f"_{len(result)}"
+                mesh_name = f"{name}_{len(result)}"
+            else:
+                mesh_name = name
 
             self.process(
                 weighted_buffer,
