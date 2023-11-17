@@ -12,7 +12,7 @@ from ..utility.enum_lut import (
 from ..dotnet import SAIO_NET
 
 
-def from_node_attributes(node_properties, attributes):
+def from_node_attributes(node_properties, attributes: any):
     node_properties.ignore_position, \
         node_properties.ignore_rotation, \
         node_properties.ignore_scale, \
@@ -35,7 +35,7 @@ def from_evententry_attributes(evententry_properties, attributes: any):
         evententry_properties.reflection, \
         evententry_properties.blare, \
         evententry_properties.unk9 \
-        = SAIO_NET.FLAGS.DecomposeEventEntryAttributes(attributes)
+        = SAIO_NET.FLAGS.DecomposeGCEventEntryAttributes(attributes)
 
 
 def from_surface_attributes(attributes: any, saio_land_entry):

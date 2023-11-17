@@ -327,8 +327,8 @@ class NodeProcessor:
         if len(nodes) == 1:
             self.ensure_order = False
 
-        matrices = i_matrix.net_to_bpy_matrices(
-            nodes[0].GetWorldMatrices())
+        net_matrices = [node_matrix.Item2 for node_matrix in nodes[0].GetWorldMatrixTree()]
+        matrices = i_matrix.net_to_bpy_matrices(net_matrices)
 
         mesh_dict: dict[int, i_mesh.MeshData] = {}
         for mesh in self.meshes:
@@ -338,9 +338,6 @@ class NodeProcessor:
                 mesh_dict[node_index] = mesh
 
         for index, node in enumerate(nodes):
-            if node.IsVirtualRoot:
-                continue
-
             data = None
             if index in mesh_dict:
                 data = mesh_dict[index].mesh

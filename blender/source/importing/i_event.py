@@ -192,7 +192,7 @@ class EventImporter:
         for model in self.event_data.Models:
 
             as_armature = (
-                model.Root.Children.Count > 0
+                model.Root.ChildCount > 0
                 and model.Root not in self.event_data.NotArmaturedModels)
             weighted_name = model.Root.Label
 
@@ -286,11 +286,11 @@ class EventImporter:
 
             self._add_entity_to_collection(
                 entity.Model, collection, "CHUNK",
-                entity.Attributes, entity.Layer, shadow_object)
+                entity.GCAttributes, entity.Layer, shadow_object)
 
             self._add_entity_to_collection(
                 entity.GCModel, collection, "GC",
-                entity.Attributes, entity.Layer, shadow_object)
+                entity.GCAttributes, entity.Layer, shadow_object)
 
     def _setup_attach_upgrade(self, model, target, index, second):
         if model is None:
@@ -349,13 +349,13 @@ class EventImporter:
         import math
 
         # upgrades
-        for i, upgrade in enumerate(self.event_data.EventData.Upgrades):
+        for i, upgrade in enumerate(self.event_data.EventData.OverlayUpgrades):
             self._setup_attach_upgrade(
                 upgrade.Model1, upgrade.Target1, i, False)
             self._setup_attach_upgrade(
                 upgrade.Model2, upgrade.Target2, i, True)
 
-        for i, model in enumerate(self.event_data.EventData.OverrideUpgrades):
+        for i, model in enumerate(self.event_data.EventData.IntegratedUpgrades):
             self._setup_override_upgrade(
                 model,
                 math.floor(i / 3),
@@ -404,14 +404,17 @@ class EventImporter:
                 event_properties.tails_tails_bone = self._get_bone_name(
                     tt.Label)
 
-        reflections = self.event_data.EventData.ReflectionControl
+        reflections = self.event_data.EventData.Reflections
         for i, reflection in enumerate(reflections.Reflections):
 
-            verts = []
+            verts = [
+                Vector((reflection.Vertex1.X, -reflection.Vertex1.Z, reflection.Vertex1.Y)),
+                Vector((reflection.Vertex2.X, -reflection.Vertex2.Z, reflection.Vertex2.Y)),
+                Vector((reflection.Vertex3.X, -reflection.Vertex3.Z, reflection.Vertex3.Y)),
+                Vector((reflection.Vertex4.X, -reflection.Vertex4.Z, reflection.Vertex4.Y)),
+            ]
             center = Vector()
-            for point in reflection.Quad:
-                vert = Vector((point.X, -point.Z, point.Y))
-                verts.append(vert)
+            for vert in verts:
                 center += vert
 
             center *= 0.25
@@ -591,10 +594,10 @@ class EventImporter:
 
     def _setup_other(self):
         self.base_scene.saio_scene.event.drop_shadow_control \
-            = self.event_data.EventData.DropShadowControl
+            = self.event_data.EventData.EnableDropShadows
 
-        if self.event_data.EventData.UVAnimationData is not None:
-            animdata = self.event_data.EventData.UVAnimationData
+        if self.event_data.EventData.SurfaceAnimations is not None:
+            animdata = self.event_data.EventData.SurfaceAnimations
             event_uv_anim_list = self.base_scene.saio_scene.event.uv_animations
 
             for ts in animdata.TextureSequences:
