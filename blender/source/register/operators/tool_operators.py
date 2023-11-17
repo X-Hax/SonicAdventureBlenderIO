@@ -396,28 +396,19 @@ class SAIO_OT_ArmaturCorrectVisual(SAIOBasePopupOperator):
 
     bone_shapes: BoolProperty(
         name="Bone Shapes",
-        description=(
-            "Assigns each bone a shape to display the rotations in a more"
-            " \"correct\" way"
-        ),
+        description="Assigns each bone a shape to display the rotations in a more \"correct\" way",
         default=True
     )
 
     bone_groups: BoolProperty(
         name="Bone Groups",
-        description=(
-            "Assign each bone a bone group with a distinct color based on how"
-            " they affect the meshes"
-        ),
+        description="Assign each bone a bone group based on how they affect the meshes",
         default=True
     )
 
-    bone_layers: BoolProperty(
-        name="Bone Layers",
-        description=(
-            "Set up bone layers based on how they affect the meshes."
-            " Default layer will keep all bones"
-        ),
+    bone_colors: BoolProperty(
+        name="Bone Colors",
+        description="Assign each bone a distinct color based on how they affect the meshes",
         default=True
     )
 
@@ -452,14 +443,18 @@ class SAIO_OT_ArmaturCorrectVisual(SAIOBasePopupOperator):
 
     @staticmethod
     def _eval_bone_groupings(armature_obj: bpy.types.Object):
+        from ...utility.general import get_armature_modifier
 
         groupings: dict[str, list[str]] = {}
 
         for bone in armature_obj.pose.bones:
             groupings[bone.name] = []
 
+        mesh_groups: dict[str, list] = {}
+
         for mesh_obj in armature_obj.children:
-            from ...utility.general import get_armature_modifier
+            mesh_groups[mesh_obj.name] = []
+
             if get_armature_modifier(mesh_obj) is not None:
                 for group in mesh_obj.vertex_groups:
                     if group.name not in groupings:
@@ -469,33 +464,57 @@ class SAIO_OT_ArmaturCorrectVisual(SAIOBasePopupOperator):
             elif mesh_obj.parent_type == 'BONE':
                 groupings[mesh_obj.parent_bone].append(None)
 
-        result = {}
-        for bone_name, groups in groupings.items():
-            result[armature_obj.pose.bones[bone_name]] = groups
+        no_effect = []
+        is_parent = []
+        multi = []
 
-        return result
+        for bonename, grouping in groupings.items():
+            if len(grouping) == 0:
+                no_effect.append(bonename)
+                continue
+            elif len(grouping) > 1:
+                multi.append(bonename)
+
+            for group in grouping:
+                if group is None:
+                    is_parent.append(bonename)
+                else:
+                    mesh_groups[group].append(bonename)
+
+        for mesh_name in list(mesh_groups.keys()):
+            if len(mesh_groups[mesh_name]) == 0:
+                del mesh_groups[mesh_name]
+
+        return (no_effect, is_parent, multi, mesh_groups)
 
     @staticmethod
-    def _set_bone_groups(
+    def _setup_bone_collections(
             armature_obj: bpy.types.Object,
-            groupings: dict[bpy.types.PoseBone, list[str]]):
+            groupings: tuple[list, list, list, dict[str, list]]):
 
-        pose = armature_obj.pose
-        to_remove = [group for group in pose.bone_groups]
-        for group in to_remove:
-            pose.bone_groups.remove(group)
+        armature: bpy.types.Armature = armature_obj.data
 
-        no_effect = pose.bone_groups.new(name="No Effect")
-        no_effect.color_set = "THEME13"
+        def create_collection(name: str, bonenames: list[str]):
+            if len(bonenames) == 0:
+                return
 
-        multi = pose.bone_groups.new(name="Multi")
-        multi.color_set = "THEME01"
+            collection = armature.collections.new(name)
+            for bonename in bonenames:
+                collection.assign(armature.bones[bonename])
 
-        mesh_groups: dict[str, bpy.types.BoneGroup] = {}
+        create_collection("Empty", groupings[0])
+        create_collection("Is Parent", groupings[1])
+        create_collection("Multiple", groupings[2])
+#
+        for mesh_name, bonenames in groupings[3].items():
+            create_collection(mesh_name, bonenames)
 
-        is_parent = pose.bone_groups.new(name="Is Parent")
-        is_parent.color_set = "THEME11"
-        mesh_groups[None] = is_parent
+    @staticmethod
+    def _setup_bone_colors(
+            armature_obj: bpy.types.Object,
+            groupings: tuple[list, list, list, dict[str, list]]):
+
+        armature: bpy.types.Armature = armature_obj.data
 
         mesh_themes = [
             "THEME09",
@@ -510,46 +529,20 @@ class SAIO_OT_ArmaturCorrectVisual(SAIOBasePopupOperator):
             "THEME15",
         ]
 
-        for grouping in groupings.values():
-            for name in grouping:
-                if name is not None and name not in mesh_groups:
-                    mesh_group = pose.bone_groups.new(name=name)
-                    theme_index = (len(mesh_groups) - 1) % len(mesh_themes)
-                    mesh_group.color_set = mesh_themes[theme_index]
-                    mesh_groups[name] = mesh_group
+        for i, bonenames in enumerate(groupings[3].values()):
+            mesh_theme = mesh_themes[i % len(mesh_themes)]
 
-        for bone, grouping in groupings.items():
-            if len(grouping) == 0:
-                bone.bone_group = no_effect
-            elif len(grouping) > 1:
-                bone.bone_group = multi
-            else:
-                bone.bone_group = mesh_groups[grouping[0]]
+            for bonename in bonenames:
+                armature.bones[bonename].color.palette = mesh_theme
 
-    @staticmethod
-    def _set_bone_layers(groupings: dict[bpy.types.PoseBone, list[str]]):
+        for bonename in groupings[0]:
+            armature.bones[bonename].color.palette = "THEME13"
 
-        layers: dict[str, int] = {}
-        layers[None] = 4
-        next_layer = 5
+        for bonename in groupings[1]:
+            armature.bones[bonename].color.palette = "THEME11"
 
-        for grouping in groupings.values():
-            for name in grouping:
-                if name not in layers:
-                    layers[name] = next_layer
-                    next_layer += 1
-
-        for bone, grouping in groupings.items():
-            bone_layers = bone.bone.layers
-            for i in range(1, len(bone_layers)):
-                bone_layers[i] = False
-
-            if len(grouping) > 0:
-                bone_layers[2] = True
-                for name in grouping:
-                    bone_layers[layers[name]] = True
-            else:
-                bone_layers[1] = True
+        for bonename in groupings[2]:
+            armature.bones[bonename].color.palette = "THEME01"
 
     def _execute(self, context: bpy.types.Context):
 
@@ -559,16 +552,17 @@ class SAIO_OT_ArmaturCorrectVisual(SAIOBasePopupOperator):
             SAIO_OT_ArmaturCorrectVisual._set_bone_shapes(
                 context, armature_obj)
 
-        if self.bone_groups or self.bone_layers:
+        if self.bone_groups or self.bone_colors:
             groupings = SAIO_OT_ArmaturCorrectVisual._eval_bone_groupings(
                 armature_obj)
 
             if self.bone_groups:
-                SAIO_OT_ArmaturCorrectVisual._set_bone_groups(
+                SAIO_OT_ArmaturCorrectVisual._setup_bone_collections(
                     armature_obj, groupings)
 
-            if self.bone_layers:
-                SAIO_OT_ArmaturCorrectVisual._set_bone_layers(groupings)
+            if self.bone_colors:
+                SAIO_OT_ArmaturCorrectVisual._setup_bone_colors(
+                    armature_obj, groupings)
 
         return {'FINISHED'}
 
@@ -655,7 +649,7 @@ class SAIO_OT_AutoNodeAttributes(SAIOBasePopupOperator):
             def check(x: bpy.types.Object):
                 return x.select_get()
         else:
-            def check(x: bpy.types.Object): # pylint: disable=unused-argument
+            def check(x: bpy.types.Object):  # pylint: disable=unused-argument
                 return True
 
             if self.mode == 'ALL':
