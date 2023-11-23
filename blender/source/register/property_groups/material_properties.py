@@ -69,7 +69,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
     specular_exponent: IntProperty(
         name="Specular Exponent",
         description="Specular exponent on the material",
-        default=32,
+        default=11,
         min=0, max=255,
         update=_update_material_values,
     )
@@ -121,7 +121,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             " On render: disables backface culling"
             " (only working using render-altering mods)"),
         update=_update_material_values,
-        default=True
+        default=False
     )
 
     source_alpha: EnumProperty(
@@ -197,7 +197,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
     anisotropic_filtering: BoolProperty(
         name="Anisotropic filtering",
         description="Enable Anisotropy for the texture of the material",
-        default=True
+        default=False
     )
 
     mipmap_distance_multiplier: FloatProperty(
@@ -206,7 +206,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
             "mipmap distance multiplier;"
             " Gets rounded to steps of 0.25"
         ),
-        default=0,
+        default=1,
         min=0,
         max=3.75
     )
