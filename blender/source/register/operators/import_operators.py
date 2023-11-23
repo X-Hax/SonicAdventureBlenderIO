@@ -148,6 +148,10 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
                 scene = bpy.data.scenes.new(file.name)
                 context.window.scene = scene
 
+            if self.fix_view:
+                context.space_data.clip_start = 1.0
+                context.space_data.clip_end = 10000.0
+
             i_landtable.LandtableProcessor.process_landtable(
                 context,
                 import_data,
