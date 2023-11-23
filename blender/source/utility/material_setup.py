@@ -336,8 +336,10 @@ def _update_material_texture(
     if (texture_list is None
             or index >= len(texture_list.textures)):
         texture_node.image = None
-    else:
+    elif texture_list.textures[index] is not None:
         texture_node.image = texture_list.textures[index].image
+    else:
+        texture_node.image = None
 
 
 def update_material_textures(
