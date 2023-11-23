@@ -21,26 +21,26 @@ class ModelData:
         self.outdata = None
 
     def _eval_armature_meshes(self):
-        for object, matrix in self.node_data.weighted_models:
+        for obj, matrix in self.node_data.weighted_models:
             model = ModelMesh(
                 self.node_data,
-                object,
+                obj,
                 matrix,
                 None)
 
-            self.meshes[object] = model
+            self.meshes[obj] = model
 
         for attached_node_name, virtual_objects \
                 in self.node_data.bone_models.items():
 
-            for object, matrix in virtual_objects:
+            for obj, matrix in virtual_objects:
                 model = ModelMesh(
                     self.node_data,
-                    object,
+                    obj,
                     matrix,
                     attached_node_name)
 
-                self.meshes[object] = model
+                self.meshes[obj] = model
 
     def _eval_object_meshes(self):
         for node in self.node_data.node_mapping.keys():
@@ -67,7 +67,7 @@ class ModelData:
 class ModelEvaluator:
 
     _context: bpy.types.Context
-    _format: str
+    _attach_format: str
     _auto_root: bool
     _optimize: bool
     _ignore_weights: bool
@@ -82,7 +82,7 @@ class ModelEvaluator:
     def __init__(
             self,
             context: bpy.types.Context,
-            format: str,
+            attach_format: str,
             auto_root: bool = True,
             optimize: bool = True,
             ignore_weights: bool = False,
@@ -93,7 +93,7 @@ class ModelEvaluator:
             force_sort_bones: bool = False):
 
         self._context = context
-        self._format = format
+        self._attach_format = attach_format
         self._auto_root = auto_root
         self._optimize = optimize
         self._ignore_weights = ignore_weights
@@ -104,13 +104,6 @@ class ModelEvaluator:
             context, True, apply_pose, force_sort_bones)
 
         self._output = None
-
-    @property
-    def _ignore_root(self):
-        return (
-            not self._auto_root
-            and self._output.node_data.has_auto_root
-        )
 
     def _setup(self):
         self._output = ModelData()
@@ -132,22 +125,19 @@ class ModelEvaluator:
             self._output.attach_format,
             self._optimize,
             self._ignore_weights,
-            self._ignore_root,
             self._write_specular,
             self._automatic_node_attributes)
 
     def save_debug(self, filepath: str):
-        print("Debug model currently not implemented")
-        # SAIO_NET.DEBUG_MODEL(
-        #     self._output.node_data.nodes,
-        #     self._output.mesh_structs,
-        #     self._output.attach_format,
-        #     self._optimize,
-        #     self._ignore_weights,
-        #     self._ignore_root,
-        #     self._write_specular,
-        #     self._automatic_node_attributes
-        # ).ToFile(filepath)
+        SAIO_NET.DEBUG_MODEL(
+            self._output.node_data.nodes,
+            self._output.mesh_structs,
+            self._output.attach_format,
+            self._optimize,
+            self._ignore_weights,
+            self._write_specular,
+            self._automatic_node_attributes
+        ).ToFile(filepath)
 
     def evaluate(self, objects: list[bpy.types.Object], convert: bool = True):
         self._setup()
@@ -156,7 +146,7 @@ class ModelEvaluator:
         self._eval_mesh_structures(convert)
 
         if convert:
-            self._output.attach_format = o_enum.to_attach_format(self._format)
+            self._output.attach_format = o_enum.to_attach_format(self._attach_format)
             self._convert_structures()
 
         return self._output

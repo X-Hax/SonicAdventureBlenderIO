@@ -190,7 +190,8 @@ class ShapeMotionEvaluator:
 
         node_count = 1 if self._node_map is None else len(self._node_map)
 
-        self._output = SA3D_Modeling.MOTION(self._duration, node_count)
+        self._output = SA3D_Modeling.MOTION()
+        self._output.NodeCount = node_count
         self._output.Label = name
 
     def _convert_action(self, action: Action, obj: BObject, index: int):

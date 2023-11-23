@@ -91,17 +91,17 @@ def convert_to_node_motion(
 
     start = math.ceil(frame_range[0])
     end = math.floor(frame_range[1])
-    frame_number = end - start + 1
 
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)
 
     if obj.type == "ARMATURE":
 
-        bone_nodes = bone_utils.get_bone_map(obj, force_sort_bones, False)
-        motion = SA3D_Modeling.MOTION(frame_number, len(bone_nodes))
+        bone_map = bone_utils.get_bone_map(obj, force_sort_bones, False)
+        motion = SA3D_Modeling.MOTION()
+        motion.NodeCount = len(bone_map)
 
-        for index, bone_name in enumerate(bone_nodes):
+        for index, bone_name in enumerate(bone_map):
             if index == 0 and not anim_parameters.bone_localspace:
                 base_matrix = obj.matrix_world.copy()
             else:
@@ -127,7 +127,8 @@ def convert_to_node_motion(
                 motion.Keyframes.Add(index, keyframes)
 
     else:
-        motion = SA3D_Modeling.MOTION(frame_number, 1)
+        motion = SA3D_Modeling.MOTION()
+        motion.NodeCount = 1
 
         keyframes = evaluator.evaluate_node_keyframe_set(
             fcurves,
@@ -156,12 +157,12 @@ def convert_to_camera_motion(
     load_dotnet()
 
     start, end = get_frame_range(camera_actions.as_list())
-    frame_number = end - start + 1
 
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)
 
-    motion = SA3D_Modeling.MOTION(frame_number, 1)
+    motion = SA3D_Modeling.MOTION()
+    motion.NodeCount = 1
 
     keyframes = evaluator.evaluate_camera_keyframe_set(
         camera_setup, camera_actions)

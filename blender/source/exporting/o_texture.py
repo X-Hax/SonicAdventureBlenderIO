@@ -1,6 +1,6 @@
 from ..register.property_groups.texture_properties import SAIO_TextureList
 from ..register.property_groups.texturename_properties import SAIO_TextureNameList
-from ..dotnet import System, SA3D_Texturing, SA3D_Archival, SAIO_NET
+from ..dotnet import System, SA3D_Common, SA3D_Texturing, SA3D_Archival, SAIO_NET
 from ..exceptions import SAIOException
 
 
@@ -13,7 +13,9 @@ def create_texnames_from_names(
         texname = texture_name.name if texture_name.name != '!NULL' else None
         texname_list.append(SA3D_Texturing.TEXTURE_NAME(texname.lower(), 0, 0))
 
-    return SA3D_Texturing.TEXTURE_NAME_LIST(name, name + "_names", texname_list)
+    tex_array = SA3D_Common.LABELED_ARRAY[SA3D_Texturing.TEXTURE_NAME](
+        name + "_names", texname_list)
+    return SA3D_Texturing.TEXTURE_NAME_LIST(name, tex_array)
 
 
 def create_texnames_from_textures(
@@ -25,7 +27,9 @@ def create_texnames_from_textures(
         texname_list.append(SA3D_Texturing.TEXTURE_NAME(
             texture.name.lower().ljust(28), 0, 0))
 
-    return SA3D_Texturing.TEXTURE_NAME_LIST(name, name + "_names", texname_list)
+    tex_array = SA3D_Common.LABELED_ARRAY[SA3D_Texturing.TEXTURE_NAME](
+        name + "_names", texname_list)
+    return SA3D_Texturing.TEXTURE_NAME_LIST(name, tex_array)
 
 
 def create_texture_set(texture_list: SAIO_TextureList):
@@ -67,12 +71,10 @@ def create_texture_set(texture_list: SAIO_TextureList):
 
     return SA3D_Texturing.TEXTURE_SET(sa3d_textures)
 
-
-def save_texture_archive(
+def encode_texture_archive(
         texture_set,
         filepath: str,
-        archive_type: str,
-        compress: bool):
+        archive_type: str):
 
     from os import path
 
@@ -103,6 +105,18 @@ def save_texture_archive(
 
     else:
         raise SAIOException(f"Invalid Archive type \"{archive_type}\"")
+
+    return archive
+
+def save_texture_archive(
+        texture_set,
+        filepath: str,
+        archive_type: str,
+        compress: bool):
+
+    from os import path
+
+    archive = encode_texture_archive(texture_set, filepath, archive_type)
 
     file_data = archive.Write()
     if compress:

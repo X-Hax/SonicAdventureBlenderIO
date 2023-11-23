@@ -19,8 +19,8 @@ class SAIO_NET:
     MODEL: any = None
     '''class SAIO.NET.Model'''
 
-    # DEBUG_MODEL: any = None
-    # '''class SAIO.NET.DebugModel'''
+    DEBUG_MODEL: any = None
+    '''class SAIO.NET.DebugModel'''
 
     NODE_STRUCT: any = None
     '''struct SAIO.NET.NodeStruct'''
@@ -44,7 +44,7 @@ class SAIO_NET:
             LandTableWrapper,
             MeshStruct,
             Model,
-            # DebugModel,
+            DebugModel,
             NodeStruct,
             CurvePath,
             PathData,
@@ -57,7 +57,7 @@ class SAIO_NET:
         cls.LANDTABLE_WRAPPER = LandTableWrapper
         cls.MESH_STRUCT = MeshStruct
         cls.MODEL = Model
-        # cls.DEBUG_MODEL = DebugModel
+        cls.DEBUG_MODEL = DebugModel
         cls.NODE_STRUCT = NodeStruct
         cls.CURVE_PATH = CurvePath
         cls.PATH_DATA = PathData

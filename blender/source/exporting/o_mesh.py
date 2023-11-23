@@ -348,7 +348,7 @@ class ModelMesh:
                     return linear_to_srgb(vertex_colors.data[loop].color)
         else:
             def get_color(loop, vertex): # pylint: disable=unused-argument
-                return (1, 1, 1, 1)
+                return (1.0, 1.0, 1.0, 1.0)
 
         # UV Obtainer
 

@@ -193,6 +193,7 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         from ...exporting import o_motion
         from ...importing import i_motion
         from ...utility import anim_parameters
+        from ...dotnet import SA3D_Modeling
 
         armature_object = context.active_object
 
@@ -220,9 +221,8 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         )
 
         # emulating file export and import
-        file_bytes = out.WriteFile()
-
-        in_motion = out.ReadFile(file_bytes, out.ModelCount)
+        file_bytes = SA3D_Modeling.ANIMATION_FILE.WriteToBytes(out)
+        in_motion = SA3D_Modeling.ANIMATION_FILE.ReadFromBytes(file_bytes).Animation
 
         in_action = i_motion.NodeMotionProcessor.process_motion(
             in_motion,

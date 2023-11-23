@@ -238,7 +238,7 @@ class EventExporter:
 
         self.models[obj] = model_data
 
-        nodes = model_data.outdata.GetNodes()
+        nodes = model_data.outdata.GetTreeNodes()
         mapping = model_data.node_data.node_mapping
 
         for node_source, node_index in mapping.items():
@@ -510,7 +510,7 @@ class EventExporter:
 
             reflections.Reflections.Add(reflection)
 
-        self.event_data.ReflectionControl = reflections
+        self.event_data.Reflections = reflections
 
     def _setup_tails_tails(self):
 
@@ -583,7 +583,7 @@ class EventExporter:
         )
         entry.Layer = properties.layer
 
-        entry.Attributes = o_enum.to_evententry_attributes(properties)
+        entry.GCAttributes = o_enum.to_evententry_attributes(properties)
 
         return entry
 
@@ -598,7 +598,7 @@ class EventExporter:
 
     def _setup_animated_scene(self, cutinfo: CutInfo):
         posrot = SA3D_Modeling.KEYFRAME_ATTRIBUTES.Position.op_BitwiseOr(
-            SA3D_Modeling.KEYFRAME_ATTRIBUTES.Rotation)
+            SA3D_Modeling.KEYFRAME_ATTRIBUTES.EulerRotation)
 
         result = SA3D_SA2Event.SCENE(cutinfo.framecount)
         result.Big = SA3D_SA2Event.BIG_THE_CAT_ENTRY(None, 0)
@@ -617,7 +617,7 @@ class EventExporter:
             if obj in cutinfo.shape_motions:
                 entry.ShapeAnimation = cutinfo.shape_motions[obj]
 
-            entry.AutoAnimFlags()
+            entry.AutoGCAnimationAttributes()
             result.Entries.Add(entry)
 
         for obj in cutinfo.particles:
@@ -630,7 +630,7 @@ class EventExporter:
 
     def _setup_eventdata(self):
         self.event_data = SA3D_SA2Event.MODEL_DATA(SA3D_SA2Event.EVENT_TYPE.gc)
-        self.event_data.DropShadowControl = \
+        self.event_data.EnableDropShadows = \
             self.base_scene.saio_scene.event.drop_shadow_control
 
         self._setup_texture_dimensions()
@@ -664,16 +664,21 @@ class EventExporter:
 
     def export(self, filepath: str, export_textures: bool):
 
-        event = SA3D_SA2Event.EVENT(self.event_data, None,
-                                self.event_data.TextureNameList)
-        event.WriteToFiles(filepath)
+        textures = None
 
         if export_textures:
             from . import o_texture
-            o_texture.save_texture_archive(
+            textures = o_texture.encode_texture_archive(
                 o_texture.create_texture_set(
                     self.base_scene.saio_scene.texture_world.saio_texture_list
                 ), filepath[:-4] + "texture.prs",
-                "GVM",
-                True
+                "GVM"
             )
+
+        event = SA3D_SA2Event.EVENT(
+            self.event_data,
+            None,
+            textures,
+            self.event_data.TextureNameList)
+
+        event.WriteToFiles(filepath)

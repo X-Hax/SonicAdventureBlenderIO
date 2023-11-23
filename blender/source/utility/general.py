@@ -88,7 +88,6 @@ def get_armature_modifier(obj: bpy.types.Object) -> bpy.types.ArmatureModifier |
             return modifier
     return None
 
-
 def reset_property_group(target, bool_to_false: False):
     for prop in target.bl_rna.properties:
         if not hasattr(prop, "default"):
