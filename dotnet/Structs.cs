@@ -29,14 +29,16 @@ namespace SAIO.NET
     {
         public string Label { get; set; }
         public int MeshIndex { get; set; }
+        public uint BlockBit { get; set; }
         public Matrix4x4 WorldMatrix { get; set; }
         public NodeAttributes NodeAttributes { get; set; }
         public SurfaceAttributes SurfaceAttributes { get; set; }
 
-        public LandEntryStruct(string label, int meshIndex, NodeAttributes nodeAttributes, SurfaceAttributes surfaceAttributes, Matrix4x4 worldMatrix)
+        public LandEntryStruct(string label, int meshIndex, uint blockBit, NodeAttributes nodeAttributes, SurfaceAttributes surfaceAttributes, Matrix4x4 worldMatrix)
         {
             Label = label;
             MeshIndex = meshIndex;
+            BlockBit = blockBit;
             WorldMatrix = worldMatrix;
             NodeAttributes = nodeAttributes;
             SurfaceAttributes = surfaceAttributes;
@@ -49,6 +51,7 @@ namespace SAIO.NET
             Vector3 euler = rotation.QuaternionToEuler(NodeAttributes.HasFlag(NodeAttributes.RotateZYX));
 
             LandEntry result = LandEntry.CreateWithAttach(attach, SurfaceAttributes);
+            result.BlockBit = BlockBit;
 
             result.Model.Label = Label;
             result.Model.SetAllNodeAttributes(NodeAttributes);

@@ -5,7 +5,7 @@ from ..dotnet import SAIO_NET
 class LandtableEvaluator:
 
     _context: bpy.types.Context
-    _format: str
+    _model_format: str
     _optimize: bool
     _write_specular: bool
     _apply_modifs: bool
@@ -21,7 +21,7 @@ class LandtableEvaluator:
     def __init__(
             self,
             context: bpy.types.Context,
-            format: str,
+            model_format: str,
             optimize: bool = True,
             write_specular: bool = True,
             apply_modifs: bool = True,
@@ -29,7 +29,7 @@ class LandtableEvaluator:
             automatic_node_attributes: bool = True):
 
         self._context = context
-        self._format = format
+        self._model_format = model_format
         self._optimize = optimize
         self._write_specular = write_specular
         self._apply_modifs = apply_modifs
@@ -49,34 +49,36 @@ class LandtableEvaluator:
         self._modelmeshes.clear()
         self._mesh_structs = None
 
-    def _eval_mesh_index(self, object: bpy.types.Object):
-        if len(object.modifiers) > 0 and self._apply_modifs:
+    def _eval_mesh_index(self, obj: bpy.types.Object):
+        if len(obj.modifiers) > 0 and self._apply_modifs:
             mesh_index = len(self._mesh_lut)
-            self._mesh_lut[object] = mesh_index
+            self._mesh_lut[obj] = mesh_index
 
-        elif object.data in self._mesh_lut:
-            mesh_index = self._mesh_lut[object.data]
+        elif obj.data in self._mesh_lut:
+            mesh_index = self._mesh_lut[obj.data]
 
         else:
             mesh_index = len(self._mesh_lut)
-            self._mesh_lut[object.data] = mesh_index
+            self._mesh_lut[obj.data] = mesh_index
 
         return mesh_index
 
-    def _eval_entry(self, object: bpy.types.Object):
-        mesh_index = self._eval_mesh_index(object)
+    def _eval_entry(self, obj: bpy.types.Object):
+        mesh_index = self._eval_mesh_index(obj)
+        blockbit = int(obj.saio_land_entry.blockbit, base=16)
 
         surface_attributes = o_enum.to_surface_attributes(
-            object.saio_land_entry)
+            obj.saio_land_entry)
 
         node_attributes = o_enum.to_node_attributes(
-            object.saio_node)
+            obj.saio_node)
 
-        mtx = o_matrix.bpy_to_net_matrix(object.matrix_world)
+        mtx = o_matrix.bpy_to_net_matrix(obj.matrix_world)
 
         landentry = SAIO_NET.LAND_ENTRY_STRUCT(
-            object.name,
+            obj.name,
             mesh_index,
+            blockbit,
             node_attributes,
             surface_attributes,
             mtx
@@ -123,7 +125,7 @@ class LandtableEvaluator:
         self._cleanup()
 
     def export(self, filepath: str):
-        model_format = o_enum.to_model_format(self._format)
+        model_format = o_enum.to_model_format(self._model_format)
         landtable_prop = self._context.scene.saio_scene.landtable
         texlist_pointer = int(landtable_prop.tex_list_pointer, base=16)
 

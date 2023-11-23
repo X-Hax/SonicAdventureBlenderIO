@@ -78,6 +78,7 @@ class LandtableProcessor:
         mesh_data = self._meshes[landentry.MeshIndex]
         obj = bpy.data.objects.new(landentry.Label, mesh_data.mesh)
 
+        obj.saio_land_entry.blockbit = f"{landentry.BlockBit:08X}"
         obj.saio_land_entry.sf_visible = False
 
         i_enum.from_surface_attributes(

@@ -226,6 +226,7 @@ namespace SAIO.NET
                 landEntries.Add(new(
                     landEntry.Model.Label,
                     index,
+                    landEntry.BlockBit,
                     landEntry.Model.Attributes,
                     landEntry.SurfaceAttributes,
                     landEntry.Model.LocalMatrix));
