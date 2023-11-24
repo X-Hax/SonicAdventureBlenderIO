@@ -107,7 +107,7 @@ class LandtableEvaluator:
         # we apply modifiers here since the only models with modifiers
         # are those that we added before based on whether we apply modifiers
         self._mesh_structs = o_mesh.ModelMesh.evaluate_models(
-            self._context, self._modelmeshes, True)
+            self._context, self._modelmeshes, True, False)
 
     def _cleanup(self):
         for temp in self._temp_objects:

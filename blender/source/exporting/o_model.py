@@ -73,6 +73,7 @@ class ModelEvaluator:
     _ignore_weights: bool
     _write_specular: bool
     _apply_modifs: bool
+    _apply_pose: bool
     _automatic_node_attributes: bool
     _force_sort_bones: bool
     _node_evaluator: o_node.NodeEvaluator
@@ -99,6 +100,7 @@ class ModelEvaluator:
         self._ignore_weights = ignore_weights
         self._write_specular = write_specular
         self._apply_modifs = apply_modifs
+        self._apply_pose = apply_pose
         self._automatic_node_attributes = automatic_node_attributes
         self._node_evaluator = o_node.NodeEvaluator(
             context, True, apply_pose, force_sort_bones)
@@ -116,6 +118,7 @@ class ModelEvaluator:
             self._context,
             self._output.meshes.values(),
             self._apply_modifs,
+            self._apply_pose,
             convert)
 
     def _convert_structures(self):

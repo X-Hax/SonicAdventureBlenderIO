@@ -69,7 +69,7 @@ class ModelMesh:
 
     # Evaluation routine
 
-    def _prepare_modifiers(self, apply_modifiers: bool):
+    def _prepare_modifiers(self, apply_modifiers: bool, apply_armature: bool):
         # Whether the model is actually weighted
         for modifier in self.object.modifiers:
             self._viewport_modifier_states[modifier] = modifier.show_viewport
@@ -78,7 +78,7 @@ class ModelMesh:
                     and modifier.type == 'ARMATURE'
                     and modifier.object == self.object.parent):
                 self._armature_modifier = modifier
-                modifier.show_viewport = False
+                modifier.show_viewport = apply_armature
 
             elif not apply_modifiers:
                 modifier.show_viewport = False
@@ -417,10 +417,11 @@ class ModelMesh:
             context: bpy.types.Context,
             meshes: list['ModelMesh'],
             apply_modifiers: bool,
+            apply_armature: bool,
             convert: bool = True):
 
         for mesh in meshes:
-            mesh._prepare_modifiers(apply_modifiers) # pylint: disable=protected-access
+            mesh._prepare_modifiers(apply_modifiers, apply_armature) # pylint: disable=protected-access
 
         texlist_manager = TexlistManager()
         texlist_manager.evaluate_texlists(context.scene)
