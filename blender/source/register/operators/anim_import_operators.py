@@ -20,7 +20,7 @@ class MotionImportOperator(SAIOBaseFileLoadOperator):
     bl_options = {'PRESET', 'UNDO'}
 
     filter_glob: StringProperty(
-        default="*.saanim",
+        default="*.saanim;*.njm",
         options={'HIDDEN'},
     )
 
