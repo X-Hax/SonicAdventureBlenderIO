@@ -40,7 +40,6 @@ def register_classes(bl_info):
         if hasattr(cls, "register"):
             cls.register()
 
-    ui.register()
     bpy.utils.register_manual_map(manual.add_manual_map)
 
 
@@ -52,7 +51,6 @@ def unregister_classes():
     addon_updater.unregister_addon_updater()
 
     bpy.utils.unregister_manual_map(manual.add_manual_map)
-    ui.unregister()
 
     for cls in classes:
         bpy.utils.unregister_class(cls)

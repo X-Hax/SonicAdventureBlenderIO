@@ -77,13 +77,3 @@ to_register = [
     menus.TOPBAR_MT_SAIO_Export,
     menus.TOPBAR_MT_SAIO_Import
 ]
-
-
-def register():
-    menus.TOPBAR_MT_SAIO_Export.register()
-    menus.TOPBAR_MT_SAIO_Import.register()
-
-
-def unregister():
-    menus.TOPBAR_MT_SAIO_Export.unregister()
-    menus.TOPBAR_MT_SAIO_Import.unregister()
