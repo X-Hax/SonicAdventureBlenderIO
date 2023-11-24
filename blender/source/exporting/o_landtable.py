@@ -124,6 +124,30 @@ class LandtableEvaluator:
         self._eval_mesh_models()
         self._cleanup()
 
+    def save_debug(self, filepath: str):
+        model_format = o_enum.to_model_format(self._model_format)
+        landtable_prop = self._context.scene.saio_scene.landtable
+        texlist_pointer = int(landtable_prop.tex_list_pointer, base=16)
+
+        SAIO_NET.DEBUG_LEVEL(
+            self._land_entries,
+            self._mesh_structs,
+            model_format,
+
+            landtable_prop.name,
+            landtable_prop.draw_distance,
+            landtable_prop.tex_file_name,
+            texlist_pointer,
+
+            filepath,
+            self._optimize,
+            self._write_specular,
+            self._fallback_surface_attributes,
+            self._automatic_node_attributes,
+            self._context.scene.saio_scene.author,
+            self._context.scene.saio_scene.description
+        ).ToFile(filepath)
+
     def export(self, filepath: str):
         model_format = o_enum.to_model_format(self._model_format)
         landtable_prop = self._context.scene.saio_scene.landtable

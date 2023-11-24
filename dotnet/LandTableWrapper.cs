@@ -1,4 +1,5 @@
-﻿using SA3D.Common;
+﻿using BCnEncoder.Shared;
+using SA3D.Common;
 using SA3D.Common.Lookup;
 using SA3D.Modeling.File;
 using SA3D.Modeling.Mesh;
@@ -127,7 +128,7 @@ namespace SAIO.NET
             landtable.Geometry = new LabeledArray<LandEntry>("geometry_" + StringExtensions.GenerateIdentifier(), geometry.ToArray());
         }
 
-        public static void Export(
+        public static LandTable ProcessLandtable(
             LandEntryStruct[] landentries,
             MeshStruct[] weightedAttaches,
             ModelFormat format,
@@ -135,13 +136,10 @@ namespace SAIO.NET
             float drawDistance,
             string texFileName,
             uint texListPointer,
-            string filepath,
             bool optimize,
             bool writeSpecular,
             bool fallbackSurfaceAttributes,
-            bool automaticNodeAttributes,
-            string author,
-            string description)
+            bool automaticNodeAttributes)
         {
             if(landentries.Length == 0)
             {
@@ -183,6 +181,38 @@ namespace SAIO.NET
                     ExportDouble(landtable, landentries, wbas, optimize, automaticNodeAttributes);
                     break;
             }
+
+            return landtable;
+        }
+
+        public static void Export(
+            LandEntryStruct[] landentries,
+            MeshStruct[] weightedAttaches,
+            ModelFormat format,
+            string name,
+            float drawDistance,
+            string texFileName,
+            uint texListPointer,
+            string filepath,
+            bool optimize,
+            bool writeSpecular,
+            bool fallbackSurfaceAttributes,
+            bool automaticNodeAttributes,
+            string author,
+            string description)
+        {
+            LandTable landtable = ProcessLandtable(
+                landentries,
+                weightedAttaches,
+                format,
+                name,
+                drawDistance,
+                texFileName,
+                texListPointer,
+                optimize,
+                writeSpecular,
+                fallbackSurfaceAttributes,
+                automaticNodeAttributes);
 
             MetaData metaData = new()
             {

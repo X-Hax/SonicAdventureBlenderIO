@@ -184,6 +184,15 @@ class ExportLVLOperator(ExportModelOperator):
         default=True
     )
 
+    debug_output: BoolProperty(
+        name="Developer tool: Debug output",
+        description=(
+            "Outputs the raw exported level data as a json file for debugging."
+            " DONT TOUCH IF YOU ARE NOT A DEVELOPER FOR THE SAIO ADDON! It"
+            " will dramatically increase export time!"),
+        default=False
+    )
+
     def export_models(self, context, objects):
         from ...exporting import o_landtable
 
@@ -198,6 +207,9 @@ class ExportLVLOperator(ExportModelOperator):
 
         evaluator.evaluate(objects)
         evaluator.export(self.filepath)
+
+        if self.debug_output:
+            evaluator.save_debug(self.filepath + ".json")
 
         return {'FINISHED'}
 

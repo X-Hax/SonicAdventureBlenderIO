@@ -55,9 +55,7 @@ namespace SAIO.NET
 
             result.Model.Label = Label;
             result.Model.SetAllNodeAttributes(NodeAttributes);
-            result.Model.Position = position;
-            result.Model.EulerRotation = euler;
-            result.Model.Scale = scale;
+            result.Model.UpdateTransforms(position, euler, scale);
 
             if(automaticNodeAttributes)
             {

@@ -22,6 +22,9 @@ class SAIO_NET:
     DEBUG_MODEL: any = None
     '''class SAIO.NET.DebugModel'''
 
+    DEBUG_LEVEL: any = None
+    '''class SAIO.NET.DebugLevel'''
+
     NODE_STRUCT: any = None
     '''struct SAIO.NET.NodeStruct'''
 
@@ -45,6 +48,7 @@ class SAIO_NET:
             MeshStruct,
             Model,
             DebugModel,
+            DebugLevel,
             NodeStruct,
             CurvePath,
             PathData,
@@ -58,6 +62,7 @@ class SAIO_NET:
         cls.MESH_STRUCT = MeshStruct
         cls.MODEL = Model
         cls.DEBUG_MODEL = DebugModel
+        cls.DEBUG_LEVEL = DebugLevel
         cls.NODE_STRUCT = NodeStruct
         cls.CURVE_PATH = CurvePath
         cls.PATH_DATA = PathData
@@ -72,6 +77,7 @@ class SAIO_NET:
         cls.MESH_STRUCT = None
         cls.MODEL = None
         cls.DEBUG_MODEL = None
+        cls.DEBUG_LEVEL = None
         cls.NODE_STRUCT = None
         cls.CURVE_PATH = None
         cls.PATH_DATA = None
