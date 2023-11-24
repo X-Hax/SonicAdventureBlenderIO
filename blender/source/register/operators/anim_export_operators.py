@@ -10,6 +10,7 @@ from .base_export_operators import (
 from ...exporting import o_motion, o_shapemotion, o_model
 from ...utility import camera_utils
 from ...exceptions import UserException
+from ...dotnet import SA3D_Modeling
 
 
 class SAIO_OT_Export_Node_Animation(NodeAnimExportOperator):
@@ -37,14 +38,16 @@ class SAIO_OT_Export_Node_Animation(NodeAnimExportOperator):
 
         action = SAIO_OT_Export_Node_Animation._get_action_to_export(context)
 
-        o_motion.convert_to_node_motion(
+        motion = o_motion.convert_to_node_motion(
             context.active_object,
             self.force_sort_bones,
             action.fcurves,
             action.frame_range,
             action.name,
             self.get_anim_parameters()
-        ).WriteFile(self.filepath)
+        )
+
+        SA3D_Modeling.ANIMATION_FILE.WriteToFile(self.filepath, motion)
 
         return {'FINISHED'}
 
@@ -84,14 +87,16 @@ class SAIO_OT_Export_Node_Animations(NodeAnimExportOperator):
                 outpath = os.path.join(
                     folder, f"{strip.action.name}.saanim")
 
-                o_motion.convert_to_node_motion(
+                motion = o_motion.convert_to_node_motion(
                     active,
                     self.force_sort_bones,
                     strip.action.fcurves,
                     (strip.action_frame_start, strip.action_frame_end),
                     strip.name,
                     anim_parameters
-                ).WriteFile(outpath)
+                )
+
+                SA3D_Modeling.ANIMATION_FILE.WriteToFile(outpath, motion)
 
         return {'FINISHED'}
 
@@ -193,12 +198,14 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
 
     def export(self, context: bpy.types.Context):
 
-        o_motion.convert_to_camera_motion(
+        motion = o_motion.convert_to_camera_motion(
             self.camera_setup,
             self.action_setup,
             self.motion_name,
             self.get_anim_parameters(),
-        ).WriteFile(self.filepath)
+        )
+
+        SA3D_Modeling.ANIMATION_FILE.WriteToFile(self.filepath, motion)
 
         return {'FINISHED'}
 
@@ -293,5 +300,6 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
             context,
             self.normal_mode)
 
-        evaluator.evaluate(self._actions).WriteFile(self.filepath)
+        motion = evaluator.evaluate(self._actions)
+        SA3D_Modeling.ANIMATION_FILE.WriteToFile(self.filepath, motion)
         return {'FINISHED'}
