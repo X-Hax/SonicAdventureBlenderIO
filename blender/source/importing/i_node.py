@@ -199,7 +199,11 @@ class NodeProcessor:
         bone_name = self._bone_map[node_index]
         bone = self._armature_obj.pose.bones[bone_name]
         bone_matrix = self._armature_obj.matrix_world @ bone.matrix
-        mesh_obj.matrix_world = bone_matrix
+        # mesh_obj.matrix_world = bone_matrix
+
+        pos, rot, scale = bone_matrix.decompose()
+        mesh_obj.matrix_world = Matrix.LocRotScale(
+            pos, rot, Vector((1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z)))
 
     def _setup_mesh_weights(
             self,
