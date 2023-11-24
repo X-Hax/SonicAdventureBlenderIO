@@ -36,6 +36,7 @@ Note that, when selecting only specific objects from the same hierarchy, only th
 Exports the targeted objected as a landtable (*.*lvl) file.
 
 - `Fallback szrface attributes`: If an object has no surface attributes, it will receive the `Visible` and `Solid` attributes.
+- `Developer Output: Debug Output`: Exports a .json file containing the processable level data that would be passed to the external library. **Only for debugging purposes, do not touch unless a developer**
 
 ### Export SA2 Event
 Export the current SA2 event.
