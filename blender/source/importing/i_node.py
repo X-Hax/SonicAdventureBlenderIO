@@ -199,7 +199,6 @@ class NodeProcessor:
         bone_name = self._bone_map[node_index]
         bone = self._armature_obj.pose.bones[bone_name]
         bone_matrix = self._armature_obj.matrix_world @ bone.matrix
-        # mesh_obj.matrix_world = bone_matrix
 
         pos, rot, scale = bone_matrix.decompose()
         mesh_obj.matrix_world = Matrix.LocRotScale(
