@@ -222,7 +222,8 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
 
         # emulating file export and import
         file_bytes = SA3D_Modeling.ANIMATION_FILE.WriteToBytes(out)
-        in_motion = SA3D_Modeling.ANIMATION_FILE.ReadFromBytes(file_bytes).Animation
+        in_motion = SA3D_Modeling.ANIMATION_FILE.ReadFromBytes(
+            file_bytes).Animation
 
         in_action = i_motion.NodeMotionProcessor.process_motion(
             in_motion,
@@ -328,13 +329,22 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
 
         fake_nodes: list['FakeNode'] = []
 
+        class FakeTuple:
+            Item1: any
+            Item2: any
+
+            def __init__(self, item1, item2):
+                self.Item1 = item1
+                self.Item2 = item2
+
+
         class FakeNode:
 
             Name: str
             Attributes: any
             Parent: 'FakeNode'
             IsVirtualRoot: bool
-            matrices: list
+            matrices: list[FakeTuple]
 
             def __init__(self, node):
                 self.Label = node.Label
@@ -346,16 +356,18 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
                 else:
                     self.Parent = None
 
-            def GetWorldMatrices(self):
+            def GetWorldMatrixTree(self):
                 return self.matrices
 
         from ...exporting import o_matrix
         matrices = []
         for index, node in enumerate(structure.nodes):
-            fake_nodes.append(FakeNode(node))
-            matrices.append(
-                o_matrix.bpy_to_net_matrix(
-                    objects[index].matrix_world))
+            fake_node = FakeNode(node)
+            fake_nodes.append(fake_node)
+            matrices.append(FakeTuple(
+                fake_node,
+                o_matrix.bpy_to_net_matrix(objects[index].matrix_world)
+            ))
 
         fake_nodes[0].matrices = matrices
 
