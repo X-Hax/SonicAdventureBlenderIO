@@ -91,7 +91,7 @@ class SAIO_OT_TextureNames_Import(
 
         from ...importing import i_texture
 
-        njs_texlist = SA3D_Texturing.TEXTURE_NAME_LIST.Load(self.filepath)
+        njs_texlist = SA3D_Texturing.TEXTURE_NAME_LIST.ReadFromTextFile(self.filepath)
         i_texture.process_texture_names(njs_texlist, texture_names)
 
 
@@ -110,4 +110,4 @@ class SAIO_OT_TextureNames_Export(
         filename = os.path.basename(self.filepath)
         njs_list = o_texture.create_texnames_from_names(
             texture_names, filename)
-        njs_list.SaveAsIni(self.filepath)
+        njs_list.WriteAsIniToTextFile(self.filepath)
