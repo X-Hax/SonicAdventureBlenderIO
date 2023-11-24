@@ -5,6 +5,8 @@ Objects and bones are considered nodes and own attributes related to them, which
 
 The panel can be found in the **properties editor**, under the **object** and **bone** tabs, both called "SAIO Node Properties".
 
+<br clear="right">
+
 !!! info
 	The following attributes dont need to be set by hand and can be evaluated at export time:
 
@@ -13,8 +15,6 @@ The panel can be found in the **properties editor**, under the **object** and **
 	- Ignore Scale
 	- Skip Draw
 	- Skip Children
-
-<br clear="right">
 
 ---
 

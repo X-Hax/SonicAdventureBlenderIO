@@ -8,7 +8,7 @@ nav:
     - User Interface:
       - 3D View Toolbar:
         - Tools:
-          - 'ui/toolbar/tools/index.md'
+          - Overview: 'ui/toolbar/tools/index.md'
           - Import: 'ui/toolbar/tools/import.md'
           - Export: 'ui/toolbar/tools/export.md'
           - Material: 'ui/toolbar/tools/material.md'
@@ -45,35 +45,13 @@ nav:
     - Technical:
       - Data Structure: 'technical/datastructure.md'
 theme:
-  name: 'material'
+  name: 'readthedocs'
   logo: 'img/logo.svg'
   favicon: 'img/favicon.ico'
-  features:
-    - navigation.indexes
-    - navigation.sections
-    - toc.follow
-  palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: deep orange
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
-extra_css:
-  - stylesheets/extra.css
 markdown_extensions:
   - admonition
   - attr_list
   - md_in_html
   - tables
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
   - toc:
       permalink: "🔗&#xFE0E;"
