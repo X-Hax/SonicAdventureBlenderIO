@@ -3,7 +3,7 @@ from . import (
     operator_references
 )
 
-MANUAL_PREFIX = "https://x-hax.github.io/SonicAdventureBlenderIODocs/"
+MANUAL_PREFIX = "https://x-hax.github.io/SonicAdventureBlenderIO/"
 manual_mapping = []
 
 manual_mapping.extend(property_groups_reference.manual_mapping)

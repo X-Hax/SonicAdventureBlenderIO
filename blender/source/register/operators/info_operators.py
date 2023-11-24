@@ -9,7 +9,7 @@ class SAIO_OT_Info_Manual(SAIOBaseOperator):
 
     def _execute(self, context: bpy.types.Context):
         import webbrowser
-        webbrowser.open("https://x-hax.github.io/SonicAdventureBlenderIODocs/")
+        webbrowser.open("https://x-hax.github.io/SonicAdventureBlenderIO/")
         return {'FINISHED'}
 
 
