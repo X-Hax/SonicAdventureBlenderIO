@@ -170,8 +170,8 @@ BLEND_MODE = {
 }
 
 FILTER_MODE = {
-    'POINT': "PointSampled",
-    "PointSampled": 'POINT',
+    'NEAREST': "Nearest",
+    "Nearest": 'NEAREST',
 
     'BILINEAR': "Bilinear",
     "Bilinear": 'BILINEAR',

@@ -185,11 +185,11 @@ class SAIO_Material(bpy.types.PropertyGroup):
     texture_filtering: EnumProperty(
         name="Filter Type",
         description="The texture filter",
-        items=(('POINT', 'Point', "no filtering"),
-               ('BILINEAR', 'Bilinear', "Bilinear Filtering"),
-               ('TRILINEAR', 'Trilinear', "Trilinear Filtering"),
+        items=(('NEAREST', 'Nearest', "no interpolation"),
+               ('BILINEAR', 'Bilinear', "Bilinear interpolation"),
+               ('TRILINEAR', 'Trilinear', "Trilinear interpolation"),
                ('BLEND', 'Blend',
-                "Bi- and Trilinear Filtering blended together")
+                "Bi- and Trilinear Filtering blended together(?)")
                ),
         default='BILINEAR'
     )
