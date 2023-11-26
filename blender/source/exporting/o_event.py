@@ -327,7 +327,6 @@ class EventExporter:
         self.event_data.TextureDimensions = texture_sizes
 
     def _setup_texture_names(self):
-
         from . import o_texture
 
         world = self.base_scene.saio_scene.texturename_world
@@ -601,7 +600,7 @@ class EventExporter:
             SA3D_Modeling.KEYFRAME_ATTRIBUTES.EulerRotation)
 
         result = SA3D_SA2Event.SCENE(cutinfo.framecount)
-        result.Big = SA3D_SA2Event.BIG_THE_CAT_ENTRY(None, 0)
+        result.BigTheCat = SA3D_SA2Event.BIG_THE_CAT_ENTRY(None, 0)
 
         result.CameraAnimations.Add(
             SA3D_SA2Event.EVENT_MOTION.CreateFromMotion(cutinfo.camera_motion))
