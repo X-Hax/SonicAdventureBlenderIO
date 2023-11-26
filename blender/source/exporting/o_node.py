@@ -79,7 +79,7 @@ class NodeStructure:
 
         # convert node attributes
         if source is None:
-            node_attributes = SAIO_NET.Flags.ComposeNodeAttributes(
+            node_attributes = SAIO_NET.FLAGS.ComposeNodeAttributes(
                 False, False, False, False, False, False, False, False)
         else:
             from . import o_enum
