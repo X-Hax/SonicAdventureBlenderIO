@@ -131,8 +131,8 @@ class NodeEvaluator:
 
     _context: bpy.types.Context
 
-    _legacy_hierarchy: bool
-    '''Evaluate an armatures object as its root node'''
+    _auto_root: bool
+    '''Create a root object if there are multiple nodes with no parent'''
 
     _apply_pose: bool
     '''Keep armature posing on export'''
@@ -159,14 +159,16 @@ class NodeEvaluator:
     def __init__(
             self,
             context: bpy.types.Context,
+            auto_root: bool,
             correct_names: bool,
             apply_pose: bool,
             force_sort_bones: bool):
 
         self._context = context
+        self._auto_root = auto_root
         self._correct_names = correct_names
         self._apply_pose = apply_pose
-        self.force_sort = force_sort_bones
+        self._force_sort_bones = force_sort_bones
 
         self._hierarchy_dictionary = {}
         self._parentless = []
@@ -259,7 +261,7 @@ class NodeEvaluator:
 
         children = list(bone.children)
 
-        if self.force_sort:
+        if self._force_sort_bones:
             children.sort(key=lambda x: x.name)
 
         for child in children:
@@ -290,7 +292,7 @@ class NodeEvaluator:
             if bone.parent is None]
 
         parent_index = -1
-        if len(parentless_bones) > 1:
+        if len(parentless_bones) > 1 and self._auto_root:
             parent_index = 0
             self._create_root_node()
 
@@ -318,16 +320,21 @@ class NodeEvaluator:
         self._evaluate_object_tree(objects)
         self._base_matrix = Matrix.Identity(4)
 
-        if len(self._parentless) > 1:
-            self._create_root_node()
-            for parentless in self._parentless:
-                self._eval_object(parentless, 0)
-        else:
+        if len(self._parentless) == 1:
             parentless = self._parentless[0]
             if parentless.type == 'ARMATURE':
                 self._base_matrix = parentless.matrix_world
                 self._eval_armature(parentless)
             else:
+                self._eval_object(parentless, -1)
+
+        elif self._auto_root:
+            self._create_root_node()
+            for parentless in self._parentless:
+                self._eval_object(parentless, 0)
+
+        else:
+            for parentless in self._parentless:
                 self._eval_object(parentless, -1)
 
         return self._output

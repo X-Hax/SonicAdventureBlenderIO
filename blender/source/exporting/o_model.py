@@ -103,7 +103,7 @@ class ModelEvaluator:
         self._apply_pose = apply_pose
         self._automatic_node_attributes = automatic_node_attributes
         self._node_evaluator = o_node.NodeEvaluator(
-            context, True, apply_pose, force_sort_bones)
+            context, self._auto_root, True, apply_pose, force_sort_bones)
 
         self._output = None
 

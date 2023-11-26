@@ -321,7 +321,7 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
 
         from ...exporting.o_node import NodeEvaluator
 
-        evaluator = NodeEvaluator(context, False, True, True)
+        evaluator = NodeEvaluator(context, False, False, True, True)
         structure = evaluator.evaluate(objects)
 
         # creating a fake SAIO Node hierarchy to use in the
