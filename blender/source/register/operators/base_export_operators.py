@@ -107,7 +107,7 @@ class AnimationExportOperator(ExportOperator):
             "\nDoes not affect manually placed keyframes"
         ),
         min=0,
-        default=0.05,
+        default=0,
     )
 
     general_optimization_threshold: FloatProperty(
@@ -122,7 +122,7 @@ class AnimationExportOperator(ExportOperator):
             "\nAffects all frames"
         ),
         min=0,
-        default=0.05
+        default=0
     )
 
     show_advanced: BoolProperty(
@@ -206,7 +206,7 @@ class NodeAnimExportOperator(AnimationExportOperator):
         ),
         min=0,
         max=1,
-        default=0.05
+        default=0
     )
 
     quaternion_optimization_threshold: FloatProperty(
@@ -221,7 +221,7 @@ class NodeAnimExportOperator(AnimationExportOperator):
             "\nAffects all frames"
         ),
         min=0,
-        default=0.01
+        default=0
     )
 
     def get_anim_parameters(self):
