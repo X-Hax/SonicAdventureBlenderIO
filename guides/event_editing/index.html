@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Event Editing - Sonic Adventure IO Manual</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Event Editing";
+        var mkdocs_page_input_path = "guides\\event_editing.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Sections</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >User Interface</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" >3D View Toolbar</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" >Tools</a>
+    <ul>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/">Overview</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/import/">Import</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/export/">Export</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material/">Material</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/utilities/">Utilities</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material_mass_edit/">Material Mass Edit</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/migration/">Migration</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/object/">Object</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/scene/">Scene</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Scene related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/settings/">Settings properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/landtable/">Landtable properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/event/">Event properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Object related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/node/">Node Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/landentry/">Landentry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/evententry/">Evententry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/event_node_uv_animations/">Event Node UV Animations</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/mesh/">Mesh Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/material/">Material Properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/textures/">Texture List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/texturenames/">Texturename List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/lists/">Lists</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Asset Info</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/filetypes/">File Types</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/location/">Location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/model_formats/">Model Formats</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Guides</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../asset_importing/">Asset Importing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../texturing/">Texturing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../animating/">Animating</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Event Editing</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#importing-events">Importing events</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#editing-events">Editing events</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#scenes">Scenes</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#the-root-scene">The Root scene</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#event-entries">Event Entries</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#animations">Animations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#upgrade-models">Upgrade models</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#shadow-models">Shadow models</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#particles">Particles</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#reflections">Reflections</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#exporting">Exporting</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../path_editing/">Path Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../migration/">Migration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Technical</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../technical/datastructure/">Data Structure</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Sonic Adventure IO Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Sections</li>
+          <li class="breadcrumb-item">Guides</li>
+      <li class="breadcrumb-item active">Event Editing</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="sa2-event-editing">SA2 Event Editing<a class="headerlink" href="#sa2-event-editing" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p>SAIO hosts a big new features: <strong>Editing SA2 Events!</strong></p>
+<p>Now you can import and export full events! Mini events, which are played inside stages and utilize ingame models, are planned for the future, and not yet supported.</p>
+<h2 id="importing-events">Importing events<a class="headerlink" href="#importing-events" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>All SA2 events are located under <code>Path/To/Sonic Adventure 2/resource/gd_PC/event</code>, and all have the same naming convention:
+<br/> An <code>e</code> followed by a 4 digit, zero filled, event number and the <code>.prs</code> file extension(e.g. <code>e0000.prs</code>).
+<br/> Event files are accompanied by other files, storing effects, sounds, subtitles and more, but the only relevant ones for blender are</p>
+<ul>
+<li><code>e####.prs</code>: The main file containing the models</li>
+<li><code>e####motion.prs</code>: Stores animations (only sa2b forward)</li>
+<li><code>e####texture.prs</code>: (optional) Stores the texture list</li>
+<li><code>e####texlist.prs</code>: (very optional) Stores texture names</li>
+</ul>
+<p>To import the event, press <a href="../../ui/toolbar/tools/import/#import-sa2-event"><code>import sa2 event</code></a> and select the <code>e####.prs</code> file of your choice.</p>
+<p>After importing, you should be greated by something similar to this.
+<a href="../../img/asset_importing_example_event.png"><img alt="" src="../../img/asset_importing_example_event.png" /></a></p>
+<p>Cutscenes are composed of multiple scenes (the "cuts" of the cutscenes).</p>
+<p><img alt="" src="../../img/asset_importing_example_event_scenes.png" /></p>
+<p>There is a Root scene with shared models between the scenes, as well as other objects that are used between the scenes, such as upgrades, shadow models and reflections.</p>
+<p>The numbered scenes (<code>_1</code>, <code>_2</code>, etc.) are the individual animated cuts.</p>
+<hr />
+<h2 id="editing-events">Editing events<a class="headerlink" href="#editing-events" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Now the question is: What are you allowed to edit?</p>
+<p>The answer: <strong>Everything!</strong>
+<br/> Full events are completely self contained, and dont depend on any other game models or animations. You can edit them however you like!</p>
+<p><em>HOWEVER</em> there are rules you must follow to be able to export the event correctly</p>
+<hr />
+<h3 id="scenes">Scenes<a class="headerlink" href="#scenes" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Events are divided into scenes, as already shown <a href="#importing-events">above</a>.</p>
+<p>You can manage which scenes play in which order by editing the <a href="../../ui/scene/event/#event-scenes">scenes list</a> in the root event properties.</p>
+<hr />
+<h3 id="the-root-scene">The Root scene<a class="headerlink" href="#the-root-scene" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>The root scene manages the entire event and stores event entries that get used in every scene. If a model is in the root event, it will not be seperately exported for the other events <strong>and cannot be animated</strong>.</p>
+<p>Root events also host the upgrades, shadow models and reflections.</p>
+<hr />
+<h3 id="event-entries">Event Entries<a class="headerlink" href="#event-entries" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Models in events are called "event entries", and their settings are found under the objects <a href="../../ui/object/evententry/">event entry properties</a>. Only a root object can be an event entry; If an object has a parent, they are not an entry.</p>
+<h4 id="lighting">Lighting<a class="headerlink" href="#lighting" title="Permanent link">🔗&#xFE0E;</a></h4>
+<p>Model entries won't be properly lit by default. You'll have to mark entries with the correct attributes, which are unfortuntaly not properly researched. For all we know, you only have to mark <a href="../../ui/object/evententry/#unknowns"><code>Unk 2</code></a> to get lit, as well as <a href="../../ui/object/evententry/#enable-lighting"><code>Enable lighting</code></a> for root scene entries.</p>
+<hr />
+<h3 id="animations">Animations<a class="headerlink" href="#animations" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Animations are handled through NLA tracks:</p>
+<p><img alt="" src="../../img/guide_event_editing_1.png" /></p>
+<h4 id="node-animations">Node Animations<a class="headerlink" href="#node-animations" title="Permanent link">🔗&#xFE0E;</a></h4>
+<p>The exporter will verify that the animation is "vanilla" (only one track, no modifiers, same length as scene itself, and similar). If the track is vanilla, it will be exported as is; Otherwise the exporter will bake the animation for the entire scene, which will take much longer.</p>
+<h4 id="shape-animations">Shape Animations<a class="headerlink" href="#shape-animations" title="Permanent link">🔗&#xFE0E;</a></h4>
+<p>Shape animations are handled a bit different than the regular shape animation export. The addon will require you to align shape animations in your NLA tracks with the scenes start and end, as opposed to naming them all the same. The <a href="../animating/#limitations">curve requirements</a> remain the same.</p>
+<h4 id="camera-animations">Camera animations<a class="headerlink" href="#camera-animations" title="Permanent link">🔗&#xFE0E;</a></h4>
+<p>Camera animations act similarly to node animations, as they will be baked if not vanilla. As with shape animations, you will not need to ensure their names, as the animations will be derived from which scene they take place in.</p>
+<hr />
+<h3 id="upgrade-models">Upgrade models<a class="headerlink" href="#upgrade-models" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Upgrades are handled a bit tricky. There are 2 types:</p>
+<h4 id="override-upgrades">Override upgrades<a class="headerlink" href="#override-upgrades" title="Permanent link">🔗&#xFE0E;</a></h4>
+<p>These are set in the <a href="../../ui/scene/event/#override-upgrades">override upgrades panel</a>, and will simply make specific parts of a model invisible or visible, based on which upgrades the player has collected.</p>
+<p>The base is the visible part when the upgrade is not collected, and the override parts are visible when the upgrade is collected. You are not required to fill any one in. The base and both overrides can be left empty if you so desire.</p>
+<p>This is most commonly used for the mechs, as their parts are integrated into the models and simply need to be made invisible.</p>
+<h4 id="attach-upgrades">Attach upgrades<a class="headerlink" href="#attach-upgrades" title="Permanent link">🔗&#xFE0E;</a></h4>
+<p>Attach upgrades are seperate models that get rendered on whatever they are attached to during the cutscenes. They can be specified in the <a href="../../ui/scene/event/#attach-upgrades">attach upgrades panel</a>.</p>
+<p>The model is the model itself, while the target is what they get attached to when the upgrade is collected. <strong>YOU HAVE TO MAKE SURE THE MODEL HAS THE <a href="../../ui/object/evententry/#entry-type">EVENT ENTRY TYPE</a> <code>NONE</code></strong>, otherwise it will appear in your cutscene as a regular model too!</p>
+<p>There are 3 special "upgrades" specifically for events:
+- Eggmans windshield
+- Tails windshield
+- Rouges shoe plates</p>
+<p>Those 3 models have been done using upgrades, presumably to correct their transparency effect, and are always enabled/"collected".</p>
+<hr />
+<h3 id="shadow-models">Shadow models<a class="headerlink" href="#shadow-models" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>SA2B onwards use shadow models to draw shadows in certain cutscenes. For shadow models to work, you must enable <a href="../../ui/scene/event/#drop-shadow-control">drop shadow control</a>, as well as make sure shadows are not disabled <a href="../../ui/object/evententry/#disable-shadow-catching">on event entries</a>.</p>
+<p>Shadow models are set in the <a href="../../ui/object/evententry/#shadow-model">event entry properties</a>, and are basically a mirror of the model that they are attached to. <strong>YOU HAVE TO MAKE SURE THEIR BONES ARE SET UP EQUALLY, OTHERWISE THEIR ANIMATIONS WILL FAIL!</strong> You also have to mark shadow models as such in the <a href="../../ui/object/evententry/#entry-type">event entry properties</a></p>
+<hr />
+<h3 id="particles">Particles<a class="headerlink" href="#particles" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Particles are simple empty objects with position animations. Their exact properties are specified in the event effects, which an external tool is used for (currently only editable via event splitting).</p>
+<p>Particles are marked as such in the <a href="../../ui/object/evententry/#entry-type">event entry properties</a>. Their order is determined by their names.</p>
+<hr />
+<h3 id="reflections">Reflections<a class="headerlink" href="#reflections" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Back in the dreamcast, some scenes utilized reflections, which were basically re-renderings of selected models against a plane. Unfortunately, this is broken in the ports, and has to be fixed with a mod (yet to be made).</p>
+<p>Reflections are represented by models with a single plane, sort of like placed mirrors. In their <a href="../../ui/object/evententry/#entry-type">event entry properties</a>, they have to be specified as reflections.</p>
+<p>In order for an event entry to be rendered in reflections, you have to mark them as such in the <a href="../../ui/object/evententry/#reflection">event entry properties</a>.</p>
+<hr />
+<h2 id="exporting">Exporting<a class="headerlink" href="#exporting" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Once all is done, you can hit <a href="../../ui/toolbar/tools/export/#export-sa2-event">export</a> from any scene belonging to the root scene, or from the root scene itself.</p>
+<p>Make sure to directly export the files to your mods event folder (<code>path/to/your/mod/gd_PC/event</code>) so that the texture archive gets correctly formated (if you do export it).</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../animating/" class="btn btn-neutral float-left" title="Animating"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../path_editing/" class="btn btn-neutral float-right" title="Path Editing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../animating/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../path_editing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Export - Sonic Adventure IO Manual</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Export";
+        var mkdocs_page_input_path = "ui\\toolbar\\tools\\export.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../img/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/">About</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../guides/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Sections</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >User Interface</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" >3D View Toolbar</a>
+    <ul class="current">
+                <li class="toctree-l3 current"><a class="reference internal current" >Tools</a>
+    <ul class="current">
+                <li class="toctree-l4"><a class="reference internal" href="../">Overview</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../import/">Import</a>
+                </li>
+                <li class="toctree-l4 current"><a class="reference internal current" href="#">Export</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../material/">Material</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../utilities/">Utilities</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../material_mass_edit/">Material Mass Edit</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../migration/">Migration</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../object/">Object</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../scene/">Scene</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Scene related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../scene/settings/">Settings properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../scene/landtable/">Landtable properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../scene/event/">Event properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Object related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../object/node/">Node Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../object/landentry/">Landentry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../object/evententry/">Evententry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../object/event_node_uv_animations/">Event Node UV Animations</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../object/mesh/">Mesh Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../object/material/">Material Properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../textures/">Texture List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../texturenames/">Texturename List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../lists/">Lists</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Asset Info</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../assetinfo/filetypes/">File Types</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../assetinfo/location/">Location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../assetinfo/model_formats/">Model Formats</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guides</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../guides/asset_importing/">Asset Importing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../guides/texturing/">Texturing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../guides/animating/">Animating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../guides/event_editing/">Event Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../guides/path_editing/">Path Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../guides/migration/">Migration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Technical</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../technical/datastructure/">Data Structure</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">Sonic Adventure IO Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Sections</li>
+          <li class="breadcrumb-item">User Interface</li>
+          <li class="breadcrumb-item">3D View Toolbar</li>
+          <li class="breadcrumb-item">Tools</li>
+      <li class="breadcrumb-item active">Export</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="export-tools">Export Tools<a class="headerlink" href="#export-tools" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p><img align="right" alt="Export Panel" src="../../../../img/ui_toolsbar_tools_export.png" /></p>
+<p>Several tools for exporting data to files.</p>
+<p><br clear="right"/></p>
+<hr />
+<h2 id="3d-model-exporters">3D model exporters<a class="headerlink" href="#3d-model-exporters" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Common parameters between the model exporters:</p>
+<ul>
+<li><code>Select Mode</code>: Determines which objects to target.<ul>
+<li><code>All</code>: All objects in the current scene will be exported.</li>
+<li><code>Visible</code>: Only the visible object will be exported.</li>
+<li><code>Selected</code>: Only the selected objects will be exported.</li>
+</ul>
+</li>
+<li><code>Optimize</code>: Optimize vertex data and get rid of any duplicate.
+    <br/><strong>WARNING:</strong> This may alter vertex order! Do not use for things that morph, like chao models or chao trees.</li>
+<li><code>Automatic Node attributes</code>: Automatically determines several node attributes on export. <a href="../../../object/node/">More info here</a>.</li>
+<li><code>Write Specular</code>: (<strong>SA2 Only</strong>) Include specular colors in material info.</li>
+</ul>
+<h3 id="export-mdl">Export *MDL<a class="headerlink" href="#export-mdl" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Exports the targeted objects as a model (<em>.</em>mdl) file.</p>
+<p>Note that, when selecting only specific objects from the same hierarchy, only those objects will be exported, even if objects between them are missing. This allows for exporting models and deliberately leaving out specific models (but also any other object).</p>
+<ul>
+<li><code>Automatic Node attributes</code>: Automatically determines several node attributes on export. <a href="../../../object/node/">More info here</a>.</li>
+<li><code>Apply armature posing</code>: If exporting an armature that is posed, the armature will be exported the way it is posed. Otherwise with default transforms.</li>
+<li><code>NJ File</code>: Exports the file in .nj format.</li>
+<li><code>Automatic Root</code>: If the exported objects dont share a common root, a root parent will be created between them.</li>
+<li><code>Force Sort Bones</code>: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.</li>
+<li><code>Developer Output: Debug Output</code>: Exports a .json file containing the processable mesh data that would be passed to the external library. <strong>Only for debugging purposes, do not touch unless a developer</strong></li>
+</ul>
+<h3 id="export-lvl">Export *LVL<a class="headerlink" href="#export-lvl" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Exports the targeted objected as a landtable (<em>.</em>lvl) file.</p>
+<ul>
+<li><code>Fallback szrface attributes</code>: If an object has no surface attributes, it will receive the <code>Visible</code> and <code>Solid</code> attributes.</li>
+<li><code>Developer Output: Debug Output</code>: Exports a .json file containing the processable level data that would be passed to the external library. <strong>Only for debugging purposes, do not touch unless a developer</strong></li>
+</ul>
+<h3 id="export-sa2-event">Export SA2 Event<a class="headerlink" href="#export-sa2-event" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Export the current SA2 event.</p>
+<p>Files exported (% = export filename):
+- <code>%.prs</code>: Main file
+- <code>%texture.prs</code>: Stores the texture archive
+- <code>%texlist.prs</code>: Stores the texture name list
+- <code>%motion.bin</code>: Stores animations</p>
+<p>See <a href="#3d-model-exporters">common model parameters</a> and <a href="#export-animations">common animation parameters</a>.</p>
+<hr />
+<h2 id="export-path">Export Path<a class="headerlink" href="#export-path" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Exports the selected path to an INI file, or as a C struct directly insertable into your mods code.</p>
+<ul>
+<li><code>Format</code>: File format to export to<ul>
+<li><code>INI Format</code>: Export as INI file usable in other tools (and for reimporting)</li>
+<li><code>C Struct</code>: Export as a C file storing the path as a c struct for use in code (not reimportable).</li>
+</ul>
+</li>
+<li><code>Use path structs</code>: When importing using <code>C Struct</code>, it exports using the <code>Loop</code> and <code>LoopHead</code> structures.
+    <br/>With this checked, it exports using the <code>pathtbl</code> and <code>pathtag</code> structures.</li>
+<li><code>Curve Code</code>: The code to run the path with<ul>
+<li><code>Custom Code</code>: Enter your own code address using the <code>Custom Code Address</code> field</li>
+<li><code>SA1 Loops</code>: Used on most paths where the player is moved, i.e. Loops. <em>(Address: 0x4BB1F0)</em></li>
+<li><code>SA2 Loops</code>: Used on most paths where the player is moved, i.e. Loops. <em>(Address: 0x497B50)</em></li>
+<li><code>SA2 Grind Rails</code>: Used for most grind rails. <em>(Address: 0x4980C0)</em></li>
+<li><code>SA2 Hand Rails</code>: Used for the hand/gravity rails used in Crazy Gadget. <em>(Address: 0x498140)</em></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="export-animations">Export animations<a class="headerlink" href="#export-animations" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>These export animations to *.saanim files.</p>
+<p>Common parameters between the exporters:</p>
+<ul>
+<li><code>Use 16bit rotations</code>: Rotation channels only occupy 16 instead of 32 bits. Used primarily for chao animations.</li>
+<li><code>Rotation Mode</code>: <strong>(Advanced)</strong> How rotations should be exported<ul>
+<li><code>Euler</code>: Exports as euler rotations</li>
+<li><code>Quaternion</code>: Exports as quaternion rotations (not used by the sonic adventure games, but other titles using the ninja formats, like phantasy star online)</li>
+<li><code>Keep</code>: Export based on the rotation modes on objects</li>
+</ul>
+</li>
+<li>
+<p><details markdown><summary><code>Interpolation conversion deviation threshold</code>: (<strong>Advanced</strong>) | Click to expand</summary></p>
+<ul>
+<li><strong>Problem</strong>: Blender allows for non-linear keyframes</li>
+<li><strong>Solution</strong>: Baking the interpolated keyframes</li>
+<li><strong>The issues with that</strong>: You may not want every frame in your animation to be baked (file size reasons).</li>
+<li><strong>How this parameter affects the conversion</strong>: The minimum amount a keyframe must divert from its interpolated counterpart to remain. 0 keeps all keyframes.</li>
+<li><strong>The standard value:</strong> Usually, a value around 0.05 is enough and gets rid of most unnecessary keyframes.</li>
+<li>
+<p><strong>Example:</strong></p>
+<table>
+<thead>
+<tr>
+<th><img alt="" src="../../../../img/animation_export_interpolation_threshold_og.png" /></th>
+<th><img alt="" src="../../../../img/animation_export_interpolation_threshold_none.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="" src="../../../../img/animation_export_interpolation_threshold_low.png" /></td>
+<td><img alt="" src="../../../../img/animation_export_interpolation_threshold_high.png" /></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><details markdown><summary><code>Quaternion conversion deviation threshold</code>: (<strong>Advanced</strong>) | Click to expand</summary></p>
+<ul>
+<li><strong>Problem</strong>: Importing Euler rotation keyframes to Quaternion objects/bones or vice versa.</li>
+<li><strong>Solution</strong>: Converting keyframes between quaternion and euler.</li>
+<li><strong>The issues with that</strong>: Quaternion conversions are inaccurate, as the interpolation between those types is not linear. This means we must Bake the interpolated values as keyframes before converting.</li>
+<li><strong>How this parameter affects the conversion</strong>: The minimum amount a keyframe must divert from its interpolated counterpart to remain. 0 keeps all keyframes.</li>
+<li><strong>The standard value:</strong> Usually, a value around 0.05 is enough and gets rid of most unnecessary keyframes.</li>
+<li>
+<p><strong>Example:</strong></p>
+<table>
+<thead>
+<tr>
+<th><img alt="" src="../../../../img/animation_conversion_quat_threshold_og.png" /></th>
+<th><img alt="" src="../../../../img/animation_conversion_quat_threshold_none.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="" src="../../../../img/animation_conversion_quat_threshold_low.png" /></td>
+<td><img alt="" src="../../../../img/animation_conversion_quat_threshold_high.png" /></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><code>Optimiziation deviation threshold</code>: (<strong>Advanced</strong>) Similar to the Interpolation threshold, but applies to all frames in the animation (including manually placed ones).</p>
+</li>
+<li><code>Quaternion Optimiziation deviation threshold</code>: (<strong>Advanced</strong>) The same as the regular optimization, but specifically for quaternion rotations, as those use other value ranges.</li>
+</ul>
+<h3 id="export-node-animation">Export Node Animation<a class="headerlink" href="#export-node-animation" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Exports the currently active node animation (either the one currently being edited, or the active action) of the target to an *.saanim file.
+<br/> Only works for objects with no children and armatures</p>
+<ul>
+<li><code>Bone Localspace</code>: Export the animations relative to the armature. Unchecked, the animation will be exported relative to the world center.</li>
+<li><code>Force Sort Bones</code>: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.</li>
+</ul>
+<p>You can read further on shape animations <a href="../../../../guides/animating/#node-animations">here</a></p>
+<h3 id="batch-export-node-animations">Batch Export Node Animations<a class="headerlink" href="#batch-export-node-animations" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Performs <code>Export Node Animation</code> on all animation strips found on the targets NLA tracks. Files will receive the name of the action stored in the strip.</p>
+<h3 id="export-shape-animation">Export Shape Animation<a class="headerlink" href="#export-shape-animation" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Exports the currently active shapekey animation (either the one currently being edited, or the active action) of the target to an *.saanim file.</p>
+<ul>
+<li><code>Normal Mode</code>: How normals should be exported<ul>
+<li><code>None</code>: No normal keyframes at all</li>
+<li><code>Typed</code>: Will be formatted to read as "has normals" but contains no actual normals data</li>
+<li><code>Nulled</code>: Add keyframes with a single Zero vector</li>
+<li><code>Full</code>: Add normal keyframes</li>
+</ul>
+</li>
+</ul>
+<p>You can read further on shape animations <a href="../../../../guides/animating/#shape-animations">here</a></p>
+<h3 id="export-camera-animation">Export Camera animation<a class="headerlink" href="#export-camera-animation" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Exports the currently active animation set (either the one currently being edited, or the active action) of the target camera setup to an *.saanim file.</p>
+<p>You can read further on camera animations <a href="../../../../guides/animating/#camera-animations">here</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../import/" class="btn btn-neutral float-left" title="Import"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../material/" class="btn btn-neutral float-right" title="Material">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../import/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../material/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

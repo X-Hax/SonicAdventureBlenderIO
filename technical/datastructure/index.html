@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Data Structure - Sonic Adventure IO Manual</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Data Structure";
+        var mkdocs_page_input_path = "technical\\datastructure.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../guides/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Sections</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >User Interface</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" >3D View Toolbar</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" >Tools</a>
+    <ul>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/">Overview</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/import/">Import</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/export/">Export</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material/">Material</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/utilities/">Utilities</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material_mass_edit/">Material Mass Edit</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/migration/">Migration</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/object/">Object</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/scene/">Scene</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Scene related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/settings/">Settings properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/landtable/">Landtable properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/event/">Event properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Object related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/node/">Node Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/landentry/">Landentry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/evententry/">Evententry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/event_node_uv_animations/">Event Node UV Animations</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/mesh/">Mesh Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/material/">Material Properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/textures/">Texture List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/texturenames/">Texturename List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/lists/">Lists</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Asset Info</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/filetypes/">File Types</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/location/">Location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/model_formats/">Model Formats</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guides</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/asset_importing/">Asset Importing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/texturing/">Texturing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/animating/">Animating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/event_editing/">Event Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/path_editing/">Path Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/migration/">Migration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Technical</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Data Structure</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#preferences">Preferences</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#scene">Scene</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quick-edit">Quick Edit</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#panel-settings">Panel Settings</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#landtable">Landtable</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#event">Event</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#texture-list">Texture List</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#texture-name-list">Texture Name List</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#node">Node</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#land-entry">Land Entry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#event-entry">Event Entry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#event-node-uv-animation-list">Event-Node UV Animation List</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mesh">Mesh</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#material">Material</a>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Sonic Adventure IO Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Sections</li>
+          <li class="breadcrumb-item">Technical</li>
+      <li class="breadcrumb-item active">Data Structure</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="pyton-data-structure">Pyton data structure<a class="headerlink" href="#pyton-data-structure" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p>This is part of the technical documentation, if anyone is interested in messing with the data via scripting. <br/>
+A handful of property groups have been added, all of which are documented here. <br/>
+The documentation is structured as following:</p>
+<pre><code>{Parent type path}
+{Parent type path 2}
+└─ {Property Name} : {Addon Property Group Type}*
+   ├─ [] : {Collection element type}
+   │  └─ {{collection element properties}}
+   ├─ {Property Name} : {Property Type}
+   ├─ {Property Name} : @{Readonly Property Type}
+   └─ {Property Name} : {Enum Type}
+      └&gt; {Enum Value} : {Display name}
+</code></pre>
+<hr />
+<h2 id="preferences">Preferences<a class="headerlink" href="#preferences" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Addon preferences</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>SAIO_AddonPreferences*
+├─ auto_check_update : bool
+├─ updater_interval_months : int
+├─ updater_interval_days  : int
+├─ updater_interval_hours  : int
+├─ updater_interval_minutes  : int
+├─ print_debug : bool
+├─ use_project_path : bool
+├─ default_path : str
+└─ tools_path: str
+</code></pre>
+
+</details>
+<hr />
+<h2 id="scene">Scene<a class="headerlink" href="#scene" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores per-scene related info and settings</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.Scene
+└─ saio_scene : SAIO_Scene*
+   ├─ author : str
+   ├─ description : str
+   ├─ scene_type : enum
+   │  ├&gt; MDL : Model
+   │  ├&gt; LVL : Landtable
+   │  ├&gt; EVR : Event root/base scene
+   │  └&gt; EVC : Event cut/sub scene
+   │
+   ├─ use_principled : bool
+   ├─ light_dir : vector, tuple[float, float, float]
+   ├─ light_color : RGBA, tuple[float, float, float, float]
+   ├─ light_ambient : RGBA, tuple[float, float, float, float]
+   ├─ display_specular : bool
+   ├─ viewport_alpha_cutoff : bool
+   │
+   ├─ landtable : SAIO_LandTable*
+   ├─ event : SAIO_Event*
+   ├─ texture_world : bpy.types.World
+   ├─ texturename_world : bpy.types.World
+   ├─ panels : SAIO_PanelSettings*
+   ├─ viewport_panels : SAIO_PanelSettings*
+   └─ quick_edit : SAIO_QuickEdit*
+
+</code></pre>
+
+</details>
+<hr />
+<h2 id="quick-edit">Quick Edit<a class="headerlink" href="#quick-edit" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>All properties related to the quick edit functionality</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>SAIO_Scene*
+└─ quick_edit: SAIO_QuickEdit*
+    ├─ panels : SAIO_PanelSettings*
+    │
+    ├─ material_properties : SAIO_Material*
+    ├─ use_material_edit : bool
+    ├─ apply_diffuse : bool
+    ├─ apply_specular : bool
+    ├─ apply_ambient : bool
+    ├─ apply_specularity : bool
+    ├─ apply_texture_id : bool
+    ├─ apply_filter : bool
+    ├─ apply_mipmap_distance_multiplier : bool
+    ├─ apply_source_alpha : bool
+    ├─ apply_destination_alpha : bool
+    ├─ apply_shadow_stencil : bool
+    ├─ apply_texgen_coord_id : bool
+    ├─ apply_texgen_type : bool
+    ├─ apply_texgen_matrix_id : bool
+    ├─ apply_texgen_source : bool
+    │
+    ├─ land_entry_properties : SAIO_LandEntry*
+    ├─ use_land_entry_edit : bool
+    ├─ apply_blockbit : bool
+    │
+    ├─ use_node_edit : bool
+    ├─ node_properties : SAIO_Node*
+    │
+    ├─ use_event_entry_edit : bool
+    ├─ apply_entry_type : bool
+    ├─ apply_layer : bool
+    ├─ event_entry_properties : SAIO_EventEntry*
+    │
+    ├─ use_mesh_edit : bool
+    └─ mesh_properties : SAIO_Mesh*
+
+
+</code></pre>
+
+</details>
+<hr />
+<h2 id="panel-settings">Panel Settings<a class="headerlink" href="#panel-settings" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Meta properties that are only used for the UI</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>SAIO_Scene
+├─ panels: SAIO_PanelSettings*
+└─ viewport_panels: SAIO_PanelSettings*
+   ├─ expanded_material_quick_edit: bool
+   ├─ expanded_node_quick_edit: bool
+   ├─ expanded_event_entry_quick_edit: bool
+   ├─ expanded_land_entry_quick_edit: bool
+   ├─ expanded_mesh_quick_edit: bool
+   │
+   ├─ expanded_texture_properties: bool
+   ├─ expanded_rendering_properties: bool
+   ├─ expanded_gc_properties: bool
+   ├─ expanded_gc_texgen: bool
+   │
+   ├─ expanded_surface_attributes: bool
+   ├─ advanced_surface_attributes: bool
+   ├─ land_entry_surface_attributes_editmode: enum
+   │  ├&gt; UNIVERAL : Universal
+   │  ├&gt; SA1 : Adventure 1
+   │  └&gt; SA2 : Adventure 2
+   │
+   ├─ expanded_override_upgrade_menu: bool
+   ├─ override_upgrade_menu: enum
+   │  ├&gt; SONLS : Sonic Light Shoes
+   │  ├&gt; SONAL : Sonic Ancient Light
+   │  ├&gt; SONMG : Sonic Magic Gloves
+   │  ├&gt; SONFR : Sonic Flame Ring
+   │  ├&gt; SONBB : Sonic Bounce Bracelet
+   │  ├&gt; SONMM : Sonic Mystic Melody
+   │  ├&gt; TAIBS : Tails Booster
+   │  ├&gt; TAIBZ : Tails Bazooka
+   │  ├&gt; TAILB : Tails Laser Blaster
+   │  ├&gt; TAIMM : Tails Mystic Melody
+   │  ├&gt; KNUSC : Knuckles Shovel Claws
+   │  ├&gt; KNUSG : Knuckles Sunglasses
+   │  ├&gt; KNUHG : Knuckles Hammer Gloves
+   │  ├&gt; KNUAN : Knuckles Air Necklace
+   │  ├&gt; KNUMM : Knuckles Mystic Melody
+   │  ├&gt; SONSU : Super Sonic
+   │  ├&gt; SHAAS : Shadow Air Shoes
+   │  ├&gt; SHAAL : Shadow Ancient Light
+   │  ├&gt; SHAFR : Shadow Flame Ring
+   │  ├&gt; SHAMM : Shadow Mystic Melody
+   │  ├&gt; EGGJE : Eggman Jet Engine
+   │  ├&gt; EGGLC : Eggman Large Cannon
+   │  ├&gt; EGGLB : Eggman Laser Blaster
+   │  ├&gt; EGGPA : Eggman Protective Armor
+   │  ├&gt; EGGMM : Eggman Mystic Melody
+   │  ├&gt; ROUPN : Rouge Pick Nails
+   │  ├&gt; ROUTS : Rouge Treasure Scope
+   │  ├&gt; ROUIB : Rouge Iron Boots
+   │  └&gt; ROUMM : Rouge MysticMelody
+   │
+   ├─ expanded_attach_upgrade_menu: bool
+   ├─ attach_upgrade_menu: enum
+   │  ├&gt; SONLS : Sonic Light Shoes
+   │  ├&gt; SONFR : Sonic Flame Ring
+   │  ├&gt; SONBB : Sonic Bounce Bracelet
+   │  ├&gt; SONMG : Sonic Magic Gloves
+   │  ├&gt; SHAAS : Shadow Air Shoes
+   │  ├&gt; SHAFR : Shadow Flame Ring
+   │  ├&gt; KNUS1 : Knuckles Shovel Claws 1
+   │  ├&gt; KNUS2 : Knuckles Shovel Claws 2
+   │  ├&gt; KNUH1 : Knuckles Hammer Gloves 1
+   │  ├&gt; KNUH2 : Knuckles Hammer Gloves 2
+   │  ├&gt; KNUSG : Knuckles Sunglasses
+   │  ├&gt; KNUAN : Knuckles Air Necklace
+   │  ├&gt; ROUPN : Rouge Pick Nails
+   │  ├&gt; ROUTS : Rouge Treasure Scope
+   │  ├&gt; ROUIB : Rouge Iron Boots
+   │  ├&gt; ROUSP : Rouge Shoe Plates (Transparency)
+   │  ├&gt; TAIWS : Tails Windshield (Transparency)
+   │  └&gt; EGGWS : Eggman Windshield (Transparency)
+   │
+   ├─ expanded_uv_animations_menu: bool
+   │
+   ├─ expanded_landtable_panel : bool
+   ├─ expanded_texture_panel : bool
+   └─ expanded_lighting_panel : bool
+</code></pre>
+
+</details>
+<hr />
+<h2 id="landtable">Landtable<a class="headerlink" href="#landtable" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores level info</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>SAIO_Scene*
+└─ landtable : SAIO_LandTable*
+   ├─ name : str
+   ├─ draw_distance : int
+   ├─ double_sided_collision : bool
+   ├─ tex_file_name : str
+   └─ tex_list_pointer : str
+</code></pre>
+
+</details>
+<hr />
+<h2 id="event">Event<a class="headerlink" href="#event" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores sa2 root event info</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>SAIO_Scene*
+└─ event : SAIO_Event*
+   ├─ active_index : int
+   ├─ [] : SAIO_EventScene*
+   │  ├─ name : str
+   │  └─ scene : bpy.types.Scene
+   │
+   ├─ drop_shadow_control : bool
+   ├─ tails_tails : bpy.types.Object
+   ├─ tails_tails_bone : str
+   ├─ uv_animations : SAIO_Event_UVAnimList*
+   │  ├─ active_index : int
+   │  └─ [] : SAIO_Event_UVAnim*
+   │     ├─ texture_index : int
+   │     └─ texture_count : int
+   │
+   ├─ ou_sonls : SAIO_OverrideUpgrade*
+   ├─ ou_sonal : SAIO_OverrideUpgrade*
+   ├─ ou_sonmg : SAIO_OverrideUpgrade*
+   ├─ ou_sonfr : SAIO_OverrideUpgrade*
+   ├─ ou_sonbb : SAIO_OverrideUpgrade*
+   ├─ ou_sonmm : SAIO_OverrideUpgrade*
+   ├─ ou_taibs : SAIO_OverrideUpgrade*
+   ├─ ou_taibz : SAIO_OverrideUpgrade*
+   ├─ ou_tailb : SAIO_OverrideUpgrade*
+   ├─ ou_taimm : SAIO_OverrideUpgrade*
+   ├─ ou_knusc : SAIO_OverrideUpgrade*
+   ├─ ou_knusg : SAIO_OverrideUpgrade*
+   ├─ ou_knuhg : SAIO_OverrideUpgrade*
+   ├─ ou_knuan : SAIO_OverrideUpgrade*
+   ├─ ou_knumm : SAIO_OverrideUpgrade*
+   ├─ ou_sonsu : SAIO_OverrideUpgrade*
+   ├─ ou_shaas : SAIO_OverrideUpgrade*
+   ├─ ou_shaal : SAIO_OverrideUpgrade*
+   ├─ ou_shafr : SAIO_OverrideUpgrade*
+   ├─ ou_shamm : SAIO_OverrideUpgrade*
+   ├─ ou_eggje : SAIO_OverrideUpgrade*
+   ├─ ou_egglc : SAIO_OverrideUpgrade*
+   ├─ ou_egglb : SAIO_OverrideUpgrade*
+   ├─ ou_eggpa : SAIO_OverrideUpgrade*
+   ├─ ou_eggmm : SAIO_OverrideUpgrade*
+   ├─ ou_roupn : SAIO_OverrideUpgrade*
+   ├─ ou_routs : SAIO_OverrideUpgrade*
+   ├─ ou_rouib : SAIO_OverrideUpgrade*
+   ├─ ou_roumm : SAIO_OverrideUpgrade*
+   ├─ ou_add01 : SAIO_OverrideUpgrade*
+   ├─ ou_add02 : SAIO_OverrideUpgrade*
+   │  ├─ base : bpy.types.Object
+   │  ├─ base_bone : str
+   │  ├─ override1 : bpy.types.Object
+   │  ├─ override1_bone : str
+   │  ├─ override2 : bpy.types.Object
+   │  └─ override2_bone : str
+   │
+   ├─ au_sonls : SAIO_AttachUpgrade*
+   ├─ au_sonfr : SAIO_AttachUpgrade*
+   ├─ au_sonbb : SAIO_AttachUpgrade*
+   ├─ au_sonmg : SAIO_AttachUpgrade*
+   ├─ au_shaas : SAIO_AttachUpgrade*
+   ├─ au_shafr : SAIO_AttachUpgrade*
+   ├─ au_knus1 : SAIO_AttachUpgrade*
+   ├─ au_knus2 : SAIO_AttachUpgrade*
+   ├─ au_knuh1 : SAIO_AttachUpgrade*
+   ├─ au_knuh2 : SAIO_AttachUpgrade*
+   ├─ au_knusg : SAIO_AttachUpgrade*
+   ├─ au_knuan : SAIO_AttachUpgrade*
+   ├─ au_roupn : SAIO_AttachUpgrade*
+   ├─ au_routs : SAIO_AttachUpgrade*
+   ├─ au_rouib : SAIO_AttachUpgrade*
+   ├─ au_rousp : SAIO_AttachUpgrade*
+   ├─ au_taiws : SAIO_AttachUpgrade*
+   └─ au_eggws : SAIO_AttachUpgrade*
+      ├─ model1 : bpy.types.Object
+      ├─ target1 : bpy.types.Object
+      ├─ target1_bone : str
+      ├─ model2 : bpy.types.Object
+      ├─ target2 : bpy.types.Object
+      └─ target2_bone : str
+</code></pre>
+
+</details>
+<hr />
+<h2 id="texture-list">Texture List<a class="headerlink" href="#texture-list" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores the texture list</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.World
+└─ saio_texture_list : SAIO_TextureList*
+   ├─ active_index : int
+   └─ [] : SAIO_Texture*
+      ├─ image : bpy.types.Image
+      ├─ name : str
+      ├─ global_index : int
+      ├─ override_width : int
+      ├─ override_width : int
+      ├─ texture_type : enum
+      │  ├&gt; RGBA : Colored
+      │  ├&gt; ID4 : Index4
+      │  └&gt; ID8 : Index8
+      │
+      └─ index : @int
+</code></pre>
+
+
+Specifically referenced via:
+
+<pre><code>bpy.types.Object
+└─ saio_texture_world : bpy.types.World
+
+SAIO_Scene*
+└─ texture_world : bpy.types.World
+</code></pre>
+
+</details>
+<hr />
+<h2 id="texture-name-list">Texture Name List<a class="headerlink" href="#texture-name-list" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores the texture name list</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.World
+└─ saio_texturename_list
+   ├─ active_index : int
+   └─ [] : SAIO_TextureName
+      └─ name : str
+</code></pre>
+
+
+Specifically referenced via:
+
+<pre><code>bpy.types.Object
+└─ saio_texturename_world : bpy.types.World
+
+SAIO_Scene*
+└─ texturename_world : bpy.types.World
+</code></pre>
+
+</details>
+<hr />
+<h2 id="node">Node<a class="headerlink" href="#node" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores node attributes</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.Object
+bpy.types.EditBone
+bpy.types.Bone
+└─ saio_node : SAIO_Node*
+    ├─ ignore_position : bool
+    ├─ ignore_rotation : bool
+    ├─ ignore_scale : bool
+    ├─ rotate_zyx : bool
+    ├─ skip_draw : bool
+    ├─ skip_children : bool
+    ├─ no_animate : bool
+    └─ no_morph : bool
+</code></pre>
+
+</details>
+<hr />
+<h2 id="land-entry">Land Entry<a class="headerlink" href="#land-entry" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores surface attributes for level geometry and their blockbit</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.Object
+└─ saio_land_entry : SAIO_LandEntry*
+   ├─ blockbit : str
+   │
+   ├─ sf_visible : bool
+   ├─ sf_solid : bool
+   ├─ sf_water : bool
+   ├─ sf_water_no_alpha : bool
+   │
+   ├─ sf_accelerate : bool
+   ├─ sf_low_acceleration : bool
+   ├─ sf_no_acceleration : bool
+   ├─ sf_increased_acceleration : bool
+   ├─ sf_tube_acceleration : bool
+   ├─ sf_no_friction : bool
+   ├─ sf_cannot_land : bool
+   ├─ sf_unclimbable : bool
+   ├─ sf_stairs : bool
+   ├─ sf_diggable : bool
+   ├─ sf_hurt : bool
+   ├─ sf_dynamic_collision : bool
+   ├─ sf_water_collision : bool
+   ├─ sf_gravity : bool
+   │
+   ├─ sf_footprints : bool
+   ├─ sf_no_shadows : bool
+   ├─ sf_no_fog : bool
+   ├─ sf_low_depth : bool
+   ├─ sf_use_sky_draw_distance : bool
+   ├─ sf_easy_draw : bool
+   ├─ sf_no_zwrite : bool
+   ├─ sf_draw_by_mesh : bool
+   ├─ sf_enable_manipulation : bool
+   ├─ sf_waterfall : bool
+   ├─ sf_chaos0_land : bool
+   ├─ sf_transform_bounds : bool
+   ├─ sf_bounds_radius_small : bool
+   ├─ sf_bounds_radius_tiny : bool
+   │
+   ├─ sf_sa1_unknown9 : bool
+   ├─ sf_sa1_unknown11 : bool
+   ├─ sf_sa1_unknown15 : bool
+   ├─ sf_sa1_unknown19 : bool
+   │
+   ├─ sf_sa2_unknown6 : bool
+   ├─ sf_sa2_unknown9 : bool
+   ├─ sf_sa2_unknown14 : bool
+   ├─ sf_sa2_unknown16 : bool
+   ├─ sf_sa2_unknown17 : bool
+   ├─ sf_sa2_unknown18 : bool
+   ├─ sf_sa2_unknown25 : bool
+   └─ sf_sa2_unknown26 : bool
+</code></pre>
+
+</details>
+<hr />
+<h2 id="event-entry">Event Entry<a class="headerlink" href="#event-entry" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores information related to Event entries</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.Object
+└─ saio_event_entry: SAIO_EventEntry*
+   ├─ entry_type : enum
+   │  ├&gt; NONE : None
+   │  ├&gt; CHUNK : Chunk
+   │  ├&gt; GC : GC
+   │  ├&gt; SHADOW : GC Shadow
+   │  ├&gt; PARTICLE : Particle
+   │  └&gt; REFLECTION : Reflection Plane
+   │
+   ├─ shadow_model : bpy.types.Object
+   ├─ reflection : bool
+   ├─ blare : bool
+   ├─ layer : int
+   ├─ unk0 : bool
+   ├─ unk2 : bool
+   ├─ unk4 : bool
+   ├─ unk5 : bool
+   ├─ unk6 : bool
+   └─ unk9 : bool
+</code></pre>
+
+</details>
+<hr />
+<h2 id="event-node-uv-animation-list">Event-Node UV Animation List<a class="headerlink" href="#event-node-uv-animation-list" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores per-object specific uv animation info</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.Object
+└─ saio_eventnode_uvanims : SAIO_EventNode_UVAnimList*
+   ├─ active_index : int
+   └─ [] : SAIO_EventNode_UVAnim*
+      └─ material_index : int
+</code></pre>
+
+</details>
+<hr />
+<h2 id="mesh">Mesh<a class="headerlink" href="#mesh" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores mesh specific info</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.Mesh
+└─ saio_mesh : SAIO_Mesh*
+   └─ force_vertex_colors: bool
+</code></pre>
+
+</details>
+<hr />
+<h2 id="material">Material<a class="headerlink" href="#material" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Stores material settings</p>
+<details>
+<summary>View</summary>
+
+
+<pre><code>bpy.types.Material
+└─ saio_material : SAIO_Material*
+   ├─ diffuse : RGBA, tuple[float, float, float, float]
+   ├─ specular : RGBA, tuple[float, float, float, float]
+   ├─ ambient : RGBA, tuple[float, float, float, float]
+   ├─ specular_exponent : int
+   ├─ flat_shading : bool
+   ├─ ignore_ambient : bool
+   ├─ ignore_diffuse : bool
+   ├─ ignore_specular : bool
+   ├─ use_alpha : bool
+   ├─ culling : bool
+   │
+   ├─ source_alpha : enum
+   ├─ destination_alpha : enum
+   │  ├&gt; ZERO : Zero
+   │  ├&gt; ONE : One
+   │  ├&gt; OTHER : Other
+   │  ├&gt; INV_OTHER : Inverted other
+   │  ├&gt; SRC : Source
+   │  ├&gt; INV_SRC : Inverted source
+   │  ├&gt; DST : Destination
+   │  └&gt; INV_DST : Inverted destination
+   │
+   ├─ texture_id : int
+   ├─ use_texture : bool
+   ├─ use_environment : bool
+   ├─ texture_filtering :
+   ├─ anisotropic_filtering : bool
+   ├─ mipmap_distance_multiplier : float
+   ├─ clamp_u : bool
+   ├─ clamp_v : bool
+   ├─ mirror_u : bool
+   ├─ mirror_v : bool
+   ├─ shadow_stencil : int
+   │
+   ├─ texgen_coord_id : enum
+   │  ├&gt; TEXCOORD0 : TexCoord0
+   │  ├&gt; TEXCOORD1 : TexCoord1
+   │  ├&gt; TEXCOORD2 : TexCoord2
+   │  ├&gt; TEXCOORD3 : TexCoord3
+   │  ├&gt; TEXCOORD4 : TexCoord4
+   │  ├&gt; TEXCOORD5 : TexCoord5
+   │  ├&gt; TEXCOORD6 : TexCoord6
+   │  ├&gt; TEXCOORD7 : TexCoord7
+   │  ├&gt; TEXCOORDMAX : TexCoordMax
+   │  └&gt; TEXCOORDNULL : TexCoordNull
+   │
+   ├─ texgen_type : enum
+   │  ├&gt; MATRIX3X4 : Matrix 3x4
+   │  ├&gt; MATRIX2X4 : Matrix 2x4
+   │  ├&gt; BITMAP0 : Bitmap 0
+   │  ├&gt; BITMAP1 : Bitmap 1
+   │  ├&gt; BITMAP2 : Bitmap 2
+   │  ├&gt; BITMAP3 : Bitmap 3
+   │  ├&gt; BITMAP4 : Bitmap 4
+   │  ├&gt; BITMAP5 : Bitmap 5
+   │  ├&gt; BITMAP6 : Bitmap 6
+   │  ├&gt; BITMAP7 : Bitmap 7
+   │  └&gt; SRTG : SRTG
+   │
+   ├─ texgen_source_matrix : enum
+   │  ├&gt; POSITION : Position
+   │  ├&gt; NORMAL : Normal
+   │  ├&gt; BINORMAL : Binormal
+   │  ├&gt; TANGENT : Tangent
+   │  ├&gt; TEX0 : Tex0
+   │  ├&gt; TEX1 : Tex1
+   │  ├&gt; TEX2 : Tex2
+   │  ├&gt; TEX3 : Tex3
+   │  ├&gt; TEX4 : Tex4
+   │  ├&gt; TEX5 : Tex5
+   │  ├&gt; TEX6 : Tex6
+   │  └&gt; TEX7 : Tex7
+   │  ├&gt; TEXCOORD0 : TexCoord0
+   │  ├&gt; TEXCOORD1 : TexCoord1
+   │  ├&gt; TEXCOORD2 : TexCoord2
+   │  ├&gt; TEXCOORD3 : TexCoord3
+   │  ├&gt; TEXCOORD4 : TexCoord4
+   │  ├&gt; TEXCOORD5 : TexCoord5
+   │  └&gt; TEXCOORD6 : TexCoord6
+   │  ├&gt; COLOR0 : Color 0
+   │  └&gt; COLOR1 : Color 1
+   │
+   └─ texgen_matrix_id : enum
+      ├&gt; MATRIX0 : Matrix 0
+      ├&gt; MATRIX1 : Matrix 1
+      ├&gt; MATRIX2 : Matrix 2
+      ├&gt; MATRIX3 : Matrix 3
+      ├&gt; MATRIX4 : Matrix 4
+      ├&gt; MATRIX5 : Matrix 5
+      ├&gt; MATRIX6 : Matrix 6
+      ├&gt; MATRIX7 : Matrix 7
+      ├&gt; MATRIX8 : Matrix 8
+      ├&gt; MATRIX9 : Matrix 9
+      └&gt; IDENTITY : Identity
+</code></pre>
+
+</details>
+<hr />
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../guides/migration/" class="btn btn-neutral float-left" title="Migration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../guides/migration/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

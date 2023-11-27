@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Evententry Properties - Sonic Adventure IO Manual</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Evententry Properties";
+        var mkdocs_page_input_path = "ui\\object\\evententry.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../..">
+          <img src="../../../img/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/">About</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guides/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Sections</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >User Interface</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" >3D View Toolbar</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" >Tools</a>
+    <ul>
+                <li class="toctree-l4"><a class="reference internal" href="../../toolbar/tools/">Overview</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../toolbar/tools/import/">Import</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../toolbar/tools/export/">Export</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../toolbar/tools/material/">Material</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../toolbar/tools/utilities/">Utilities</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../toolbar/tools/material_mass_edit/">Material Mass Edit</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../toolbar/tools/migration/">Migration</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../toolbar/object/">Object</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../toolbar/scene/">Scene</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Scene related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../scene/settings/">Settings properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../scene/landtable/">Landtable properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../scene/event/">Event properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" >Object related</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../node/">Node Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../landentry/">Landentry Properties</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Evententry Properties</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#entry-type">Entry Type</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#chunk-gc-models">CHUNK &amp; GC Models</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../event_node_uv_animations/">Event Node UV Animations</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../mesh/">Mesh Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../material/">Material Properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../textures/">Texture List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../texturenames/">Texturename List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../lists/">Lists</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Asset Info</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../assetinfo/filetypes/">File Types</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../assetinfo/location/">Location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../assetinfo/model_formats/">Model Formats</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guides</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../guides/asset_importing/">Asset Importing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../guides/texturing/">Texturing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../guides/animating/">Animating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../guides/event_editing/">Event Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../guides/path_editing/">Path Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../guides/migration/">Migration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Technical</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../technical/datastructure/">Data Structure</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">Sonic Adventure IO Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Sections</li>
+          <li class="breadcrumb-item">User Interface</li>
+          <li class="breadcrumb-item">Object related</li>
+      <li class="breadcrumb-item active">Evententry Properties</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="event-entry-properties-panel">Event Entry Properties Panel<a class="headerlink" href="#event-entry-properties-panel" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p><img align="right" alt="" src="../../../img/ui_evententry_properties.png" /></p>
+<p>In event scenes, this panel is used to set event geometry properties and to define how the model behaves during cutscene playback.
+<br/> The panel is only available for the top-level parent of a model. Any object with a parent will not be able to use this panel.</p>
+<p>The panel can be found in the <strong>properties</strong> editor, under the <strong>object</strong> tab, called "SAIO Land Entry Properties".</p>
+<p><br clear="right"></p>
+<hr />
+<h2 id="entry-type">Entry Type<a class="headerlink" href="#entry-type" title="Permanent link">🔗&#xFE0E;</a></h2>
+<ul>
+<li><code>None</code>: Not any event structure. Use this on objects that should not be exported, such as cameras or other workflow objects.</li>
+<li><code>Chunk</code> &amp; <code>GC</code>: A model that is rendered and animated.</li>
+<li><code>Shadow</code>: A GC Shadow model and lets it be used in the <strong>GC Shadow Model</strong> property.</li>
+<li><code>Particle</code>: A particle object.</li>
+<li><code>Reflection Plane</code>: A reflection plane model. The object is expected with only a single quad.</li>
+</ul>
+<h2 id="chunk-gc-models">CHUNK &amp; GC Models<a class="headerlink" href="#chunk-gc-models" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>These two types are exported as actual models in the event. The types export the model corresponding to their name (read more <a href="../../../assetinfo/model_formats/">here</a>).</p>
+<p>Additionaly, these get extra attributes to set, documented below.</p>
+<h3 id="shadow-model">Shadow Model<a class="headerlink" href="#shadow-model" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>You can set a shadow model to be used for GC shadow casting. <strong>MAKE SURE THE ARMATURE IS SET UP IDENTICALLY</strong>, as the exact same animation will be applied as to the base model!</p>
+<h3 id="layer">Layer<a class="headerlink" href="#layer" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>This was added in the ports, and is used to adjust the rendering order for transparent models. Increasing the layer makes the model draw later then those at lower layers.</p>
+<figure class="align-right">
+<p><img alt="How the Blare Effect should've looked like" src="../../../img/ui_blare_effect.gif" /></p>
+<figcaption>How the Blare Effect should've looked like;<br/> Via the SA2 Cutscene player tool</figcaption>
+</figure>
+<h3 id="blare">Blare<a class="headerlink" href="#blare" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Marks the model to be used in the blare effect, an unused and unfinished effect similar to motion blur. The name originates from the games debugging texts.
+<br/>Only 64 models can be marked for blare.</p>
+<h3 id="reflection">Reflection<a class="headerlink" href="#reflection" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Marks the model to be visible in reflections.</p>
+<h3 id="enable-lighting">Enable Lighting<a class="headerlink" href="#enable-lighting" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Enables lighting(?) on root scene event entries.</p>
+<h3 id="disable-shadow-catching">Disable Shadow Catching<a class="headerlink" href="#disable-shadow-catching" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Disables rendering shadows on root scene event entries.</p>
+<h3 id="unknowns">Unknowns<a class="headerlink" href="#unknowns" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>These attributes still require extensive research in how they work.
+<br/> For all we know, <strong>Unknown 2</strong> on its own enables lighting.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../landentry/" class="btn btn-neutral float-left" title="Landentry Properties"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../event_node_uv_animations/" class="btn btn-neutral float-right" title="Event Node UV Animations">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../landentry/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../event_node_uv_animations/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

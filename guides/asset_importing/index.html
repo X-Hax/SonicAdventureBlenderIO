@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Asset Importing - Sonic Adventure IO Manual</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Asset Importing";
+        var mkdocs_page_input_path = "guides\\asset_importing.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Sections</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >User Interface</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" >3D View Toolbar</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" >Tools</a>
+    <ul>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/">Overview</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/import/">Import</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/export/">Export</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material/">Material</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/utilities/">Utilities</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material_mass_edit/">Material Mass Edit</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/migration/">Migration</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/object/">Object</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/scene/">Scene</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Scene related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/settings/">Settings properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/landtable/">Landtable properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/event/">Event properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Object related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/node/">Node Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/landentry/">Landentry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/evententry/">Evententry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/event_node_uv_animations/">Event Node UV Animations</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/mesh/">Mesh Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/material/">Material Properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/textures/">Texture List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/texturenames/">Texturename List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/lists/">Lists</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Asset Info</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/filetypes/">File Types</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/location/">Location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/model_formats/">Model Formats</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Guides</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Asset Importing</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#satools-project-and-files">SATools, Project and Files</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#importing-a-model-or-stage">Importing a Model or Stage</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-character-import">Example Character import</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-level-import">Example Level import</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#loading-textures">Loading textures</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#importing-animations">Importing Animations</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-of-an-armature-object">Example of an armature object</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-of-a-non-armature-object">Example of a non-armature object</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#converting-non-armature-to-armature">Converting Non-Armature to Armature</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-output">Example output</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#importing-animation-files">Importing animation files</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../texturing/">Texturing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../animating/">Animating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../event_editing/">Event Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../path_editing/">Path Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../migration/">Migration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Technical</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../technical/datastructure/">Data Structure</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Sonic Adventure IO Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Sections</li>
+          <li class="breadcrumb-item">Guides</li>
+      <li class="breadcrumb-item active">Asset Importing</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="import-game-assets">Import Game Assets<a class="headerlink" href="#import-game-assets" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p>This guide aims to give an in-depth walkthrough on how to import models and levels from the Sonic Adventure titles using SAIO. This guide is strictly for importing files.</p>
+<h2 id="satools-project-and-files">SATools, Project and Files<a class="headerlink" href="#satools-project-and-files" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>To be able to import most game assets, you'll need to extract them with the SA Tools project manager:</p>
+<ol>
+<li>Make sure you have <a href="../installation/#installing-the-sonic-adventure-toolset">SA Tools installed</a>.</li>
+<li>You'll want to follow the tutorial for the <a href="https://github.com/X-Hax/sa_tools/wiki/SA-Tools-Hub">SA Tools Hub</a> for setting up projects.</li>
+<li>Once you have creatred a project, the below stips will cover importing models and levels from your project into blender.</li>
+</ol>
+<h2 id="importing-a-model-or-stage">Importing a Model or Stage<a class="headerlink" href="#importing-a-model-or-stage" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p><strong>In case you made it here without having the addon installed, please <a href="../installation/">see here for installation guide</a>.</strong></p>
+<p>The addon supports importing models from 3 different sources</p>
+<ul>
+<li><a href="../../assetinfo/filetypes/#models">*.*MDL files</a> for <strong>models</strong></li>
+<li><a href="../../assetinfo/filetypes/#models">*.NJ files</a> for <strong>models</strong></li>
+<li><a href="../../assetinfo/filetypes/#stages">*.*LVL files</a> for <strong>levels</strong></li>
+<li><a href="../../assetinfo/filetypes/#full-events">SA2 Event files</a> for <strong>cutscenes</strong> (select the <code>e####.prs</code> file of the event)</li>
+</ul>
+<p>To import those, navigate to the <a href="../../ui/toolbar/tools/">SAIO Tools toolbar</a> in 3D View and expand the <a href="../../ui/toolbar/tools/import/">Import panel</a>:
+<img alt="" src="../../img/asset_importing_toolbar_import.png" /></p>
+<p>Once your asset is imported, you should be able to start taking a look around it in the 3D view. Please note, some levels may take a second to import as they may have a lot of data to be processed. You may also need to increase your view distance if you would like to see the level without it clipping.</p>
+<h3 id="example-character-import">Example Character import<a class="headerlink" href="#example-character-import" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p><img alt="" src="../../img/asset_importing_example_model.png" /></p>
+<hr />
+<h3 id="example-level-import">Example Level import<a class="headerlink" href="#example-level-import" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p><img alt="" src="../../img/asset_importing_example_level.png" /></p>
+<p>Level imports also come with two types of sub Collections when imported:</p>
+<ul>
+<li>The Visual contains all level models that are rendered when the level is played.</li>
+<li>The Collision contains level models are have their attributes set to solid, but are invisible.</li>
+</ul>
+<p>In SA1/DX, your main level will be mostly comprised of Visual objects as it used used the level models for both visual and collidable surfaces.</p>
+<hr />
+<h2 id="loading-textures">Loading textures<a class="headerlink" href="#loading-textures" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Now that you have your model or stage imported, you probably want the model to have its textures. Thankfully this addon also supports importing and auto-assigning textures.</p>
+<ol>
+<li>Create a world to hold your texture list for your scene <br/> <img alt="" src="../../img/asset_importing_textures_1.png" /></li>
+<li>Import your texture archive/pack <br/> <img alt="" src="../../img/asset_importing_textures_2.png" /></li>
+<li>Your texture list should now be filled with the textures <br/> <img alt="" src="../../img/asset_importing_textures_3.png" /></li>
+<li>Update the material textures <br/> <img alt="" src="../../img/asset_importing_textures_4.png" /></li>
+<li>View your scene in material view, and you should now be able to see the models with their correct textures* <br/> <img alt="" src="../../img/asset_importing_textures_5.png" /></li>
+</ol>
+<p><strong>*</strong> Some models, particulary level objects, may need texture name lists to get set up properly.
+<br> For a more in-depth guide on how texturing works, <a href="../texturing/">see this guide</a>.</p>
+<hr />
+<h2 id="importing-animations">Importing Animations<a class="headerlink" href="#importing-animations" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>For model files, this tool also supports loaded in animation files.</p>
+<p><strong><em>The following information is extremely important</em></strong>
+<br/>To import an animation, you will need an object that is setup as an armature. Not all models will import with an armature. Thankfully though, this addon can convert non-armature objects to armatures easily. The following are examples of an armature and non-armature object.</p>
+<h3 id="example-of-an-armature-object">Example of an armature object<a class="headerlink" href="#example-of-an-armature-object" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p><img alt="" src="../../img/asset_importing_example_armature.png" /></p>
+<h3 id="example-of-a-non-armature-object">Example of a non-armature object<a class="headerlink" href="#example-of-a-non-armature-object" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p><img alt="" src="../../img/asset_importing_example_not_armature.png" /></p>
+<p>If you have imported a model with (or as) an armature, you can skip to Animation Import. If you do not, please complete the next step before continuing.</p>
+<h2 id="converting-non-armature-to-armature">Converting Non-Armature to Armature<a class="headerlink" href="#converting-non-armature-to-armature" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>To convert a non-armature, simple select the <strong><em>root object</em></strong> of your object. It will be the very first object in the imported collection.</p>
+<p><img alt="" src="../../img/asset_importing_convert_armature_1.png" /></p>
+<p>Once selected, go to the tool panel within the SAIO Tools viewport toolbar and select <code>Arnature from objects</code>:</p>
+<p><img alt="" src="../../img/asset_importing_convert_armature_2.png" /></p>
+<p>A prompt will open asking your for a rotation mode and if you wish to merge the meshes.</p>
+<ul>
+<li><code>Rotation Mode</code>: Simply leaving this on default (XYZ Euler) is fine.</li>
+<li><code>Merge meshes</code>: This option will merge the mesh data into a single mesh on conversion.</li>
+</ul>
+<p>Once you have adjusted the options the way you want them, simply press OK and a new armature containing the mesh data will be created.</p>
+<h3 id="example-output">Example output<a class="headerlink" href="#example-output" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p><img alt="" src="../../img/asset_importing_convert_armature_3.png" /></p>
+<p>Woohoo! Now you're ready to properly import your animation data to the scene!</p>
+<h2 id="importing-animation-files">Importing animation files<a class="headerlink" href="#importing-animation-files" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Now comes the final step, actually importing the animations. Simply select your root object (the Armature).</p>
+<p><img alt="" src="../../img/asset_importing_animation_1.png" /></p>
+<p>With the armature object selected, simply head to the tool panel within the SAIO Tools Viewport toolbar and use the <code>Import Node Animation</code> button.</p>
+<p><img alt="" src="../../img/asset_importing_animation_2.png" /></p>
+<p>You are able to select as many <code>.saanim</code> files as you would like to import. Once you have selected the files you wish to import, press the <code>Import Node Animation</code> button in the dialog box to confirm your selection. Afterwards, every animation will be imported to your model as an action with its own NLA track and strip.</p>
+<p>To view animations, you can head over to the Animations Workspace in the top bar menu in blender.</p>
+<p><img alt="" src="../../img/asset_importing_animation_3.png" /></p>
+<p>Once there, change the <code>dope sheet</code> view to a <code>Nonlinear animation</code> view</p>
+<p><img alt="" src="../../img/asset_importing_animation_4.png" /></p>
+<p>With your armature still selected, you can see the individual strips that were added. Simply press the star of the track you wish to view and the animation will be played back.</p>
+<p><img alt="" src="../../img/asset_importing_animation_5.png" /></p>
+<p>Voilá! The model should now be in the correct pose for the start of the animation! Simply press play and the animation will begin.</p>
+<p><img alt="" src="../../img/asset_importing_animation_6.gif" /></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../assetinfo/model_formats/" class="btn btn-neutral float-left" title="Model Formats"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../texturing/" class="btn btn-neutral float-right" title="Texturing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../assetinfo/model_formats/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../texturing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

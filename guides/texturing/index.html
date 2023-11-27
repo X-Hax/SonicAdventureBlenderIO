@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Texturing - Sonic Adventure IO Manual</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Texturing";
+        var mkdocs_page_input_path = "guides\\texturing.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Sections</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >User Interface</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" >3D View Toolbar</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" >Tools</a>
+    <ul>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/">Overview</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/import/">Import</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/export/">Export</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material/">Material</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/utilities/">Utilities</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material_mass_edit/">Material Mass Edit</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/migration/">Migration</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/object/">Object</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/scene/">Scene</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Scene related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/settings/">Settings properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/landtable/">Landtable properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/event/">Event properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Object related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/node/">Node Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/landentry/">Landentry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/evententry/">Evententry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/event_node_uv_animations/">Event Node UV Animations</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/mesh/">Mesh Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/material/">Material Properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/textures/">Texture List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/texturenames/">Texturename List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/lists/">Lists</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Asset Info</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/filetypes/">File Types</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/location/">Location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../assetinfo/model_formats/">Model Formats</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Guides</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../asset_importing/">Asset Importing</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Texturing</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#texture-lists">Texture lists</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#importing-exporting">Importing &amp; Exporting</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#texture-name-lists">Texture name lists</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#importing-exporting_1">Importing &amp; Exporting</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#texture-management">Texture management</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#managing-your-lists">Managing your lists</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#updating-textures-on-materials">Updating textures on materials</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#manually-setting-a-materials-texture">Manually setting a materials texture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#how-texturesindices-get-picked">How textures/indices get picked</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../animating/">Animating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../event_editing/">Event Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../path_editing/">Path Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../migration/">Migration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Technical</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../technical/datastructure/">Data Structure</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Sonic Adventure IO Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Sections</li>
+          <li class="breadcrumb-item">Guides</li>
+      <li class="breadcrumb-item active">Texturing</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="texturing">Texturing<a class="headerlink" href="#texturing" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p>The addon features full texture support, including texture list processing and importing and exporting of texture archives.</p>
+<h2 id="texture-lists">Texture lists<a class="headerlink" href="#texture-lists" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>The Sonic Adventure games primarily access textures (be it on models, as ui sprites other other) using <a href="../../assetinfo/filetypes/#textures">Textures lists stored in Archives</a>. A texture is then referenced by it's index within the list, or by the global texture index. SAIO has full* texturing support that allows for viewing all models with textures.</p>
+<p><strong>*</strong> Some object models compile textures from multiple different texture lists. This is has yet to be implemented into the addon, but can already be worked around.</p>
+<hr />
+<h3 id="importing-exporting">Importing &amp; Exporting<a class="headerlink" href="#importing-exporting" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>The addons allows for directly importing and exporting <a href="../../assetinfo/filetypes/#textures">most texture archives formats</a>.</p>
+<details>
+<summary><b>Importing: Click for step by step guide</b></summary>
+<ol>
+<li>Navigate to the texture list panel for which you want to import the texture list.</li>
+<li>Select or create the world that should hold the texture list.</li>
+<li>Click the tiny arrow to the bottom right of the list.</li>
+<li>Click <code>Import texture archive</code>/<code>Import texture pack</code>.
+<br/><a href="../../img/textures_import_1.png"><img alt="" src="../../img/textures_import_1.png" /></a></li>
+<li>Select the archive/pack index file.</li>
+<li>Click the blue confirm button in the bottom right to start importing.
+<br/><a href="../../img/textures_import_2.png"><img alt="" src="../../img/textures_import_2.png" /></a></li>
+<li>Wait until the import is complete.</li>
+<li>Your texture list should now have more textures.
+<br/><a href="../../img/textures_import_3.png"><img alt="" src="../../img/textures_import_3.png" /></a></li>
+</ol>
+</details>
+<details>
+<summary><b>Exporting: Click for step by step guide</b></summary>
+<ol>
+<li>Navigate to the texture list panel of which you want to export the texture list.</li>
+<li>Click the tiny arrow to the bottom right of the list.</li>
+<li>Click <code>Export texture archive</code>/<code>Export texture pack</code>.
+<br/><a href="../../img/textures_export_1.png"><img alt="" src="../../img/textures_export_1.png" /></a></li>
+<li>Choose the format in which you want to export the texture list, and whether to compress it with PRS.</li>
+<li>Select a folder to export the textures to and enter the file/pack name.</li>
+<li>Click the blue confirm button in the bottom right to start exporting.
+<br/><a href="../../img/textures_export_2.png"><img alt="" src="../../img/textures_export_2.png" /></a></li>
+<li>Wait until the texture list is exported.</li>
+<li>The texture archive/pack should now be visible in the output folder.
+<br/><a href="../../img/textures_export_3.png"><img alt="" src="../../img/textures_export_3.png" /></a></li>
+</ol>
+</details>
+<hr />
+<h2 id="texture-name-lists">Texture name lists<a class="headerlink" href="#texture-name-lists" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Texture names are used to "convert" material indices. They are primarily used for objects that share texture lists with other objects and require a specific subset of textures to be used. In that case, you'd use a texture name list on the object (or scene), which would take the materials texture index, get the texture name from its list, and look for a texture with the same name in the texture list.</p>
+<figure>
+<p><a href="../../img/textures_texname_explanation.png"><img alt="A diagram depicting how texture names influence texture evaluation" src="../../img/textures_texname_explanation.png" /></a></p>
+<figcaption>A diagram depicting how texture names influence texture evaluation</figcaption>
+</figure>
+<hr />
+<h3 id="importing-exporting_1">Importing &amp; Exporting<a class="headerlink" href="#importing-exporting_1" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>The addon allows for importing and exporting texture lists</p>
+<details>
+<summary><b>Importing: Click for step by step guide</b></summary>
+<ol>
+<li>Navigate to the texturename list panel for which you want to import the names.</li>
+<li>Select or create the world that should hold the names.</li>
+<li>Click the tiny arrow to the bottom right of the list.</li>
+<li>Select <code>Import texture list</code>.
+<br/><a href="../../img/textures_names_import_1.png"><img alt="" src="../../img/textures_names_import_1.png" /></a></li>
+<li>Select the ini/satex file.</li>
+<li>Click the blue confirm button in the bottom right to initiate the import process.
+<br/><a href="../../img/textures_names_import_2.png"><img alt="" src="../../img/textures_names_import_2.png" /></a></li>
+<li>Wait until the import is complete.</li>
+<li>Your texturename list should now have more names.
+<br/><a href="../../img/textures_names_import_3.png"><img alt="" src="../../img/textures_names_import_3.png" /></a></li>
+</ol>
+</details>
+<details>
+<summary><b>Exporting: Click for step by step guide</b></summary>
+<ol>
+<li>Navigate to the texturename list panel of which you want to export the names.</li>
+<li>Click the tiny arrow to the bottom right of the list.</li>
+<li>Select <code>Export texture list</code>.
+<br/><a href="../../img/textures_names_export_1.png"><img alt="" src="../../img/textures_names_export_1.png" /></a></li>
+<li>Select a folder to export the texturename list to and enter the filename.</li>
+<li>Click the blue confirm button in the bottom right to start exporting.
+<br/><a href="../../img/textures_names_export_2.png"><img alt="" src="../../img/textures_names_export_2.png" /></a></li>
+<li>Wait until the export is complete.</li>
+<li>Your satex file should now be visible in the output folder.
+<br/><a href="../../img/textures_names_export_3.png"><img alt="" src="../../img/textures_names_export_3.png" /></a></li>
+</ol>
+</details>
+<hr />
+<h2 id="texture-management">Texture management<a class="headerlink" href="#texture-management" title="Permanent link">🔗&#xFE0E;</a></h2>
+<h3 id="managing-your-lists">Managing your lists<a class="headerlink" href="#managing-your-lists" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Texture lists and Texturename lists can be set for on <strong>scenes</strong> and <strong>objects</strong>. Lists are stored on worlds, which allows for reusing lists between scenes and/or objects. This also means that you have to create a world for each list you want to use. Texture lists and Texturename lists occupy different spaces on a world, which means that every world can have a texture list and a texturename list, but you are not forced to use a world for both at once.</p>
+<p>It is recommended to use a world for only either a texture list or texturename list, to keep things organized.</p>
+<p>See more about how to <a href="../../ui/textures/">edit <strong>texture</strong> lists here</a> and how to <a href="../../ui/texturenames/">edit <strong>texturename</strong> lists here</a>.</p>
+<h3 id="updating-textures-on-materials">Updating textures on materials<a class="headerlink" href="#updating-textures-on-materials" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>You will need to update the material using an operator. The only times textures will automatically be applied is when</p>
+<ul>
+<li>you import a model or level to a scene that already has a texture list with the necessary textures</li>
+<li>importing events, as event importing will automatically import textures needed and apply them</li>
+</ul>
+<p>To update material textures, you will have to navigate to use the <a href="../../ui/toolbar/tools/material/#update-material-textures">Update Material Textures</a> operator. Make sure that its set to <code>Texture Image</code> mode, so that the images on texture will be updated.</p>
+<h3 id="manually-setting-a-materials-texture">Manually setting a materials texture<a class="headerlink" href="#manually-setting-a-materials-texture" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>You can set textures in two ways: Either by setting the <a href="../../ui/object/material/#texture-id">texture ID</a>, or by selecting a texture via the <a href="../../ui/object/material/#texture">texture slot</a> (requires material to be set up).</p>
+<h3 id="how-texturesindices-get-picked">How textures/indices get picked<a class="headerlink" href="#how-texturesindices-get-picked" title="Permanent link">🔗&#xFE0E;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unless you are setting up a complex scene with many texture lists and reused materials, you probably won't need to understand this process to its fullest.</p>
+</div>
+<p>Texture lists and texturename lists can be attached to scenes and objects. This means that a material has to find its appropriate texture list and texturename list of which to use the textures and their indices when trying to map textures to indices and vice versa. The process for finding a material texture list and name list is the same.</p>
+<p>This means for every material to get the texture/id for, every mesh, object and the parent objects are checked for the lists. For every object on which the material is located on, the first lists are picked. If a material is reused between objects that result in different lists, it falls back to the lists of the scene that the evaluation is currently happening on. If the scene has no lists, none will be used at all.</p>
+<p>When trying to obtain a materials texture ID (like when exporting a model), the addon will get the list and look for the texture image. If a texture name list was found, it will look for the name of the corresponding texture item there, and use the given ID if found.
+<br/>If the ID is not retrievable that way, the addon will just use the manually set fallback ID.
+<br/>This same process also works the other way around, when looking for the texture of a material by the fallback id.</p>
+<hr />
+<p>The list finding process may be a bit hard to wrap your head around, so lets look at some graphs:</p>
+<p><img alt="" src="../../img/textures_material_graph.png" /></p>
+<p>This graph shows where and how lists get picked. The logic is the same for textures and texturenames. Following cases:</p>
+<ol>
+<li><strong>NO LIST</strong>: No list is found at all. Fallback is used</li>
+<li><strong>HAS LIST</strong>: A list is found on the scene.</li>
+<li><strong>HAS LIST</strong>: A list is found on the object and on the scene, but the object has priority</li>
+<li><strong>HAS LIST</strong>: The material is found on two objects, and both use the same list, so its used.</li>
+<li><strong>HAS LIST</strong>: The material is found on two objects, but both use different lists, so the list found on the scene is used</li>
+<li><strong>HAS LIST</strong>: The material is found on two objects, but even though only one has a list, the scenes list gets used.</li>
+<li><strong>HAS LIST</strong>: The material is found on two objects, and only one object hast a list. Since no other list is found for the material, that one is used.</li>
+<li><strong>NO LIST</strong>: The material is found on two object, but both have different lists, and the scene has none to fall back onto, so none is used.</li>
+</ol>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../asset_importing/" class="btn btn-neutral float-left" title="Asset Importing"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../animating/" class="btn btn-neutral float-right" title="Animating">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../asset_importing/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../animating/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

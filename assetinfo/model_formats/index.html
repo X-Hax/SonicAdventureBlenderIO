@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Model Formats - Sonic Adventure IO Manual</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Model Formats";
+        var mkdocs_page_input_path = "assetinfo\\model_formats.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../img/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/">About</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../guides/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Sections</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >User Interface</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" >3D View Toolbar</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" >Tools</a>
+    <ul>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/">Overview</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/import/">Import</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/export/">Export</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material/">Material</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/utilities/">Utilities</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/material_mass_edit/">Material Mass Edit</a>
+                </li>
+                <li class="toctree-l4"><a class="reference internal" href="../../ui/toolbar/tools/migration/">Migration</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/object/">Object</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/toolbar/scene/">Scene</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Scene related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/settings/">Settings properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/landtable/">Landtable properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/scene/event/">Event properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Object related</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/node/">Node Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/landentry/">Landentry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/evententry/">Evententry Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/event_node_uv_animations/">Event Node UV Animations</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/mesh/">Mesh Properties</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ui/object/material/">Material Properties</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/textures/">Texture List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/texturenames/">Texturename List</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ui/lists/">Lists</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Asset Info</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../filetypes/">File Types</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../location/">Location</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Model Formats</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#sa1-basic">SA1 - "BASIC"</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sa2-chunk">SA2 - "CHUNK"</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sa2b-gc">SA2B - GC</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guides</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/asset_importing/">Asset Importing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/texturing/">Texturing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/animating/">Animating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/event_editing/">Event Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/path_editing/">Path Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../guides/migration/">Migration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Technical</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../technical/datastructure/">Data Structure</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Sonic Adventure IO Manual</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Sections</li>
+          <li class="breadcrumb-item">Asset Info</li>
+      <li class="breadcrumb-item active">Model Formats</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="model-formats">Model formats<a class="headerlink" href="#model-formats" title="Permanent link">🔗&#xFE0E;</a></h1>
+<p>There are 3 different model formats utilized between the adventure games, each with its own strenghts and limitations. This page gives a rough overview over how every format behaves.</p>
+<h2 id="sa1-basic">SA1 - "BASIC"<a class="headerlink" href="#sa1-basic" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Titled the BASIC format, it was first used in SA1 and later reused for SA2, albeit only for collision models.</p>
+<p>BASIC Models are as simple as it can get, but are able to store all relevant vertex information at once: Normals, Vertex colors, UVs, even polygon normals. It has the simplest material setup, storing all relevant info in one big structure.</p>
+<p>Unfortunately, it does not properly support weighted models. SADX relied on "welding", a technique where triangles were drawn between multiple individual models, to achieve connected character models.</p>
+<h2 id="sa2-chunk">SA2 - "CHUNK"<a class="headerlink" href="#sa2-chunk" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>The Chunk format was introduced in SA2 and is a rather unconventional format.</p>
+<p>Chunk models allow for storing vertices in many different combination, but SA2 only supports 3 of them:</p>
+<ul>
+<li>Normals</li>
+<li>Normals &amp; Weights</li>
+<li>Colors</li>
+</ul>
+<p>This means that you cannot combine shading with overlaid vertex colors, like SA1 did.</p>
+<p>The chunk model also utilizes, fittingly named, "chunks": Mesh data is split up into multiple blocks, each serving its own purpose, like Texture Chunks, Material Chunks and Polygon Chunks. Models then give a sequence of these chunks, which the game processes in order. Several models in SA2 require a very specific order of chunks to function properly, like the chao models (which the addon supports) and the Chaos 0 model (requires extensive technical knowledge to replace).</p>
+<p>Weighted chunk models also dont store the mesh as a whole, but divide them up among nodes. Every node stores vertices relative to themselve, which makes processing them in order easier, but takes more space and comes with the caveat of models having no "default" pose.</p>
+<h2 id="sa2b-gc">SA2B - GC<a class="headerlink" href="#sa2b-gc" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>Simply named the "Gamecube" format (but also called "Ginja"), as it first appeared in the Gamecube port of SA2. It is basically a gamecube formatted model with some modifications to suit SA2 specifically. It was taken over as is to later ports.</p>
+<p>The format is very similar to the BASIC format, but doesnt not allow combining Normals and Colors. It does not support weighted models.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">🔗&#xFE0E;</a></h2>
+<ul>
+<li>SA1 "BASIC"<ul>
+<li>Allows for storing all vertex data</li>
+<li>No weighted models</li>
+<li>(almost) Everything in SA1, collisions in SA2</li>
+</ul>
+</li>
+<li>SA2 "CHUNK"<ul>
+<li>Allow for weights</li>
+<li>Cannot combine normals and colors</li>
+<li>Unconventional storage, optimized for processing time</li>
+</ul>
+</li>
+<li>SA2B "GC"<ul>
+<li>Mostly formated as a Gamecube model</li>
+<li>Does not support combining Normals and Vertex Colors</li>
+<li>No weighted models</li>
+</ul>
+</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../location/" class="btn btn-neutral float-left" title="Location"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../guides/asset_importing/" class="btn btn-neutral float-right" title="Asset Importing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../location/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../guides/asset_importing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
