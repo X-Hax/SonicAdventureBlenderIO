@@ -35,7 +35,7 @@ def from_evententry_attributes(evententry_properties, attributes: any):
         evententry_properties.reflection, \
         evententry_properties.blare, \
         evententry_properties.unk9 \
-        = SAIO_NET.FLAGS.DecomposeGCEventEntryAttributes(attributes)
+        = SAIO_NET.FLAGS.DecomposeEventEntryAttributes(attributes)
 
 
 def from_surface_attributes(attributes: any, saio_land_entry):

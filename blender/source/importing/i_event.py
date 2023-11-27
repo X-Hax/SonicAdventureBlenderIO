@@ -286,11 +286,11 @@ class EventImporter:
 
             self._add_entity_to_collection(
                 entity.Model, collection, "CHUNK",
-                entity.GCAttributes, entity.Layer, shadow_object)
+                entity.Attributes, entity.Layer, shadow_object)
 
             self._add_entity_to_collection(
                 entity.GCModel, collection, "GC",
-                entity.GCAttributes, entity.Layer, shadow_object)
+                entity.Attributes, entity.Layer, shadow_object)
 
     def _setup_attach_upgrade(self, model, target, index, second):
         if model is None:

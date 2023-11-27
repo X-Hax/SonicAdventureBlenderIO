@@ -100,76 +100,76 @@ namespace SAIO.NET
         }
 
 
-        public static GCEventEntryAttribute ComposeGCEventEntryAttributes(bool unk0, bool enableLight, bool unk2, bool disableShadow, bool unk4, bool unk5, bool unk6, bool reflection, bool blare, bool unk9)
+        public static EventEntryAttribute ComposeEventEntryAttributes(bool unk0, bool enableLight, bool unk2, bool disableShadow, bool unk4, bool unk5, bool unk6, bool reflection, bool blare, bool unk9)
         {
-            GCEventEntryAttribute result = default;
+            EventEntryAttribute result = default;
 
             if(unk0)
             {
-                result |= GCEventEntryAttribute.Unk0;
+                result |= EventEntryAttribute.Unk0;
             }
 
             if(enableLight)
             {
-                result |= GCEventEntryAttribute.Root_EnableLighting;
+                result |= EventEntryAttribute.Root_EnableLighting;
             }
 
             if(unk2)
             {
-                result |= GCEventEntryAttribute.Unk2;
+                result |= EventEntryAttribute.Unk2;
             }
 
             if(disableShadow)
             {
-                result |= GCEventEntryAttribute.Root_DisableShadows;
+                result |= EventEntryAttribute.Root_DisableShadows;
             }
 
             if(unk4)
             {
-                result |= GCEventEntryAttribute.Unk4;
+                result |= EventEntryAttribute.Unk4;
             }
 
             if(unk5)
             {
-                result |= GCEventEntryAttribute.Unk5;
+                result |= EventEntryAttribute.Unk5;
             }
 
             if(unk6)
             {
-                result |= GCEventEntryAttribute.Unk6;
+                result |= EventEntryAttribute.Unk6;
             }
 
             if(reflection)
             {
-                result |= GCEventEntryAttribute.Reflection;
+                result |= EventEntryAttribute.Reflection;
             }
 
             if(blare)
             {
-                result |= GCEventEntryAttribute.Blare;
+                result |= EventEntryAttribute.Blare;
             }
 
             if(unk9)
             {
-                result |= GCEventEntryAttribute.Unk9;
+                result |= EventEntryAttribute.Unk9;
             }
 
             return result;
         }
 
-        public static bool[] DecomposeGCEventEntryAttributes(this GCEventEntryAttribute attributes)
+        public static bool[] DecomposeEventEntryAttributes(this EventEntryAttribute attributes)
         {
             return new[] {
-                attributes.HasFlag(GCEventEntryAttribute.Unk0),
-                attributes.HasFlag(GCEventEntryAttribute.Root_EnableLighting),
-                attributes.HasFlag(GCEventEntryAttribute.Unk2),
-                attributes.HasFlag(GCEventEntryAttribute.Root_DisableShadows),
-                attributes.HasFlag(GCEventEntryAttribute.Unk4),
-                attributes.HasFlag(GCEventEntryAttribute.Unk5),
-                attributes.HasFlag(GCEventEntryAttribute.Unk6),
-                attributes.HasFlag(GCEventEntryAttribute.Reflection),
-                attributes.HasFlag(GCEventEntryAttribute.Blare),
-                attributes.HasFlag(GCEventEntryAttribute.Unk9),
+                attributes.HasFlag(EventEntryAttribute.Unk0),
+                attributes.HasFlag(EventEntryAttribute.Root_EnableLighting),
+                attributes.HasFlag(EventEntryAttribute.Unk2),
+                attributes.HasFlag(EventEntryAttribute.Root_DisableShadows),
+                attributes.HasFlag(EventEntryAttribute.Unk4),
+                attributes.HasFlag(EventEntryAttribute.Unk5),
+                attributes.HasFlag(EventEntryAttribute.Unk6),
+                attributes.HasFlag(EventEntryAttribute.Reflection),
+                attributes.HasFlag(EventEntryAttribute.Blare),
+                attributes.HasFlag(EventEntryAttribute.Unk9),
             };
         }
 

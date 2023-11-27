@@ -582,7 +582,7 @@ class EventExporter:
         )
         entry.Layer = properties.layer
 
-        entry.GCAttributes = o_enum.to_evententry_attributes(properties)
+        entry.Attributes = o_enum.to_evententry_attributes(properties)
 
         return entry
 

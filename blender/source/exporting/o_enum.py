@@ -26,7 +26,7 @@ def to_node_attributes(node_properties):
 
 
 def to_evententry_attributes(evententry_properties):
-    return SAIO_NET.FLAGS.ComposeGCEventEntryAttributes(
+    return SAIO_NET.FLAGS.ComposeEventEntryAttributes(
         evententry_properties.unk0,
         evententry_properties.enable_lighting,
         evententry_properties.unk2,
