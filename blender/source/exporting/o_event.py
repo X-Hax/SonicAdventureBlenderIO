@@ -616,7 +616,7 @@ class EventExporter:
             if obj in cutinfo.shape_motions:
                 entry.ShapeAnimation = cutinfo.shape_motions[obj]
 
-            entry.AutoGCAnimationAttributes()
+            entry.AutoAnimationAttributes()
             result.Entries.Add(entry)
 
         for obj in cutinfo.particles:
