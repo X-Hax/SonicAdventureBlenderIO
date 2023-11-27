@@ -46,9 +46,8 @@ class SAIO_OT_MigrateData(SAIOBasePopupOperator):
 
         if self.remigrate:
             self.layout.label(text="!!WARNING!!")
-            self.layout.label(
-                text="Remigrating will overwrite data that"
-                " was in place before migration!")
+            self.layout.label(text="Remigrating will overwrite data that")
+            self.layout.label(text="was in place before migration!")
             self.layout.label(text="Only proceed only if 100% sure!!")
 
     def _execute(self, context: bpy.types.Context):
