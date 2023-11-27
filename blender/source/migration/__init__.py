@@ -118,14 +118,14 @@ def migrate_scene(scene: bpy.types.Scene, remigrate: bool):
     scene[MIGRATE_KEY] = True
 
 
-def migrate_landentry(object: bpy.types.Object, remigrate: bool):
-    if ("saSettings" not in object
-        or (MIGRATE_KEY in object
+def migrate_landentry(obj: bpy.types.Object, remigrate: bool):
+    if ("saSettings" not in obj
+        or (MIGRATE_KEY in obj
             and not remigrate)):
         return
 
-    data = DataHandler(object["saSettings"])
-    out = object.saio_land_entry
+    data = DataHandler(obj["saSettings"])
+    out = obj.saio_land_entry
 
     out.blockbit = data.get("blockbit", "0")
 
@@ -182,7 +182,7 @@ def migrate_landentry(object: bpy.types.Object, remigrate: bool):
     out.sf_sa2_unknown25 = data.getb("sfSA2U_2000000")
     out.sf_sa2_unknown26 = data.getb("sfSA2U_4000000")
 
-    object[MIGRATE_KEY] = True
+    obj[MIGRATE_KEY] = True
 
 
 def migrate_node(source: bpy.types.Bone | bpy.types.Object, remigrate: bool):
