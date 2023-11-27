@@ -1,0 +1,57 @@
+site_name: Sonic Adventure IO Manual
+nav:
+  - Getting Started:
+    - About: 'about.md'
+    - Installation: 'guides/installation.md'
+    - Contact: 'contact.md'
+  - Sections:
+    - User Interface:
+      - 3D View Toolbar:
+        - Tools:
+          - Overview: 'ui/toolbar/tools/index.md'
+          - Import: 'ui/toolbar/tools/import.md'
+          - Export: 'ui/toolbar/tools/export.md'
+          - Material: 'ui/toolbar/tools/material.md'
+          - Utilities: 'ui/toolbar/tools/utilities.md'
+          - Material Mass Edit: 'ui/toolbar/tools/material_mass_edit.md'
+          - Migration: 'ui/toolbar/tools/migration.md'
+        - Object: 'ui/toolbar/object.md'
+        - Scene: 'ui/toolbar/scene.md'
+      - Scene related:
+        - Settings properties: 'ui/scene/settings.md'
+        - Landtable properties: 'ui/scene/landtable.md'
+        - Event properties: 'ui/scene/event.md'
+      - Object related:
+        - Node Properties: 'ui/object/node.md'
+        - Landentry Properties: 'ui/object/landentry.md'
+        - Evententry Properties: 'ui/object/evententry.md'
+        - Event Node UV Animations: 'ui/object/event_node_uv_animations.md'
+        - Mesh Properties: 'ui/object/mesh.md'
+        - Material Properties: 'ui/object/material.md'
+      - Texture List: "ui/textures.md"
+      - Texturename List: "ui/texturenames.md"
+      - Lists: "ui/lists.md"
+    - Asset Info:
+      - File Types: 'assetinfo/filetypes.md'
+      - Location: 'assetinfo/location.md'
+      - Model Formats: 'assetinfo/model_formats.md'
+    - Guides:
+      - Asset Importing: 'guides/asset_importing.md'
+      - Texturing: 'guides/texturing.md'
+      - Animating: 'guides/animating.md'
+      - Event Editing: 'guides/event_editing.md'
+      - Path Editing: 'guides/path_editing.md'
+      - Migration: 'guides/migration.md'
+    - Technical:
+      - Data Structure: 'technical/datastructure.md'
+theme:
+  name: 'readthedocs'
+  logo: 'img/logo.svg'
+  favicon: 'img/favicon.ico'
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: "🔗&#xFE0E;"
