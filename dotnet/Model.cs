@@ -112,14 +112,20 @@ namespace SAIO.NET
         {
             node.BufferMeshData(optimize);
             WeightedMesh[] attaches = WeightedMesh.FromModel(node, BufferMode.None);
-            bool weighted = attaches.Any(x => x.IsWeighted);
 
-            // if no models are weighted, then blender wont create virtual meshes.
-            // as such, an object should have just one model, to avoid creating non-virtual children
-            if(!weighted)
+            bool weighted = false;
+            if(attaches.Length > 0)
             {
-                attaches = WeightedMesh.MergeAtRoots(attaches);
+                weighted = attaches.Any(x => x.IsWeighted);
+
+                // if no models are weighted, then blender wont create virtual meshes.
+                // as such, an object should have just one model, to avoid creating non-virtual children
+                if(!weighted)
+                {
+                    attaches = WeightedMesh.MergeAtRoots(attaches);
+                }
             }
+
 
             return new Model(node, attaches, weighted, author, desription);
         }
