@@ -16,6 +16,8 @@ class LandtableProcessor:
     _collection: bpy.types.Collection
     _visual_collection: bpy.types.Collection
     _collision_collection: bpy.types.Collection
+    _hybrid_collection: bpy.types.Collection | None
+    _neither_collection: bpy.types.Collection | None
 
     _meshes: list[MeshData]
 
@@ -64,6 +66,14 @@ class LandtableProcessor:
             self._name + "_collision")
         self._collection.children.link(self._collision_collection)
 
+        self._hybrid_collection = bpy.data.collections.new(
+            self._name + "_hybrid")
+        self._collection.children.link(self._hybrid_collection)
+
+        self._neither_collection = bpy.data.collections.new(
+            self._name + "_neither")
+        self._collection.children.link(self._neither_collection)
+
     def _process_meshes(self):
         from .i_mesh import MeshProcessor
 
@@ -100,14 +110,17 @@ class LandtableProcessor:
             is_visual = obj.saio_land_entry.is_visual
             is_collision = obj.saio_land_entry.is_collision
 
-        if is_visual:
+        if is_visual and is_collision:
+            self._hybrid_collection.objects.link(obj)
+
+        elif is_visual:
             self._visual_collection.objects.link(obj)
 
-        if is_collision:
+        elif is_collision:
             self._collision_collection.objects.link(obj)
 
-        if not is_visual and not is_collision:
-            self._collection.objects.link(obj)
+        else:
+            self._neither_collection.objects.link(obj)
 
     def process(self, import_data, name: str):
 
@@ -122,6 +135,14 @@ class LandtableProcessor:
         for index, landentry in enumerate(self._import_data.LandEntries):
             obj = self._setup_object(landentry)
             self._assign_collection(index, obj)
+
+        if len(self._neither_collection.objects) == 0:
+            bpy.data.collections.remove(self._neither_collection, do_unlink=True)
+            self._neither_collection = None
+
+        if len(self._hybrid_collection.objects) == 0:
+            bpy.data.collections.remove(self._hybrid_collection, do_unlink=True)
+            self._hybrid_collection = None
 
     @staticmethod
     def process_landtable(
