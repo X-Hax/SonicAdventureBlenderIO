@@ -89,7 +89,7 @@ namespace SAIO.NET
                 attaches[i] = weightedAttaches[i].ToWeightedBuffer(writeSpecular);
             }
 
-            WeightedMesh.ToModel(root, attaches, format, optimize, ignoreWeights);
+            WeightedMesh.ToModel(root, attaches, format, optimize);
 
             if(autoNodeAttributes)
             {

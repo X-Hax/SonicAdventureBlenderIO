@@ -53,7 +53,7 @@ namespace SAIO.NET
                     throw new InvalidOperationException($"Landtable format {landtable.Format} not a single mesh landtable");
             }
 
-            Attach[] attaches = wbas.Select(x => x.ToAttach(attachFormat, optimize, false)).ToArray();
+            Attach[] attaches = wbas.Select(x => x.ToAttach(attachFormat, optimize)).ToArray();
             List<LandEntry> geometry = new();
 
             foreach(LandEntryStruct landentry in landentries)
@@ -104,8 +104,8 @@ namespace SAIO.NET
                 }
             }
 
-            Attach?[] visualAttaches = visualWBAs.Select(x => x?.ToAttach(attachFormat, optimize, false)).ToArray();
-            Attach?[] collisionAttaches = collisionWBAs.Select(x => x?.ToAttach(AttachFormat.BASIC, optimize, false)).ToArray();
+            Attach?[] visualAttaches = visualWBAs.Select(x => x?.ToAttach(attachFormat, optimize)).ToArray();
+            Attach?[] collisionAttaches = collisionWBAs.Select(x => x?.ToAttach(AttachFormat.BASIC, optimize)).ToArray();
 
             List<LandEntry> geometry = new();
 
