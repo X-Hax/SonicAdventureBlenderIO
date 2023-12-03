@@ -10,7 +10,7 @@ bl_info = {
     "blender": (4, 0, 0),
     "location": "",
     "warning": "",
-    "doc_url": "https://x-hax.github.io/SonicAdventureBlenderIODocs/",
+    "doc_url": "https://x-hax.github.io/SonicAdventureBlenderIO/",
     "tracker_url": "https://github.com/X-Hax/SonicAdventureBlenderIO/issues/new",
     "category": "Import-Export"
 }
