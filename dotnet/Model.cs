@@ -1,5 +1,6 @@
 ﻿using SA3D.Modeling.File;
 using SA3D.Modeling.Mesh;
+using SA3D.Modeling.Mesh.Buffer;
 using SA3D.Modeling.Mesh.Weighted;
 using SA3D.Modeling.ObjectData;
 using SA3D.Modeling.ObjectData.Enums;
@@ -29,12 +30,13 @@ namespace SAIO.NET
 
         public static Node ToNodeStructure(
             NodeStruct[] nodes,
-            MeshStruct[] weightedAttaches,
+            MeshStruct[] meshStructs,
             AttachFormat format,
             bool optimize,
             bool ignoreWeights,
             bool writeSpecular,
-            bool autoNodeAttributes)
+            bool autoNodeAttributes,
+            bool flipVertexColorChannels)
         {
             if(nodes.Length == 0)
             {
@@ -83,13 +85,30 @@ namespace SAIO.NET
 
             Node root = objNodes[0];
 
-            WeightedMesh[] attaches = new WeightedMesh[weightedAttaches.Length];
-            for(int i = 0; i < weightedAttaches.Length; i++)
+            WeightedMesh[] meshes = new WeightedMesh[meshStructs.Length];
+            for(int i = 0; i < meshStructs.Length; i++)
             {
-                attaches[i] = weightedAttaches[i].ToWeightedBuffer(writeSpecular);
+                WeightedMesh mesh = meshStructs[i].ToWeightedBuffer(writeSpecular);
+
+                if(flipVertexColorChannels)
+                {
+                    foreach(BufferCorner[] corners in mesh.TriangleSets)
+                    {
+                        for(int j = 0; j < corners.Length; j++)
+                        {
+                            Color color = corners[j].Color;
+                            (color.Alpha, color.Blue) = (color.Blue, color.Alpha);
+                            (color.Red, color.Green) = (color.Green, color.Red);
+                            corners[j].Color = color;
+                        }
+                    }
+                }
+
+                meshes[i] = mesh;
             }
 
-            WeightedMesh.ToModel(root, attaches, format, optimize);
+
+            WeightedMesh.ToModel(root, meshes, format, optimize);
 
             if(autoNodeAttributes)
             {
@@ -102,32 +121,45 @@ namespace SAIO.NET
             return root;
         }
 
-        public static Model Import(string filepath, bool optimize)
+        public static Model Import(string filepath, bool optimize, bool flipVertexColors)
         {
             ModelFile file = ModelFile.ReadFromFile(filepath);
-            return Process(file.Model, optimize, file.MetaData.Author ?? string.Empty, file.MetaData.Description ?? string.Empty);
+            return Process(file.Model, optimize, flipVertexColors, file.MetaData.Author ?? string.Empty, file.MetaData.Description ?? string.Empty);
         }
 
-        public static Model Process(Node node, bool optimize, string author = "", string desription = "")
+        public static Model Process(Node node, bool optimize, bool flipVertexColors = false, string author = "", string desription = "")
         {
             node.BufferMeshData(optimize);
-            WeightedMesh[] attaches = WeightedMesh.FromModel(node, BufferMode.None);
+            WeightedMesh[] meshes = WeightedMesh.FromModel(node, BufferMode.None);
 
             bool weighted = false;
-            if(attaches.Length > 0)
+            if(meshes.Length > 0)
             {
-                weighted = attaches.Any(x => x.IsWeighted);
+                weighted = meshes.Any(x => x.IsWeighted);
 
                 // if no models are weighted, then blender wont create virtual meshes.
                 // as such, an object should have just one model, to avoid creating non-virtual children
                 if(!weighted)
                 {
-                    attaches = WeightedMesh.MergeAtRoots(attaches);
+                    meshes = WeightedMesh.MergeAtRoots(meshes);
+                }
+
+                foreach(WeightedMesh mesh in meshes)
+                {
+                    foreach(BufferCorner[] corners in mesh.TriangleSets)
+                    {
+                        for(int i = 0; i < corners.Length; i++)
+                        {
+                            Color color = corners[i].Color;
+                            (color.Alpha, color.Blue) = (color.Blue, color.Alpha);
+                            (color.Red, color.Green) = (color.Green, color.Red);
+                            corners[i].Color = color;
+                        }
+                    }
                 }
             }
 
-
-            return new Model(node, attaches, weighted, author, desription);
+            return new Model(node, meshes, weighted, author, desription);
         }
     }
 }
