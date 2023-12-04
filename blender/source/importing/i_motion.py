@@ -195,9 +195,7 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
         self._actions[obj] = action
 
     def _verify_keyframes(self, keyframe_set):
-
         if keyframe_set.Vertex.Count == 0:
-            print("Shape motion has non-shape keyframes!")
             return False
         return True
 
@@ -237,8 +235,12 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
             last = None
             for last in node_keyframes.Value.Vertex.Keys:
                 pass
-            if last > min_frame_count:
+
+            if last is not None and last > min_frame_count:
                 min_frame_count = last
+
+        if min_frame_count == 0:
+            raise UserException(f"Motion \"{motion.Label}\" has no vertex animations")
 
         if self._bobject.type != 'ARMATURE':
             self._convert(

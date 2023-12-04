@@ -179,6 +179,12 @@ class NodeAnimExportOperator(AnimationExportOperator):
         default="EULER"
     )
 
+    ensure_positive_euler_angles: BoolProperty(
+        name="Ensure positive euler angles",
+        description="Ensure that all exported euler rotation angles are positive.",
+        default=True
+    )
+
     force_sort_bones: BoolProperty(
         name="Force sort bones",
         description=(
@@ -232,7 +238,8 @@ class NodeAnimExportOperator(AnimationExportOperator):
             self.quaternion_threshold,
             self.general_optimization_threshold,
             self.quaternion_optimization_threshold,
-            self.short_rot
+            self.short_rot,
+            self.ensure_positive_euler_angles
         )
 
     def draw(self, context: bpy.types.Context):
@@ -241,6 +248,7 @@ class NodeAnimExportOperator(AnimationExportOperator):
             layout.prop(self, "bone_localspace")
             layout.prop(self, "force_sort_bones")
         layout.prop(self, "short_rot")
+        layout.prop(self, "ensure_positive_euler_angles")
         box = layout.box()
         if expand_menu(box, self, "show_advanced"):
             box.prop(self, "rotation_mode")

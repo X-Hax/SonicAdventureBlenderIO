@@ -55,6 +55,12 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         default="EULER"
     )
 
+    out_ensure_positive_euler_angles: BoolProperty(
+        name="Ensure positive euler angles",
+        description="Ensure that all exported euler rotation angles are positive.",
+        default=True
+    )
+
     out_interpolation_threshold: FloatProperty(
         name="Interpolation conversion deviation threshold",
         description=(
@@ -172,6 +178,8 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
 
         layout.prop(self, "out_bone_localspace")
         layout.prop(self, "out_short_rot")
+        layout.prop(self, "out_ensure_positive_euler_angles")
+
         box = layout.box()
         if expand_menu(box, self, "out_show_advanced"):
             box.prop(self, "out_rotation_mode")
@@ -208,7 +216,8 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
             self.out_quaternion_threshold,
             self.out_general_optim_thresh,
             self.out_quaternion_optim_thresh,
-            self.out_short_rot
+            self.out_short_rot,
+            self.out_ensure_positive_euler_angles
         )
 
         out = o_motion.convert_to_node_motion(
