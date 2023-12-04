@@ -35,6 +35,7 @@ raw_mapping = [
     ("EventNode_UVAnim.material_index", f"{EVENT_NODE_UI_ANIM}"),
 
     ("Mesh.force_vertex_colors", f"{MESH}#force-vertex-colors"),
+    ("Mesh.texcoord_precision_level", f"{MESH}#texcoord-precision-level"),
 
     ("Material.diffuse", f"{MATERIAL}#diffuse-color"),
     ("Material.specular", f"{MATERIAL}#specular-color"),
