@@ -95,7 +95,8 @@ class ExportMDLOperator(ExportModelOperator):
             self.apply_modifs,
             self.apply_posing,
             self.auto_node_attributs,
-            self.force_sort_bones)
+            self.force_sort_bones,
+            self.flip_vertex_color_channels)
 
         data = evaluator.evaluate(objects)
 
@@ -130,6 +131,7 @@ class SAIO_OT_Export_SA1MDL(ExportMDLOperator):
     format = "SA1"
     ignore_weights = True
     write_specular = True
+    flip_vertex_color_channels = False
 
 
 class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
@@ -153,6 +155,11 @@ class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
         default=False
     )
 
+    flip_vertex_color_channels: BoolProperty(
+        name="Flip vertex color channels",
+        description="Flips vertex color channels from ARGB to BGRA.",
+        default=False
+    )
 
 class SAIO_OT_Export_SA2BMDL(ExportMDLOperator):
     bl_idname = "saio.export_sa2bmdl"
@@ -169,6 +176,7 @@ class SAIO_OT_Export_SA2BMDL(ExportMDLOperator):
     format = "SA2B"
     ignore_weights = True
     write_specular = False
+    flip_vertex_color_channels = False
 
 ###############################################
 

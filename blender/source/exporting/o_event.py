@@ -111,6 +111,7 @@ class EventExporter:
                 True,
                 False,
                 auto_node_attributes,
+                False,
                 False
             )
 

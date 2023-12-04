@@ -71,6 +71,14 @@ class SAIO_OT_Import_Model(ModelImportOperator):
         default=True
     )
 
+    flip_vertex_colors: BoolProperty(
+        name="Flip vertex colors",
+        description=(
+            "Some SA2 models use BGRA vertex colors, instead of AGBR."
+            " Enabling this flips the channels."),
+        default=False
+    )
+
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
@@ -83,7 +91,8 @@ class SAIO_OT_Import_Model(ModelImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                import_data = SAIO_NET.MODEL.Import(filepath, self.optimize)
+                import_data = SAIO_NET.MODEL.Import(
+                    filepath, self.optimize, self.flip_vertex_colors)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -139,7 +148,8 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
             filepath = os.path.join(directory, file.name)
 
             try:
-                import_data = SAIO_NET.LANDTABLE_WRAPPER.Import(filepath, self.optimize)
+                import_data = SAIO_NET.LANDTABLE_WRAPPER.Import(
+                    filepath, self.optimize)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -186,7 +196,8 @@ class SAIO_OT_Import_Event(SAIOBaseFileLoadOperator):
         load_dotnet()
 
         try:
-            import_data = SAIO_NET.CUTSCENE.Import(self.filepath, self.optimize)
+            import_data = SAIO_NET.CUTSCENE.Import(
+                self.filepath, self.optimize)
         except Exception as error:
             print(f"An error occured while importing {self.filepath}")
             raise error
