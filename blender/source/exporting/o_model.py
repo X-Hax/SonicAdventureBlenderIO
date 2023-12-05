@@ -5,6 +5,7 @@ from .o_mesh import ModelMesh
 
 from ..dotnet import SAIO_NET
 
+
 class ModelData:
 
     node_data: o_node.NodeStructure
@@ -143,7 +144,8 @@ class ModelEvaluator:
             self._optimize,
             self._ignore_weights,
             self._write_specular,
-            self._automatic_node_attributes
+            self._automatic_node_attributes,
+            self._flip_vertex_color_channels
         ).ToFile(filepath)
 
     def evaluate(self, objects: list[bpy.types.Object], convert: bool = True):
@@ -153,7 +155,8 @@ class ModelEvaluator:
         self._eval_mesh_structures(convert)
 
         if convert:
-            self._output.attach_format = o_enum.to_attach_format(self._attach_format)
+            self._output.attach_format = o_enum.to_attach_format(
+                self._attach_format)
             self._convert_structures()
 
         return self._output

@@ -96,9 +96,12 @@ class ExportMDLOperator(ExportModelOperator):
             self.apply_posing,
             self.auto_node_attributs,
             self.force_sort_bones,
-            self.flip_vertex_color_channels)
+            self.flip_vertex_color_channels) # pylint: disable=no-member
 
         data = evaluator.evaluate(objects)
+
+        if self.debug_output:
+            evaluator.save_debug(self.filepath + ".json")
 
         metadata = SA3D_Modeling.META_DATA()
         metadata.Author = context.scene.saio_scene.author
@@ -109,9 +112,6 @@ class ExportMDLOperator(ExportModelOperator):
             data.outdata,
             self.nj_file,
             metadata)
-
-        if self.debug_output:
-            evaluator.save_debug(self.filepath + ".json")
 
         return {'FINISHED'}
 
