@@ -1,6 +1,9 @@
 import bpy
+
 from . import o_enum, o_matrix, o_mesh
+
 from ..dotnet import SAIO_NET
+from ..utility import general
 
 class LandtableEvaluator:
 
@@ -76,7 +79,7 @@ class LandtableEvaluator:
         mtx = o_matrix.bpy_to_net_matrix(obj.matrix_world)
 
         landentry = SAIO_NET.LAND_ENTRY_STRUCT(
-            obj.name,
+            general.remove_digit_prefix(obj.name),
             mesh_index,
             blockbit,
             node_attributes,
@@ -87,7 +90,7 @@ class LandtableEvaluator:
         self._land_entries.append(landentry)
 
     def _eval_mesh_models(self):
-        for mesh in self._mesh_lut.keys():
+        for mesh in self._mesh_lut:
             mesh_obj = mesh
             if not isinstance(mesh, bpy.types.Object):
                 mesh_obj = bpy.data.objects.new("##TEMP##", mesh)

@@ -8,6 +8,7 @@ class LandtableProcessor:
 
     _context: bpy.types.Context
     _optimize: bool
+    _ensure_entry_order: bool
 
     _import_data: any
     _landtable: any
@@ -24,9 +25,11 @@ class LandtableProcessor:
     def __init__(
             self,
             context: bpy.types.Context,
-            optimize: bool):
+            optimize: bool,
+            ensure_entry_order: bool):
         self._context = context
         self._optimize = optimize
+        self._ensure_entry_order = ensure_entry_order
 
     def _get_string(self, value) -> str:
         if value is None:
@@ -82,11 +85,17 @@ class LandtableProcessor:
             self._import_data.Attaches,
             self._name)
 
-    def _setup_object(self, landentry):
+    def _setup_object(self, landentry, index):
         from . import i_matrix
 
         mesh_data = self._meshes[landentry.MeshIndex]
-        obj = bpy.data.objects.new(landentry.Label, mesh_data.mesh)
+
+        if self._ensure_entry_order:
+            label = f"{index:04}_{landentry.Label}"
+        else:
+            label = landentry.Label
+
+        obj = bpy.data.objects.new(label, mesh_data.mesh)
 
         obj.saio_land_entry.blockbit = f"{landentry.BlockBit:08X}"
         obj.saio_land_entry.sf_visible = False
@@ -133,7 +142,7 @@ class LandtableProcessor:
         self._process_meshes()
 
         for index, landentry in enumerate(self._import_data.LandEntries):
-            obj = self._setup_object(landentry)
+            obj = self._setup_object(landentry, index)
             self._assign_collection(index, obj)
 
         if len(self._neither_collection.objects) == 0:
@@ -149,7 +158,8 @@ class LandtableProcessor:
             context: bpy.types.Context,
             import_data,
             name: str,
-            optimize: bool):
+            optimize: bool,
+            ensure_entry_order: bool):
 
-        processor = LandtableProcessor(context, optimize)
+        processor = LandtableProcessor(context, optimize, ensure_entry_order)
         processor.process(import_data, name)

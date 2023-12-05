@@ -99,3 +99,14 @@ def reset_property_group(target, bool_to_false: False):
             setattr(target, prop.identifier, False)
         else:
             setattr(target, prop.identifier, prop.default)
+
+def remove_digit_prefix(name: str):
+    underscore = name.find("_")
+    if underscore == -1:
+        return name
+
+    for i in range(underscore):
+        if not name[i].isdigit():
+            return name
+
+    return name[underscore+1:]

@@ -11,7 +11,7 @@ class NodeProcessor:
     _merge_meshes: bool
     _mesh_processor: i_mesh.MeshProcessor
 
-    ensure_order: bool
+    _ensure_order: bool
     object_map: dict[any, bpy.types.Object]
     meshes: list[i_mesh.MeshData]
     node_name_lut: dict[str, str]
@@ -33,7 +33,7 @@ class NodeProcessor:
 
         self._context = context
         self._collection = collection
-        self.ensure_order = ensure_order
+        self._ensure_order = ensure_order
         self._merge_meshes = merge_meshes
         self._mesh_processor = i_mesh.MeshProcessor()
 
@@ -46,7 +46,7 @@ class NodeProcessor:
             self.node_name_lut = node_name_lut
 
     def _eval_name(self, index: int, name: str):
-        if self.ensure_order:
+        if self._ensure_order:
             return f"{index:03}_{name}"
         else:
             return name
@@ -291,9 +291,9 @@ class NodeProcessor:
 
     def process_as_armature(self, nodes, name: str):
 
-        prev_ensure_order = self.ensure_order
+        prev_ensure_order = self._ensure_order
         if len(nodes) == 1:
-            self.ensure_order = False
+            self._ensure_order = False
 
         net_matrices = [node_matrix.Item2 for node_matrix in nodes[0].GetWorldMatrixTree()]
         matrices = i_matrix.net_to_bpy_matrices(net_matrices)
@@ -322,13 +322,13 @@ class NodeProcessor:
         if self._merge_meshes:
             self._merge_armature_meshes()
 
-        self.ensure_order = prev_ensure_order
+        self._ensure_order = prev_ensure_order
 
     def process_as_objects(self, nodes):
 
-        prev_ensure_order = self.ensure_order
+        prev_ensure_order = self._ensure_order
         if len(nodes) == 1:
-            self.ensure_order = False
+            self._ensure_order = False
 
         net_matrices = [node_matrix.Item2 for node_matrix in nodes[0].GetWorldMatrixTree()]
         matrices = i_matrix.net_to_bpy_matrices(net_matrices)
@@ -366,7 +366,7 @@ class NodeProcessor:
 
             obj.matrix_world = matrices[index]
 
-        self.ensure_order = prev_ensure_order
+        self._ensure_order = prev_ensure_order
 
     def process(
             self,

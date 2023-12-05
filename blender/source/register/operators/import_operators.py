@@ -138,6 +138,16 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
         default=False
     )
 
+    ensure_order: BoolProperty(
+        name="Ensure landentry order",
+        description=(
+            "Ensure that landentries retain order regardless of their imported"
+            " name by prepending their entry index to their name"
+            " (e.g. 001_landentry_name)"
+        ),
+        default=True
+    )
+
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
@@ -166,7 +176,8 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
                 context,
                 import_data,
                 file.name,
-                self.optimize)
+                self.optimize,
+                self.ensure_order)
 
         return {'FINISHED'}
 

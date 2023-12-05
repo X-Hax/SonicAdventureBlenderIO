@@ -3,6 +3,7 @@ from bpy.types import Object as BObject, PoseBone
 from mathutils import Matrix
 
 from ..dotnet import SAIO_NET
+from ..utility import general
 from ..exceptions import SAIOException
 
 VirtualModels = list[tuple[BObject, Matrix]]
@@ -188,16 +189,8 @@ class NodeEvaluator:
 
         if not self._correct_names:
             return name
-
-        underscore = name.find("_")
-        if underscore == -1:
-            return name
-
-        for i in range(underscore):
-            if not name[i].isdigit():
-                return name
-
-        return name[underscore+1:]
+        else:
+            return general.remove_digit_prefix(name)
 
     def _create_root_node(self):
         self._output.create_node(
