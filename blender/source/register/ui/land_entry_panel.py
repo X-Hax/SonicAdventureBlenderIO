@@ -178,11 +178,39 @@ class SAIO_PT_LandEntry(PropertiesPanel):
     def draw_land_entry_properties(
             layout: bpy.types.UILayout,
             is_level: bool,
-            land_entry_properties: SAIO_LandEntry,
+            obj: bpy.types.Object,
             panel_settings: SAIO_PanelSettings):
 
         if not is_level:
             layout.box().label(text="Scene is not marked as a level")
+            return
+
+        land_entry_properties: SAIO_LandEntry = obj.saio_land_entry
+
+        if obj.parent is not None:
+
+            parent = obj.parent
+            while parent.parent is not None:
+                parent = parent.parent
+
+            if parent.saio_land_entry.geometry_type == 'ANIMATED':
+                layout.box().label(text="Part of animated object.")
+                return
+            elif parent.type == 'ARMATURE':
+                layout.box().label(
+                    text="Object is part of an armature, making it of animated type.")
+                return
+        elif obj.type == 'ARMATURE':
+            layout.box().label(text="Object is an Armature, making it of animated type.")
+            return
+        elif obj.type != 'MESH':
+            layout.box().label(text="Object is not a mesh.")
+            return
+
+        if obj.parent is not None:
+            layout.prop(land_entry_properties, "geometry_type")
+
+        if land_entry_properties.geometry_type == 'ANIMATED':
             return
 
         prop_advanced(
@@ -214,10 +242,6 @@ class SAIO_PT_LandEntry(PropertiesPanel):
         if context.active_object is None:
             return "No active object"
 
-        error = SAIO_LandEntry.check_is_land_entry(context.active_object)
-        if error is not None:
-            return error
-
         return None
 
     def draw_panel(self, context):
@@ -225,5 +249,5 @@ class SAIO_PT_LandEntry(PropertiesPanel):
         SAIO_PT_LandEntry.draw_land_entry_properties(
             self.layout,
             context.scene.saio_scene.scene_type == "LVL",
-            context.active_object.saio_land_entry,
+            context.active_object,
             context.scene.saio_scene.panels)

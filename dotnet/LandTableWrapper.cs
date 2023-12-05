@@ -1,6 +1,7 @@
 ﻿using BCnEncoder.Shared;
 using SA3D.Common;
 using SA3D.Common.Lookup;
+using SA3D.Modeling.Animation;
 using SA3D.Modeling.File;
 using SA3D.Modeling.Mesh;
 using SA3D.Modeling.Mesh.Basic;
@@ -21,14 +22,16 @@ namespace SAIO.NET
         public LandEntryStruct[] LandEntries { get; }
         public WeightedMesh[] Attaches { get; }
         public int? VisualCount { get; }
+        public NodeMotion[] GeometryAnimations { get; }
 
-        public LandTableWrapper(LandTable landTable, MetaData metaData, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount)
+        public LandTableWrapper(LandTable landTable, MetaData metaData, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount, NodeMotion[] geometryAnimations)
         {
             LandTable = landTable;
             MetaData = metaData;
             LandEntries = landEntries;
             Attaches = attaches;
             VisualCount = visualCount;
+            GeometryAnimations = geometryAnimations;
         }
 
         private static void ExportSingle(
@@ -270,7 +273,13 @@ namespace SAIO.NET
                 wbas[item.Value] = WeightedMesh.FromAttach(item.Key, BufferMode.None);
             }
 
-            return new(level.Level, level.MetaData, landEntries.ToArray(), wbas, visualCount);
+            return new(
+                level.Level, 
+                level.MetaData, 
+                landEntries.ToArray(), 
+                wbas, 
+                visualCount, 
+                level.Level.GeometryAnimations.Select(x => x.NodeMotion).ToArray());
         }
 
     }

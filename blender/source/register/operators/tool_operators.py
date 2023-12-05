@@ -237,7 +237,6 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         in_action = i_motion.NodeMotionProcessor.process_motion(
             in_motion,
             armature_object,
-            False,
             self.in_rotation_mode,
             self.in_quaternion_threshold
         )

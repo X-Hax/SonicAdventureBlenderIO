@@ -465,7 +465,6 @@ class EventImporter:
         action = NodeMotionProcessor.process_motion(
             motion,
             obj,
-            False,
             "ANIM",
             0.01)
 

@@ -324,6 +324,8 @@ class NodeProcessor:
 
         self._ensure_order = prev_ensure_order
 
+        return self._armature_obj
+
     def process_as_objects(self, nodes):
 
         prev_ensure_order = self._ensure_order
@@ -384,8 +386,11 @@ class NodeProcessor:
         nodes = import_data.Root.GetTreeNodes()
         if force_armature or import_data.Weighted:
             self.process_as_armature(nodes, name)
+            return self._armature_obj
         else:
             self.process_as_objects(nodes)
+            return self.object_map[nodes[0]]
+
 
     def setup_materials(self):
         self._mesh_processor.setup_materials(self._context)
@@ -410,5 +415,7 @@ class NodeProcessor:
             node_name_lut
         )
 
-        node_processor.process(import_data, name, mat_name, force_armature)
+        result = node_processor.process(import_data, name, mat_name, force_armature)
         node_processor.setup_materials()
+
+        return result

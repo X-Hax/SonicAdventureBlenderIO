@@ -4,12 +4,15 @@ from bpy.props import (
     BoolProperty,
     StringProperty,
     CollectionProperty,
+    EnumProperty,
+    FloatProperty
 )
 from bpy.types import Context
 
 from .base import SAIOBaseFileLoadOperator
 
 from ...dotnet import load_dotnet, SAIO_NET
+from ...utility.draw import expand_menu
 
 
 class ModelImportOperator(SAIOBaseFileLoadOperator):
@@ -138,7 +141,7 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
         default=False
     )
 
-    ensure_order: BoolProperty(
+    ensure_static_order: BoolProperty(
         name="Ensure landentry order",
         description=(
             "Ensure that landentries retain order regardless of their imported"
@@ -147,6 +150,99 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
         ),
         default=True
     )
+
+    ###################################
+
+    merge_anim_meshes: BoolProperty(
+        name="Merge meshes",
+        description=(
+            "When importing an armature (whether forced or not), merge"
+            " individual meshes into a single mesh"
+        ),
+        default=False
+    )
+
+    ensure_anim_order: BoolProperty(
+        name="Ensure sibling order",
+        description=(
+            "Ensure that objects retain order regardless of their imported"
+            " name by prepending their global model Index to their name"
+            " (e.g. 001_NodeName)"
+        ),
+        default=True
+    )
+
+    show_anim: BoolProperty(
+        name="Animation",
+        default=False
+    )
+
+    ###################################
+
+    rotation_mode: EnumProperty(
+        name="Rotation Mode",
+        description="How rotations should be imported",
+        items=(
+            ("ANIM", "Animation", "Adjust bone rotation modes to match the"
+             " animation"),
+            ("KEEP", "Keep", "Import into bone rotation modes"),
+        ),
+        default="ANIM"
+    )
+
+    quaternion_threshold: FloatProperty(
+        name="Quaternion conversion deviation threshold",
+        description=(
+            "If the animations rotation data doesnt match the bones"
+            " rotation mode, the data will have to be converted. converting"
+            " between euler and quaternion rotations is inaccurate, as the"
+            " interpolation between those types is not linear. This value"
+            " determines the threshold, from which a keyframe should be"
+            " removed. 0 means all interpolated keyframes, 1 means none."
+            " usually, a value around 0.05 is enough and gets rid of most"
+            " unnecessary keyframes"
+        ),
+        default=0,
+        min=0
+    )
+
+    short_rot: BoolProperty(
+        name="Read as 16 bit rotations",
+        description=(
+            "Fallback value. Only required to be set if the file version is 0"
+        ),
+        default=False
+    )
+
+    show_advanced_anim: BoolProperty(
+        name="Advanced Animation",
+        default=False
+    )
+
+    ###################################
+
+    def draw(self, context: Context):
+        layout = self.layout
+
+        layout.prop(self, "scene_per_file")
+        layout.prop(self, "optimize")
+        layout.prop(self, "fix_view")
+        layout.prop(self, "ensure_static_order")
+
+        box = layout.box()
+        if expand_menu(box, self, "show_anim"):
+            box.prop(self, "merge_anim_meshes")
+            box.prop(self, "ensure_anim_order")
+
+            box.separator()
+
+            box.prop(self, "rotation_mode")
+
+            box2 = box.box()
+            if expand_menu(box2, self, "show_advanced_anim"):
+                box2.prop(self, "quaternion_threshold")
+                box2.prop(self, "short_rot")
+
 
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
@@ -177,7 +273,12 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
                 import_data,
                 file.name,
                 self.optimize,
-                self.ensure_order)
+                self.ensure_static_order,
+                self.merge_anim_meshes,
+                self.ensure_anim_order,
+                self.rotation_mode,
+                self.quaternion_threshold,
+                self.short_rot)
 
         return {'FINISHED'}
 

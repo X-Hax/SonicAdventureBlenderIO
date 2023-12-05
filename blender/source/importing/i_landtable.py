@@ -2,13 +2,25 @@ import bpy
 
 from . import i_enum
 from .i_mesh import MeshData
+from .i_node import NodeProcessor
+from .i_motion import NodeMotionProcessor
+
+from ..dotnet import SAIO_NET
+
 
 
 class LandtableProcessor:
 
     _context: bpy.types.Context
     _optimize: bool
-    _ensure_entry_order: bool
+    _ensure_static_order: bool
+
+    _merge_anim_meshes: bool
+    _ensure_anim_order: bool
+
+    _rotation_mode: bool
+    _quaternion_threshold: bool
+    _short_rot: bool
 
     _import_data: any
     _landtable: any
@@ -20,16 +32,31 @@ class LandtableProcessor:
     _hybrid_collection: bpy.types.Collection | None
     _neither_collection: bpy.types.Collection | None
 
+    _animation_collection: bpy.types.Collection | None
+
     _meshes: list[MeshData]
 
     def __init__(
             self,
             context: bpy.types.Context,
             optimize: bool,
-            ensure_entry_order: bool):
+            ensure_entry_order: bool,
+            merge_anim_meshes: bool,
+            ensure_anim_order: bool,
+            rotation_mode: bool,
+            quaternion_threshold: bool,
+            short_rot: bool):
+
         self._context = context
         self._optimize = optimize
-        self._ensure_entry_order = ensure_entry_order
+        self._ensure_static_order = ensure_entry_order
+
+        self._merge_anim_meshes = merge_anim_meshes
+        self._ensure_anim_order = ensure_anim_order
+
+        self._rotation_mode = rotation_mode
+        self._quaternion_threshold = quaternion_threshold
+        self._short_rot = short_rot
 
     def _get_string(self, value) -> str:
         if value is None:
@@ -77,6 +104,13 @@ class LandtableProcessor:
             self._name + "_neither")
         self._collection.children.link(self._neither_collection)
 
+        if self._import_data.GeometryAnimations.Length > 0:
+            self._animation_collection = bpy.data.collections.new(
+                self._name + "_animated")
+            self._collection.children.link(self._animation_collection)
+        else:
+            self._animation_collection = None
+
     def _process_meshes(self):
         from .i_mesh import MeshProcessor
 
@@ -90,7 +124,7 @@ class LandtableProcessor:
 
         mesh_data = self._meshes[landentry.MeshIndex]
 
-        if self._ensure_entry_order:
+        if self._ensure_static_order:
             label = f"{index:04}_{landentry.Label}"
         else:
             label = landentry.Label
@@ -131,6 +165,37 @@ class LandtableProcessor:
         else:
             self._neither_collection.objects.link(obj)
 
+    def _process_nodemotion(self, nodemotion):
+        model_data = SAIO_NET.MODEL.Process(
+            nodemotion.Model,
+            self._optimize
+        )
+
+        node_lut = {}
+
+        obj = NodeProcessor.process_model(
+            self._context,
+            model_data,
+            self._animation_collection,
+            nodemotion.Label,
+            nodemotion.Label,
+            node_lut,
+             nodemotion.Model.Child is not None or nodemotion.Model.Next is not None,
+            self._merge_anim_meshes,
+            self._ensure_anim_order
+        )
+
+        obj.saio_land_entry.geometry_type = 'ANIMATED'
+
+        action = NodeMotionProcessor.process_motion(
+            nodemotion.Animation,
+            obj,
+            self._rotation_mode,
+            self._quaternion_threshold)
+
+        anim_data = obj.animation_data_create()
+        anim_data.action = action
+
     def process(self, import_data, name: str):
 
         self._import_data = import_data
@@ -145,12 +210,17 @@ class LandtableProcessor:
             obj = self._setup_object(landentry, index)
             self._assign_collection(index, obj)
 
+        for nodemotion in self._import_data.GeometryAnimations:
+            self._process_nodemotion(nodemotion)
+
         if len(self._neither_collection.objects) == 0:
-            bpy.data.collections.remove(self._neither_collection, do_unlink=True)
+            bpy.data.collections.remove(
+                self._neither_collection, do_unlink=True)
             self._neither_collection = None
 
         if len(self._hybrid_collection.objects) == 0:
-            bpy.data.collections.remove(self._hybrid_collection, do_unlink=True)
+            bpy.data.collections.remove(
+                self._hybrid_collection, do_unlink=True)
             self._hybrid_collection = None
 
     @staticmethod
@@ -159,7 +229,21 @@ class LandtableProcessor:
             import_data,
             name: str,
             optimize: bool,
-            ensure_entry_order: bool):
+            ensure_entry_order: bool,
+            merge_anim_meshes: bool,
+            ensure_anim_order: bool,
+            rotation_mode: bool,
+            quaternion_threshold: bool,
+            short_rot: bool):
 
-        processor = LandtableProcessor(context, optimize, ensure_entry_order)
+        processor = LandtableProcessor(
+            context,
+            optimize,
+            ensure_entry_order,
+            merge_anim_meshes,
+            ensure_anim_order,
+            rotation_mode,
+            quaternion_threshold,
+            short_rot)
+
         processor.process(import_data, name)

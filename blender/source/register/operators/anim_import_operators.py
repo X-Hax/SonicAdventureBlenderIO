@@ -29,14 +29,6 @@ class MotionImportOperator(SAIOBaseFileLoadOperator):
         type=bpy.types.OperatorFileListElement
     )
 
-    force_sort_bones: BoolProperty(
-        name="Force sort bones",
-        description=(
-            "Blender doesnt sort bones by name, although this may be desired"
-            " in certain scenarios. This ensure the bones are sorted by name"),
-        default=False
-    )
-
 
 class SAIO_OT_Import_Node_Animation(MotionImportOperator):
     bl_idname = "saio.import_node_anim"
@@ -66,7 +58,7 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
             " usually, a value around 0.05 is enough and gets rid of most"
             " unnecessary keyframes"
         ),
-        default=0.05,
+        default=0,
         min=0
     )
 
@@ -96,7 +88,6 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
     def draw(self, context: bpy.types.Context):
         layout = self.layout
         layout.prop(self, "rotation_mode")
-        layout.prop(self, "force_sort_bones")
 
         box = layout.box()
         if expand_menu(box, self, "show_advanced"):
@@ -111,7 +102,7 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
         node_num = 1
         if context.active_object.type == "ARMATURE":
             node_num = len(bone_utils.get_bone_map(
-                context.active_object, self.force_sort_bones, False))
+                context.active_object, False, False))
 
         if context.active_object.animation_data is None:
             context.active_object.animation_data_create()
@@ -129,7 +120,6 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
             action = i_motion.NodeMotionProcessor.process_motion(
                 animFile.Animation,
                 context.active_object,
-                self.force_sort_bones,
                 self.rotation_mode,
                 self.quaternion_threshold)
 
@@ -229,7 +219,7 @@ class SAIO_OT_Import_Shape_Animation(MotionImportOperator):
         node_num = 1
         if context.active_object.type == "ARMATURE":
             node_num = len(bone_utils.get_bone_map(
-                context.active_object, self.force_sort_bones, True))
+                context.active_object, False, True))
 
         for file in self.files:
 
