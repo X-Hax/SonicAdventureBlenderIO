@@ -114,11 +114,9 @@ def save_texture_archive(
         archive_type: str,
         compress: bool):
 
-    from os import path
-
     archive = encode_texture_archive(texture_set, filepath, archive_type)
 
-    file_data = archive.Write()
+    file_data = archive.WriteArchiveToBytes()
     if compress:
         file_data = SA3D_Archival.PRS.CompressPRS(file_data)
 
