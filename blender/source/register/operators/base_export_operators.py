@@ -48,7 +48,7 @@ class ExportModelOperator(ExportOperator):
     optimize: BoolProperty(
         name="Optimize",
         description="Optimize if possible",
-        default=True,
+        default=False,
     )
 
     auto_node_attributs: BoolProperty(
