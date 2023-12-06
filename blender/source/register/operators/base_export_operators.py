@@ -77,7 +77,7 @@ class ExportModelOperator(ExportOperator):
             def check(x: bpy.types.Object): # pylint: disable=unused-argument
                 return True
 
-        result = [obj for obj in context.scene.objects if check(obj)]
+        result = {obj for obj in context.scene.objects if check(obj)}
 
         roots = set()
         for obj in result:
@@ -89,9 +89,9 @@ class ExportModelOperator(ExportOperator):
         if len(roots) == 1 or multi_export:
             for root in roots:
                 if root.type == 'ARMATURE':
-                    result.append(root)
+                    result.add(root)
 
-        return result
+        return list(result)
 
     def export(self, context):
         objects = ExportModelOperator._collect_objects(self.select_mode, context, self.multi_export)
