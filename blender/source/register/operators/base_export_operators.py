@@ -9,23 +9,6 @@ from .base import SAIOBaseFileSaveOperator
 from ...utility.draw import expand_menu
 from ...utility.anim_parameters import AnimParameters
 
-
-def _collect_objects(mode: str, context: bpy.types.Context):
-
-
-    if mode == 'VISIBLE':
-        def check(x: bpy.types.Object):
-            return not x.hide_get()
-    elif mode == 'SELECTED':
-        def check(x: bpy.types.Object):
-            return x.select_get()
-    else:
-        def check(x: bpy.types.Object): # pylint: disable=unused-argument
-            return True
-
-    return [obj for obj in context.scene.objects if check(obj)]
-
-
 class ExportOperator(SAIOBaseFileSaveOperator):
     bl_options = {'PRESET', 'UNDO'}
 
@@ -76,11 +59,42 @@ class ExportModelOperator(ExportOperator):
         default=True
     )
 
+    multi_export = False
+
     def export_models(self, context, objects): # pylint: disable=unused-argument
         return {'FINISHED'}
 
+    @staticmethod
+    def _collect_objects(mode: str, context: bpy.types.Context, multi_export: bool):
+
+        if mode == 'VISIBLE':
+            def check(x: bpy.types.Object):
+                return not x.hide_get()
+        elif mode == 'SELECTED':
+            def check(x: bpy.types.Object):
+                return x.select_get()
+        else:
+            def check(x: bpy.types.Object): # pylint: disable=unused-argument
+                return True
+
+        result = [obj for obj in context.scene.objects if check(obj)]
+
+        roots = set()
+        for obj in result:
+            parent = obj
+            while parent.parent is not None:
+                parent = parent.parent
+            roots.add(parent)
+
+        if len(roots) == 1 or multi_export:
+            for root in roots:
+                if root.type == 'ARMATURE':
+                    result.append(root)
+
+        return result
+
     def export(self, context):
-        objects = _collect_objects(self.select_mode, context)
+        objects = ExportModelOperator._collect_objects(self.select_mode, context, self.multi_export)
         return self.export_models(context, objects)
 
 

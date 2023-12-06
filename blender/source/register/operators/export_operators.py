@@ -161,6 +161,7 @@ class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
         default=False
     )
 
+
 class SAIO_OT_Export_SA2BMDL(ExportMDLOperator):
     bl_idname = "saio.export_sa2bmdl"
     bl_label = "SA2B model (.sa2bmdl)"
@@ -200,6 +201,8 @@ class ExportLVLOperator(ExportModelOperator):
             " will dramatically increase export time!"),
         default=False
     )
+
+    multi_export = True
 
     def export_models(self, context, objects):
         from ...exporting import o_landtable
