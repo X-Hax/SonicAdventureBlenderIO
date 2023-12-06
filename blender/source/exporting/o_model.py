@@ -71,7 +71,6 @@ class ModelEvaluator:
     _attach_format: str
     _auto_root: bool
     _optimize: bool
-    _ignore_weights: bool
     _write_specular: bool
     _apply_modifs: bool
     _apply_pose: bool
@@ -88,7 +87,6 @@ class ModelEvaluator:
             attach_format: str,
             auto_root: bool = True,
             optimize: bool = True,
-            ignore_weights: bool = False,
             write_specular: bool = True,
             apply_modifs: bool = True,
             apply_pose: bool = False,
@@ -100,7 +98,6 @@ class ModelEvaluator:
         self._attach_format = attach_format
         self._auto_root = auto_root
         self._optimize = optimize
-        self._ignore_weights = ignore_weights
         self._write_specular = write_specular
         self._apply_modifs = apply_modifs
         self._apply_pose = apply_pose
@@ -114,7 +111,7 @@ class ModelEvaluator:
     def _setup(self):
         self._output = ModelData()
 
-    def _eval_nodes(self, objects: list[bpy.types.Object]):
+    def _eval_nodes(self, objects: set[bpy.types.Object]):
         self._output.node_data = self._node_evaluator.evaluate(objects)
 
     def _eval_mesh_structures(self, convert: bool):
@@ -131,7 +128,6 @@ class ModelEvaluator:
             self._output.mesh_structs,
             self._output.attach_format,
             self._optimize,
-            self._ignore_weights,
             self._write_specular,
             self._automatic_node_attributes,
             self._flip_vertex_color_channels)
@@ -142,13 +138,12 @@ class ModelEvaluator:
             self._output.mesh_structs,
             self._output.attach_format,
             self._optimize,
-            self._ignore_weights,
             self._write_specular,
             self._automatic_node_attributes,
             self._flip_vertex_color_channels
         ).ToFile(filepath)
 
-    def evaluate(self, objects: list[bpy.types.Object], convert: bool = True):
+    def evaluate(self, objects: set[bpy.types.Object], convert: bool = True):
         self._setup()
         self._eval_nodes(objects)
         self._output.eval_modelmeshes()

@@ -33,7 +33,6 @@ namespace SAIO.NET
             MeshStruct[] meshStructs,
             AttachFormat format,
             bool optimize,
-            bool ignoreWeights,
             bool writeSpecular,
             bool autoNodeAttributes,
             bool flipVertexColorChannels)

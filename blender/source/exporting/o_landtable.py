@@ -1,13 +1,18 @@
 import bpy
 
-from . import o_enum, o_matrix, o_mesh
+from . import o_enum, o_matrix, o_mesh, o_motion
+from .o_model import ModelEvaluator
 
-from ..dotnet import SAIO_NET
+from ..dotnet import SAIO_NET, SA3D_Modeling
 from ..utility import general
+from ..utility.anim_parameters import AnimParameters
+from ..exceptions import UserException
+
 
 class LandtableEvaluator:
 
     _context: bpy.types.Context
+    _format: str
     _model_format: str
     _optimize: bool
     _write_specular: bool
@@ -15,35 +20,57 @@ class LandtableEvaluator:
     _fallback_surface_attributes: bool
     _automatic_node_attributes: bool
 
+    _auto_root: bool
+    _force_sort_bones: bool
+    _anim_parameters: AnimParameters
+
+    _le_objects: set[bpy.types.Object]
+    _anim_objects: list[set[bpy.types.Object]]
+
     _mesh_lut: dict[bpy.types.Object | bpy.types.Mesh, int]
     _land_entries: list
     _temp_objects: list[bpy.types.Object]
     _modelmeshes: list[o_mesh.ModelMesh]
     _mesh_structs: list
+    _motion_lut: dict[bpy.types.Action, any]
+    _motions: list
 
     def __init__(
             self,
             context: bpy.types.Context,
             model_format: str,
-            optimize: bool = True,
-            write_specular: bool = True,
-            apply_modifs: bool = True,
-            fallback_surface_attributes: bool = True,
-            automatic_node_attributes: bool = True):
+            optimize: bool,
+            write_specular: bool,
+            apply_modifs: bool,
+            fallback_surface_attributes: bool,
+            automatic_node_attributes: bool,
+            auto_root: bool,
+            force_sort_bones: bool,
+            anim_parameters: AnimParameters):
 
         self._context = context
-        self._model_format = model_format
+        self._format = model_format
+        self._model_format = o_enum.to_model_format(model_format)
         self._optimize = optimize
         self._write_specular = write_specular
         self._apply_modifs = apply_modifs
         self._fallback_surface_attributes = fallback_surface_attributes
         self._automatic_node_attributes = automatic_node_attributes
 
+        self._auto_root = auto_root
+        self._force_sort_bones = force_sort_bones
+        self._anim_parameters = anim_parameters
+
+        self._le_objects = set()
+        self._anim_objects = list()
+
         self._mesh_lut = {}
         self._land_entries = []
         self._temp_objects = []
         self._modelmeshes = []
         self._mesh_structs = None
+        self._motion_lut = {}
+        self._motions = []
 
     def _setup(self):
         self._mesh_lut.clear()
@@ -51,6 +78,33 @@ class LandtableEvaluator:
         self._temp_objects.clear()
         self._modelmeshes.clear()
         self._mesh_structs = None
+
+    def _organize_objects(self, objects: set[bpy.types.Object]):
+        root_dict: dict[bpy.types.Object, set[bpy.types.Object]] = dict()
+
+        for obj in objects:
+            parent = obj
+            while parent.parent is not None:
+                parent = parent.parent
+
+            if parent not in root_dict:
+                obj_set = set()
+                root_dict[parent] = obj_set
+            else:
+                obj_set = root_dict[parent]
+
+            obj_set.add(obj)
+
+        for root, root_objects in root_dict.items():
+            if root.type == 'ARMATURE' or (
+                    root.type == 'MESH'
+                    and len(root.children) == 0
+                    and root.saio_land_entry.geometry_type == 'ANIMATED'):
+
+                root_objects.add(root)  # just to be sure
+                self._anim_objects.append(root_objects)
+            else:
+                self._le_objects.update(root_objects)
 
     def _eval_mesh_index(self, obj: bpy.types.Object):
         if len(obj.modifiers) > 0 and self._apply_modifs:
@@ -116,11 +170,73 @@ class LandtableEvaluator:
         for temp in self._temp_objects:
             bpy.data.objects.remove(temp)
 
-    def evaluate(self, objects: list[bpy.types.Object]):
+    def _eval_animated(self, objects: set[bpy.types.Object]):
+
+        root = None
+        for obj in objects:
+            if obj.parent is None:
+                root = obj
+                break
+
+        if root.animation_data is None:
+            raise UserException((
+                f"Object \"{root.name}\" was identified as"
+                " animated geometry but has no animation data!"))
+
+        if root.animation_data.action is None:
+            raise UserException((
+                f"Object \"{root.name}\" was identified as"
+                " animated geometry but has no active action!"))
+
+        evaluator = ModelEvaluator(
+            self._context,
+            self._format,
+            self._auto_root,
+            self._optimize,
+            self._write_specular,
+            self._apply_modifs,
+            False, # apply posing
+            self._automatic_node_attributes,
+            self._force_sort_bones,
+            False) # flip vertex colors
+
+        modeldata = evaluator.evaluate(objects)
+
+        action = root.animation_data.action
+
+        if action in self._motion_lut:
+            motion = self._motion_lut[action]
+        else:
+            motion = o_motion.convert_to_node_motion(
+                root,
+                self._force_sort_bones,
+                action.fcurves,
+                action.frame_range,
+                action.name,
+                self._anim_parameters
+            )
+
+            self._motion_lut[action] = motion
+
+        lem = SA3D_Modeling.LAND_ENTRY_MOTION(
+            root.saio_land_entry.anim_start_frame,
+            root.saio_land_entry.anim_speed,
+            motion.GetFrameCount(),
+            modeldata.outdata,
+            motion,
+            int(root.saio_land_entry.tex_list_pointer, base=16))
+
+        self._motions.append(lem)
+
+    def evaluate(self, objects: set[bpy.types.Object]):
 
         self._setup()
+        self._organize_objects(objects)
 
-        for obj in objects:
+        for objects in self._anim_objects:
+            self._eval_animated(objects)
+
+        for obj in self._le_objects:
             if obj.type == 'MESH' and len(obj.data.polygons) > 0:
                 self._eval_entry(obj)
 
@@ -128,14 +244,14 @@ class LandtableEvaluator:
         self._cleanup()
 
     def save_debug(self, filepath: str):
-        model_format = o_enum.to_model_format(self._model_format)
         landtable_prop = self._context.scene.saio_scene.landtable
         texlist_pointer = int(landtable_prop.tex_list_pointer, base=16)
 
         SAIO_NET.DEBUG_LEVEL(
             self._land_entries,
             self._mesh_structs,
-            model_format,
+            self._motions,
+            self._model_format,
 
             landtable_prop.name,
             landtable_prop.draw_distance,
@@ -152,14 +268,14 @@ class LandtableEvaluator:
         ).ToFile(filepath)
 
     def export(self, filepath: str):
-        model_format = o_enum.to_model_format(self._model_format)
         landtable_prop = self._context.scene.saio_scene.landtable
         texlist_pointer = int(landtable_prop.tex_list_pointer, base=16)
 
         SAIO_NET.LANDTABLE_WRAPPER.Export(
             self._land_entries,
             self._mesh_structs,
-            model_format,
+            self._motions,
+            self._model_format,
 
             landtable_prop.name,
             landtable_prop.draw_distance,

@@ -1,4 +1,5 @@
-﻿using SA3D.Modeling.JSON;
+﻿using SA3D.Modeling.Animation;
+using SA3D.Modeling.JSON;
 using SA3D.Modeling.ObjectData;
 using SA3D.Modeling.ObjectData.Enums;
 using System.IO;
@@ -10,6 +11,7 @@ namespace SAIO.NET
     {
         public LandEntryStruct[] Landentries { get; set; }
         public MeshStruct[] WeightedAttaches { get; set; }
+        public LandEntryMotion[] Motions { get; set; }
         public ModelFormat Format { get; set; }
         public string Name { get; set; }
         public float DrawDistance { get; set; }
@@ -23,10 +25,11 @@ namespace SAIO.NET
         public string Author { get; set; }
         public string Description { get; set; }
 
-        public DebugLevel(LandEntryStruct[] landentries, MeshStruct[] weightedAttaches, ModelFormat format, string name, float drawDistance, string texFileName, uint texListPointer, string filepath, bool optimize, bool writeSpecular, bool fallbackSurfaceAttributes, bool automaticNodeAttributes, string author, string description)
+        public DebugLevel(LandEntryStruct[] landentries, MeshStruct[] weightedAttaches, LandEntryMotion[] motions, ModelFormat format, string name, float drawDistance, string texFileName, uint texListPointer, string filepath, bool optimize, bool writeSpecular, bool fallbackSurfaceAttributes, bool automaticNodeAttributes, string author, string description)
         {
             Landentries = landentries;
             WeightedAttaches = weightedAttaches;
+            Motions = motions;
             Format = format;
             Name = name;
             DrawDistance = drawDistance;
@@ -62,6 +65,7 @@ namespace SAIO.NET
             return LandTableWrapper.ProcessLandtable(
                 Landentries,
                 WeightedAttaches,
+                Motions,
                 Format,
                 Name,
                 DrawDistance,

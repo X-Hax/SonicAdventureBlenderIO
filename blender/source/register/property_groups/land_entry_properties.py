@@ -3,7 +3,8 @@ from bpy.props import (
     BoolProperty,
     StringProperty,
     PointerProperty,
-    EnumProperty
+    EnumProperty,
+    FloatProperty
 )
 
 
@@ -23,6 +24,25 @@ class SAIO_LandEntry(bpy.types.PropertyGroup):
     blockbit: StringProperty(
         name="Blockbit (hex)",
         description="BitFlags for LandEntry Objects",
+        default="0"
+    )
+
+    # ===== Land entry motion properties =====
+
+    anim_start_frame: FloatProperty(
+        name="Start Frame Offset",
+        description="Frame at which the animation should start playing once loaded.",
+        default=0
+    )
+
+    anim_speed: FloatProperty(
+        name="Speed",
+        description="Animation playback speed",
+        default=1
+    )
+
+    tex_list_pointer: StringProperty(
+        name="Texture List Pointer (hex)",
         default="0"
     )
 

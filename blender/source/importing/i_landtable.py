@@ -33,6 +33,7 @@ class LandtableProcessor:
     _neither_collection: bpy.types.Collection | None
 
     _animation_collection: bpy.types.Collection | None
+    _motion_lut: dict[any, bpy.types.Action]
 
     _meshes: list[MeshData]
 
@@ -57,6 +58,8 @@ class LandtableProcessor:
         self._rotation_mode = rotation_mode
         self._quaternion_threshold = quaternion_threshold
         self._short_rot = short_rot
+
+        self._motion_lut = dict()
 
     def _get_string(self, value) -> str:
         if value is None:
@@ -104,7 +107,7 @@ class LandtableProcessor:
             self._name + "_neither")
         self._collection.children.link(self._neither_collection)
 
-        if self._import_data.GeometryAnimations.Length > 0:
+        if self._import_data.LandTable.GeometryAnimations.Length > 0:
             self._animation_collection = bpy.data.collections.new(
                 self._name + "_animated")
             self._collection.children.link(self._animation_collection)
@@ -165,9 +168,9 @@ class LandtableProcessor:
         else:
             self._neither_collection.objects.link(obj)
 
-    def _process_nodemotion(self, nodemotion):
+    def _process_nodemotion(self, motion):
         model_data = SAIO_NET.MODEL.Process(
-            nodemotion.Model,
+            motion.Model,
             self._optimize
         )
 
@@ -177,21 +180,39 @@ class LandtableProcessor:
             self._context,
             model_data,
             self._animation_collection,
-            nodemotion.Label,
-            nodemotion.Label,
+            motion.NodeMotion.Label,
+            motion.NodeMotion.Label,
             node_lut,
-             nodemotion.Model.Child is not None or nodemotion.Model.Next is not None,
+            motion.Model.Child is not None or motion.Model.Next is not None,
             self._merge_anim_meshes,
             self._ensure_anim_order
         )
 
-        obj.saio_land_entry.geometry_type = 'ANIMATED'
+        le_prop = obj.saio_land_entry
 
-        action = NodeMotionProcessor.process_motion(
-            nodemotion.Animation,
-            obj,
-            self._rotation_mode,
-            self._quaternion_threshold)
+        le_prop.geometry_type = 'ANIMATED'
+        le_prop.anim_start_frame = motion.Frame
+        le_prop.anim_speed = motion.Step
+        le_prop.tex_list_pointer =  f"{motion.TextureListPointer:08X}"
+
+        if obj.type == 'ARMATURE':
+            action = NodeMotionProcessor.process_motion(
+                motion.NodeMotion.Animation,
+                obj,
+                self._rotation_mode,
+                self._quaternion_threshold)
+
+        elif motion.NodeMotion.Animation in self._motion_lut:
+            action = self._motion_lut[motion.NodeMotion.Animation]
+
+        else:
+            action = NodeMotionProcessor.process_motion(
+                motion.NodeMotion.Animation,
+                obj,
+                self._rotation_mode,
+                self._quaternion_threshold)
+
+            self._motion_lut[motion.NodeMotion.Animation] = action
 
         anim_data = obj.animation_data_create()
         anim_data.action = action
@@ -210,8 +231,8 @@ class LandtableProcessor:
             obj = self._setup_object(landentry, index)
             self._assign_collection(index, obj)
 
-        for nodemotion in self._import_data.GeometryAnimations:
-            self._process_nodemotion(nodemotion)
+        for motion in self._import_data.LandTable.GeometryAnimations:
+            self._process_nodemotion(motion)
 
         if len(self._neither_collection.objects) == 0:
             bpy.data.collections.remove(

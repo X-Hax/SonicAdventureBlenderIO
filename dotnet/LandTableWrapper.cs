@@ -22,16 +22,14 @@ namespace SAIO.NET
         public LandEntryStruct[] LandEntries { get; }
         public WeightedMesh[] Attaches { get; }
         public int? VisualCount { get; }
-        public NodeMotion[] GeometryAnimations { get; }
 
-        public LandTableWrapper(LandTable landTable, MetaData metaData, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount, NodeMotion[] geometryAnimations)
+        public LandTableWrapper(LandTable landTable, MetaData metaData, LandEntryStruct[] landEntries, WeightedMesh[] attaches, int? visualCount)
         {
             LandTable = landTable;
             MetaData = metaData;
             LandEntries = landEntries;
             Attaches = attaches;
             VisualCount = visualCount;
-            GeometryAnimations = geometryAnimations;
         }
 
         private static void ExportSingle(
@@ -128,12 +126,13 @@ namespace SAIO.NET
                 geometry.Add(le);
             }
 
-            landtable.Geometry = new LabeledArray<LandEntry>("geometry_" + StringExtensions.GenerateIdentifier(), geometry.ToArray());
+            landtable.Geometry = new LabeledArray<LandEntry>("collist_" + StringExtensions.GenerateIdentifier(), geometry.ToArray());
         }
 
         public static LandTable ProcessLandtable(
             LandEntryStruct[] landentries,
             MeshStruct[] weightedAttaches,
+            LandEntryMotion[] motions,
             ModelFormat format,
             string name,
             float drawDistance,
@@ -185,12 +184,18 @@ namespace SAIO.NET
                     break;
             }
 
+            if(motions.Length > 0)
+            {
+                landtable.GeometryAnimations = new LabeledArray<LandEntryMotion>("animlist_" + landtable.Label, motions);
+            }
+
             return landtable;
         }
 
         public static void Export(
             LandEntryStruct[] landentries,
             MeshStruct[] weightedAttaches,
+            LandEntryMotion[] motions,
             ModelFormat format,
             string name,
             float drawDistance,
@@ -207,6 +212,7 @@ namespace SAIO.NET
             LandTable landtable = ProcessLandtable(
                 landentries,
                 weightedAttaches,
+                motions,
                 format,
                 name,
                 drawDistance,
@@ -278,8 +284,7 @@ namespace SAIO.NET
                 level.MetaData, 
                 landEntries.ToArray(), 
                 wbas, 
-                visualCount, 
-                level.Level.GeometryAnimations.Select(x => x.NodeMotion).ToArray());
+                visualCount);
         }
 
     }

@@ -106,7 +106,6 @@ class EventExporter:
                 'SA2' if chunk else 'SA2B',
                 False,
                 self.optimize,
-                not chunk,
                 False,
                 True,
                 False,
@@ -216,14 +215,14 @@ class EventExporter:
     def _get_children(
             self,
             obj: BObject,
-            output: list[BObject]):
+            output: set[BObject]):
 
-        output.append(obj)
+        output.add(obj)
         for child in obj.children:
             self._get_children(child, output)
 
     def _convert_model(self, obj: bpy.types.Object):
-        objects = []
+        objects = set()
         self._get_children(obj, objects)
 
         event_props = obj.saio_event_entry

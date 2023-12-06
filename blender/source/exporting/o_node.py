@@ -210,7 +210,7 @@ class NodeEvaluator:
 
     ################################################################
 
-    def _evaluate_object_tree(self, objects: list[BObject]):
+    def _evaluate_object_tree(self, objects: set[BObject]):
         '''Compiles an object hierarchy of the passed objects'''
         self._parentless.clear()
         self._hierarchy_dictionary.clear()
@@ -232,8 +232,8 @@ class NodeEvaluator:
             if obj not in self._hierarchy_dictionary:
                 self._hierarchy_dictionary[obj] = []
 
-        for objects in self._hierarchy_dictionary.values():
-            objects.sort(key=lambda x: x.name)
+        for hierarchy_objects in self._hierarchy_dictionary.values():
+            hierarchy_objects.sort(key=lambda x: x.name)
 
         self._parentless.sort(key=lambda x: x.name)
 
@@ -301,7 +301,7 @@ class NodeEvaluator:
 
     ################################################################
 
-    def evaluate(self, objects: list[BObject]):
+    def evaluate(self, objects: set[BObject]):
 
         from ..dotnet import load_dotnet
         load_dotnet()

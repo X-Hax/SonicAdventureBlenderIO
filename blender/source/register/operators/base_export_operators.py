@@ -51,12 +51,44 @@ class ExportModelOperator(ExportOperator):
         default=False,
     )
 
-    auto_node_attributs: BoolProperty(
+    auto_node_attributes: BoolProperty(
         name="Automatic Node Attributes",
         description=(
             "Automatically determine node attributes for the exported model"
         ),
         default=True
+    )
+
+    ensure_positive_euler_angles: BoolProperty(
+        name="Ensure positive euler angles",
+        description="Ensure that all exported euler rotation angles are positive.",
+        default=True
+    )
+
+    auto_root: BoolProperty(
+        name="Automatic root",
+        description=(
+            "Creates a root on export when the objects to export are not in a"
+            " shared hierarchy"
+        ),
+        default=True
+    )
+
+    force_sort_bones: BoolProperty(
+        name="Force sort bones",
+        description=(
+            "Blender doesnt sort bones by name, although this may be desired"
+            " in certain scenarios. This ensure the bones are sorted by name"),
+        default=False
+    )
+
+    debug_output: BoolProperty(
+        name="Developer tool: Debug output",
+        description=(
+            "Outputs the raw exported model data as a json file for debugging."
+            " DONT TOUCH IF YOU ARE NOT A DEVELOPER FOR THE SAIO ADDON! It"
+            " will dramatically increase export time!"),
+        default=False
     )
 
     multi_export = False
@@ -91,7 +123,7 @@ class ExportModelOperator(ExportOperator):
                 if root.type == 'ARMATURE':
                     result.add(root)
 
-        return list(result)
+        return result
 
     def export(self, context):
         objects = ExportModelOperator._collect_objects(self.select_mode, context, self.multi_export)
