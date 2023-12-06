@@ -4,7 +4,7 @@ from mathutils import Matrix
 
 from ..dotnet import SAIO_NET
 from ..utility import general
-from ..exceptions import SAIOException
+from ..exceptions import SAIOException, UserException
 
 VirtualModels = list[tuple[BObject, Matrix]]
 
@@ -102,6 +102,12 @@ class NodeStructure:
             net_mtx))
 
     def add_virtual_model(self, obj: BObject):
+        if obj.parent_type == 'ARMATURE':
+            raise UserException(
+                f"Object \"{obj.name}\" has parent type armature,"
+                " which is not supported by this addon!"
+                " Please use the armature modifier instead.")
+
         root_parent = obj
         while obj.parent is not self.armature_object:
             root_parent = obj.parent
