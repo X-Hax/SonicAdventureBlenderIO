@@ -15,6 +15,7 @@ class LandtableProcessor:
     _optimize: bool
     _ensure_static_order: bool
 
+    _anim_all_weighted_meshes: bool
     _merge_anim_meshes: bool
     _ensure_anim_order: bool
 
@@ -42,6 +43,7 @@ class LandtableProcessor:
             context: bpy.types.Context,
             optimize: bool,
             ensure_entry_order: bool,
+            anim_all_weighted_meshes: bool,
             merge_anim_meshes: bool,
             ensure_anim_order: bool,
             rotation_mode: bool,
@@ -52,6 +54,7 @@ class LandtableProcessor:
         self._optimize = optimize
         self._ensure_static_order = ensure_entry_order
 
+        self._anim_all_weighted_meshes = anim_all_weighted_meshes
         self._merge_anim_meshes = merge_anim_meshes
         self._ensure_anim_order = ensure_anim_order
 
@@ -184,6 +187,7 @@ class LandtableProcessor:
             motion.NodeMotion.Label,
             node_lut,
             motion.Model.Child is not None or motion.Model.Next is not None,
+            self._anim_all_weighted_meshes,
             self._merge_anim_meshes,
             self._ensure_anim_order
         )
@@ -251,6 +255,7 @@ class LandtableProcessor:
             name: str,
             optimize: bool,
             ensure_entry_order: bool,
+            anim_all_weighted_meshes: bool,
             merge_anim_meshes: bool,
             ensure_anim_order: bool,
             rotation_mode: bool,
@@ -261,6 +266,7 @@ class LandtableProcessor:
             context,
             optimize,
             ensure_entry_order,
+            anim_all_weighted_meshes,
             merge_anim_meshes,
             ensure_anim_order,
             rotation_mode,

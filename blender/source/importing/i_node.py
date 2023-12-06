@@ -8,6 +8,7 @@ class NodeProcessor:
 
     _context: bpy.types.Context
     _collection: bpy.types.Collection
+    _all_weighted_meshes: bool
     _merge_meshes: bool
     _mesh_processor: i_mesh.MeshProcessor
 
@@ -28,12 +29,14 @@ class NodeProcessor:
             context: bpy.types.Context,
             collection: bpy.types.Collection,
             ensure_order: bool,
+            all_weighted_meshes: bool,
             merge_meshes: bool,
             node_name_lut: dict[str, str] | None = None):
 
         self._context = context
         self._collection = collection
         self._ensure_order = ensure_order
+        self._all_weighted_meshes = all_weighted_meshes
         self._merge_meshes = merge_meshes
         self._mesh_processor = i_mesh.MeshProcessor()
 
@@ -210,13 +213,20 @@ class NodeProcessor:
             meshdata: i_mesh.MeshData,
             node_index: int):
 
-        for bone_index, bone_weights in enumerate(meshdata.weights):
-            if len(bone_weights) == 0:
-                continue
-            bone_name = self._bone_map[bone_index + node_index]
-            weight_group = mesh_obj.vertex_groups.new(name=bone_name)
-            for vertex_index, weight in bone_weights:
-                weight_group.add([vertex_index], weight, 'REPLACE')
+        if meshdata.is_weighted:
+
+            for bone_index, bone_weights in enumerate(meshdata.weights):
+                if len(bone_weights) == 0:
+                    continue
+                bone_name = self._bone_map[bone_index + node_index]
+                weight_group = mesh_obj.vertex_groups.new(name=bone_name)
+                for vertex_index, weight in bone_weights:
+                    weight_group.add([vertex_index], weight, 'REPLACE')
+
+        else:
+            bone_name = self._bone_map[node_index]
+            group = mesh_obj.vertex_groups.new(name=bone_name)
+            group.add(range(len(meshdata.mesh.vertices)), 1, 'REPLACE')
 
     def _setup_mesh_modifiers(self, mesh_obj: bpy.types.Object):
         # The mesh got exported with "applied scales", so to compensate
@@ -312,7 +322,7 @@ class NodeProcessor:
             for i in range(len(mesh.node_indices)):
                 if len(mesh.node_indices) == 1:
                     i = None
-                if mesh.is_weighted:
+                if mesh.is_weighted or self._all_weighted_meshes:
                     self._setup_weighted_mesh(mesh, i)
                 else:
                     self._setup_unweighted_mesh(mesh, i)
@@ -404,6 +414,7 @@ class NodeProcessor:
             mat_name: str | None = None,
             node_name_lut: dict[str, str] | None = None,
             force_armature: bool = False,
+            all_weighted_meshes: bool = False,
             merge_meshes: bool = False,
             ensure_order: bool = True):
 
@@ -411,6 +422,7 @@ class NodeProcessor:
             context,
             collection,
             ensure_order,
+            all_weighted_meshes,
             merge_meshes,
             node_name_lut
         )

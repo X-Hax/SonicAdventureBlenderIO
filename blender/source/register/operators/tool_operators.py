@@ -281,6 +281,12 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
         default='XYZ'
     )
 
+    all_weighted_meshes: BoolProperty(
+        name="All weighted meshes",
+        description="All meshes receive weights instead of being parented to bones",
+        default=False
+    )
+
     merge_meshes: BoolProperty(
         name="Merge Meshes",
         description=(
@@ -392,6 +398,7 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
             context,
             collection,
             False,
+            self.all_weighted_meshes,
             self.merge_meshes
         )
 

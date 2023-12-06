@@ -35,24 +35,13 @@ class ModelImportOperator(SAIOBaseFileLoadOperator):
         default=False
     )
 
-    @classmethod
-    def poll(cls, context: Context):
-        return context.mode == 'OBJECT'
-
-
-class SAIO_OT_Import_Model(ModelImportOperator):
-    bl_idname = "saio.import_mdl"
-    bl_label = "Sonic Adv. model (.*mdl)"
-
-    filter_glob: StringProperty(
-        default="*.sa1mdl;*.sadxmdl;*.sa2mdl;*.sa2bmdl;*.nj;",
-        options={'HIDDEN'},
-    )
-
-    import_as_armature: BoolProperty(
-        name="Import as Armature",
-        description="Import as an armature, even if the model is not weighted",
-        default=False
+    all_weighted_meshes: BoolProperty(
+        name="All weighted meshes",
+        description=(
+            "When importing and armature (whether forced or not), import"
+            " all meshes as weighted meshes, even if they are weighted to"
+            " only one bone and could just be parented"
+        )
     )
 
     merge_meshes: BoolProperty(
@@ -72,6 +61,27 @@ class SAIO_OT_Import_Model(ModelImportOperator):
             " (e.g. 001_NodeName)"
         ),
         default=True
+    )
+
+
+    @classmethod
+    def poll(cls, context: Context):
+        return context.mode == 'OBJECT'
+
+
+class SAIO_OT_Import_Model(ModelImportOperator):
+    bl_idname = "saio.import_mdl"
+    bl_label = "Sonic Adv. model (.*mdl)"
+
+    filter_glob: StringProperty(
+        default="*.sa1mdl;*.sadxmdl;*.sa2mdl;*.sa2bmdl;*.nj;",
+        options={'HIDDEN'},
+    )
+
+    import_as_armature: BoolProperty(
+        name="Import as Armature",
+        description="Import as an armature, even if the model is not weighted",
+        default=False
     )
 
     flip_vertex_colors: BoolProperty(
@@ -119,6 +129,7 @@ class SAIO_OT_Import_Model(ModelImportOperator):
                 None,
                 None,
                 self.import_as_armature,
+                self.all_weighted_meshes,
                 self.merge_meshes,
                 self.ensure_order
             )
@@ -152,25 +163,6 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
     )
 
     ###################################
-
-    merge_anim_meshes: BoolProperty(
-        name="Merge meshes",
-        description=(
-            "When importing an armature (whether forced or not), merge"
-            " individual meshes into a single mesh"
-        ),
-        default=False
-    )
-
-    ensure_anim_order: BoolProperty(
-        name="Ensure sibling order",
-        description=(
-            "Ensure that objects retain order regardless of their imported"
-            " name by prepending their global model Index to their name"
-            " (e.g. 001_NodeName)"
-        ),
-        default=True
-    )
 
     show_anim: BoolProperty(
         name="Animation",
@@ -231,8 +223,9 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
 
         box = layout.box()
         if expand_menu(box, self, "show_anim"):
-            box.prop(self, "merge_anim_meshes")
-            box.prop(self, "ensure_anim_order")
+            box.prop(self, "all_weighted_meshes")
+            box.prop(self, "merge_meshes")
+            box.prop(self, "ensure_order")
 
             box.separator()
 
@@ -274,8 +267,9 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
                 file.name,
                 self.optimize,
                 self.ensure_static_order,
-                self.merge_anim_meshes,
-                self.ensure_anim_order,
+                self.all_weighted_meshes,
+                self.merge_meshes,
+                self.ensure_order,
                 self.rotation_mode,
                 self.quaternion_threshold,
                 self.short_rot)

@@ -186,6 +186,7 @@ class EventImporter:
             self.base_scene.collection,
             False,
             False,
+            False,
             self.model_name_lut
         )
 
