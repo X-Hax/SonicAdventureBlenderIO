@@ -263,6 +263,7 @@ class LandtableEvaluator:
             self._write_specular,
             self._fallback_surface_attributes,
             self._automatic_node_attributes,
+            self._anim_parameters.ensure_positive_euler_angles,
             self._context.scene.saio_scene.author,
             self._context.scene.saio_scene.description
         ).ToFile(filepath)
@@ -287,5 +288,6 @@ class LandtableEvaluator:
             self._write_specular,
             self._fallback_surface_attributes,
             self._automatic_node_attributes,
+            self._anim_parameters.ensure_positive_euler_angles,
             self._context.scene.saio_scene.author,
             self._context.scene.saio_scene.description)

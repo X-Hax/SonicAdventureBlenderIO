@@ -75,6 +75,9 @@ class ExportMDLOperator(ExportModelOperator):
 
         data = evaluator.evaluate(objects)
 
+        if self.ensure_positive_euler_angles:
+            data.outdata.EnsurePositiveEulerAnglesTree()
+
         if self.debug_output:
             evaluator.save_debug(self.filepath + ".json")
 

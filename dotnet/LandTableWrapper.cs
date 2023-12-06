@@ -141,7 +141,8 @@ namespace SAIO.NET
             bool optimize,
             bool writeSpecular,
             bool fallbackSurfaceAttributes,
-            bool automaticNodeAttributes)
+            bool automaticNodeAttributes,
+            bool ensurePositiveEulerAngles)
         {
             if(landentries.Length == 0)
             {
@@ -189,6 +190,19 @@ namespace SAIO.NET
                 landtable.GeometryAnimations = new LabeledArray<LandEntryMotion>("animlist_" + landtable.Label, motions);
             }
 
+            if(ensurePositiveEulerAngles)
+            {
+                foreach(LandEntry landEntry in landtable.Geometry)
+                {
+                    landEntry.Model.EnsurePositiveEulerAnglesTree();
+                }
+
+                foreach(LandEntryMotion landEntryMotion in landtable.GeometryAnimations)
+                {
+                    landEntryMotion.Model.EnsurePositiveEulerAnglesTree();
+                }
+            }
+
             return landtable;
         }
 
@@ -206,6 +220,7 @@ namespace SAIO.NET
             bool writeSpecular,
             bool fallbackSurfaceAttributes,
             bool automaticNodeAttributes,
+            bool ensurePositiveEulerAngles,
             string author,
             string description)
         {
@@ -221,7 +236,8 @@ namespace SAIO.NET
                 optimize,
                 writeSpecular,
                 fallbackSurfaceAttributes,
-                automaticNodeAttributes);
+                automaticNodeAttributes,
+                ensurePositiveEulerAngles);
 
             MetaData metaData = new()
             {
