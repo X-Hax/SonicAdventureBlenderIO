@@ -20,8 +20,12 @@ raw_mapping = [
     ("Node.no_animate", f"{NODE}#not-animated"),
     ("Node.no_morph", f"{NODE}#no-morph"),
 
+    ("LandEntry.geometry_type", f"{LANDENTRY}#type"),
     ("LandEntry.blockbit", f"{LANDENTRY}#blockbit"),
     ("LandEntry.sf", f"{LANDENTRY}#surface-attributes"),
+    ("LandEntry.anim_start_frame", f"{LANDENTRY}#start-frame-offset"),
+    ("LandEntry.anim_speed", f"{LANDENTRY}#speed"),
+    ("LandEntry.tex_list_pointer", f"{LANDENTRY}#texlist-pointer"),
 
     ("EventEntry.entry_type", f"{EVENTENTRY}#entry-type"),
     ("EventEntry.shadow_model", f"{EVENTENTRY}#shadow-model"),
