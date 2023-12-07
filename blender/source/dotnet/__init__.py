@@ -1,3 +1,4 @@
+import os
 from .system import System
 from .textcopy import TextCopy
 from .sa3d_common import SA3D_Common
@@ -35,7 +36,7 @@ def load_dotnet():
             "Could not install python.net, please try running blender with"
             " admin rights")) from exc
 
-    path = get_path() + "\\DLL\\"
+    path = os.path.join(get_path(), "DLL")
     dll_paths = [
         "SAIO.NET.dll",
         "SA3D.Archival.dll",
@@ -50,7 +51,7 @@ def load_dotnet():
 
     import clr
     for dll_path in dll_paths:
-        clr.AddReference(path + dll_path) # pylint: disable=no-member
+        clr.AddReference(os.path.join(path, dll_path)) # pylint: disable=no-member
 
     for library in LIBRARIES:
         library.load()

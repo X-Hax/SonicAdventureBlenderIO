@@ -221,7 +221,7 @@ class SAIO_OT_Textures_Export_Pack(TextureExportOperator):
     def check(self, context):
         filename = os.path.basename(self.filepath)
         if filename != "index.txt":
-            self.filepath = os.path.dirname(self.filepath) + "\\index.txt"
+            self.filepath = os.path.join(os.path.dirname(self.filepath), "index.txt")
             return True
         return False
 

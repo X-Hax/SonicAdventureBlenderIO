@@ -15,7 +15,7 @@ def get_name():
 
 
 def get_template_path():
-    return f"{get_path()}\\SAIOTemplates.blend"
+    return os.path.join(get_path(), "SAIOTemplates.blend")
 
 
 def compare_path(a: str, b: str):
@@ -36,12 +36,12 @@ def load_template_blend(context: bpy.types.Context):
     if not found:
         bpy.ops.wm.link(
             filename="SAIO Material Template",
-            directory=f"{lib_path}\\NodeTree\\"
+            directory=f"{lib_path}{os.path.sep}NodeTree{os.path.sep}"
         )
 
         bpy.ops.wm.link(
             filename="SAIO Bone Shape",
-            directory=f"{lib_path}\\Object\\",
+            directory=f"{lib_path}{os.path.sep}Object{os.path.sep}",
             active_collection=False,
             instance_collections=False,
             instance_object_data=False

@@ -84,6 +84,10 @@ def encode_texture_archive(
         directory = path.dirname(normpath)
         file_name = path.splitext(path.basename(normpath))[0]
 
+        if path.sep != "\\":
+            # PAK requires windows seperators
+            directory.replace(path.sep, "\\")
+
         if "\\gd_pc\\" in directory:
             pak_path = (
                 "..\\..\\..\\sonic2\\resource"
