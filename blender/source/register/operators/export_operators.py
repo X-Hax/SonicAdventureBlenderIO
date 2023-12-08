@@ -61,6 +61,8 @@ class ExportMDLOperator(ExportModelOperator):
 
     def export_models(self, context, objects):
         from ...exporting.o_model import ModelEvaluator
+        from ...exporting.o_enum import to_model_format
+
         evaluator = ModelEvaluator(
             context,
             self.format, # pylint: disable=no-member
@@ -85,11 +87,15 @@ class ExportMDLOperator(ExportModelOperator):
         metadata.Author = context.scene.saio_scene.author
         metadata.Description = context.scene.saio_scene.description
 
+        model_format = to_model_format(self.format) # pylint: disable=no-member
+
         SA3D_Modeling.MODEL_FILE.WriteToFile(
             self.filepath,
             data.outdata,
             self.nj_file,
-            metadata)
+            metadata,
+            model_format
+            )
 
         return {'FINISHED'}
 
