@@ -348,7 +348,7 @@ class KeyframeEvaluator:
         self._optimize_keyframes()
 
         if self._anim_parameters.ensure_positive_euler_angles:
-            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.EnsurePositiveEulerRotationAngles(self._output)
+            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.EnsurePositiveEulerRotationAngles(self._output, True)
 
         return self._output
 
