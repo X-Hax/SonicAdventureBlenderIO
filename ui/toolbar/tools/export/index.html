@@ -190,25 +190,32 @@
 <li><code>Optimize</code>: Optimize vertex data and get rid of any duplicate.
     <br/><strong>WARNING:</strong> This may alter vertex order! Do not use for things that morph, like chao models or chao trees.</li>
 <li><code>Automatic Node attributes</code>: Automatically determines several node attributes on export. <a href="../../../object/node/">More info here</a>.</li>
-<li><code>Write Specular</code>: (<strong>SA2 Only</strong>) Include specular colors in material info.</li>
+<li><code>Ensure positive euler angles</code>: Ensures that all nodes are exported with positive euler angles; E.g. -90° becomes 270°.</li>
+<li><code>Automatic Root</code>: If the exported objects dont share a common root, a root parent will be created between them.</li>
+<li><code>Force Sort Bones</code>: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.</li>
+<li>
+<p><code>Developer Output: Debug Output</code>: Exports a .json file containing the processable mesh data that would be passed to the external library. <strong>Only for debugging purposes, do not touch unless a developer</strong></p>
+</li>
+<li>
+<p><code>Write Specular</code>: (<strong>SA2 Only</strong>) Include specular colors in material info.</p>
+</li>
+<li><code>Flip Vertex colors</code>: (<strong>SA2 Only</strong>) Flips the channel order of vertex colors (BGRA &lt;-&gt; ARGB). Used on chao garden models like trees.</li>
 </ul>
 <h3 id="export-mdl">Export *MDL<a class="headerlink" href="#export-mdl" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>Exports the targeted objects as a model (<em>.</em>mdl) file.</p>
 <p>Note that, when selecting only specific objects from the same hierarchy, only those objects will be exported, even if objects between them are missing. This allows for exporting models and deliberately leaving out specific models (but also any other object).</p>
 <ul>
-<li><code>Automatic Node attributes</code>: Automatically determines several node attributes on export. <a href="../../../object/node/">More info here</a>.</li>
 <li><code>Apply armature posing</code>: If exporting an armature that is posed, the armature will be exported the way it is posed. Otherwise with default transforms.</li>
 <li><code>NJ File</code>: Exports the file in .nj format.</li>
-<li><code>Automatic Root</code>: If the exported objects dont share a common root, a root parent will be created between them.</li>
-<li><code>Force Sort Bones</code>: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.</li>
-<li><code>Developer Output: Debug Output</code>: Exports a .json file containing the processable mesh data that would be passed to the external library. <strong>Only for debugging purposes, do not touch unless a developer</strong></li>
 </ul>
+<hr />
 <h3 id="export-lvl">Export *LVL<a class="headerlink" href="#export-lvl" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>Exports the targeted objected as a landtable (<em>.</em>lvl) file.</p>
 <ul>
-<li><code>Fallback szrface attributes</code>: If an object has no surface attributes, it will receive the <code>Visible</code> and <code>Solid</code> attributes.</li>
-<li><code>Developer Output: Debug Output</code>: Exports a .json file containing the processable level data that would be passed to the external library. <strong>Only for debugging purposes, do not touch unless a developer</strong></li>
+<li><code>Fallback surface attributes</code>: If an object has no surface attributes, it will receive the <code>Visible</code> and <code>Solid</code> attributes.</li>
 </ul>
+<p>Parameters found under the "Animation" tab apply to animated geometry. See <a href="#export-animations">Animation</a>, and more specifivally <a href="#export-node-animation">node animation</a> for info on the advanced options.</p>
+<hr />
 <h3 id="export-sa2-event">Export SA2 Event<a class="headerlink" href="#export-sa2-event" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>Export the current SA2 event.</p>
 <p>Files exported (% = export filename):
@@ -249,6 +256,7 @@
 <li><code>Keep</code>: Export based on the rotation modes on objects</li>
 </ul>
 </li>
+<li><code>Ensure positive euler angles</code>: Ensures that all euler rotations are exported with positive angles; E.g. -90° becomes 270°.</li>
 <li>
 <p><details markdown><summary><code>Interpolation conversion deviation threshold</code>: (<strong>Advanced</strong>) | Click to expand</summary></p>
 <ul>

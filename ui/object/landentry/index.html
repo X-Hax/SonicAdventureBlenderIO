@@ -95,9 +95,11 @@
                 </li>
                 <li class="toctree-l3 current"><a class="reference internal current" href="#">Landentry Properties</a>
     <ul class="current">
-    <li class="toctree-l4"><a class="reference internal" href="#surface-attributes">Surface Attributes</a>
+    <li class="toctree-l4"><a class="reference internal" href="#type">Type</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#blockbit">Blockbit</a>
+    <li class="toctree-l4"><a class="reference internal" href="#static-type-properties">Static-type properties</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#animated-type-properties">Animated-type properties</a>
     </li>
     </ul>
                 </li>
@@ -184,6 +186,22 @@
 <p>The panel can be found in the <strong>properties editor</strong>, under the <strong>object</strong> tab, called "SAIO Land Entry Properties".</p>
 <p><br clear="right"></p>
 <hr />
+<h3 id="type">Type<a class="headerlink" href="#type" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>There are 2 types of level geometry: Static and Animated.</p>
+<ul>
+<li><strong>Static</strong> land entries are the regular geometry, and the only one supported by Sonic adventure 2 (and ports)</li>
+<li><strong>Animated</strong> land entries can be used in Sonic Adventure 1, and allow you to insert animated models into a stage, but without collision or any other additional features.</li>
+</ul>
+<p>There are a few rules in place as to which models can be set as <code>static</code> and which as <code>animated</code>:</p>
+<ul>
+<li>Objects with a parent get their geometry type from their parent.</li>
+<li>Armature models are automatically recognized as <code>animated</code>.</li>
+<li>Non-armature objects with children are automatically recognized as <code>static</code>.</li>
+<li>The geometry type can only be chosen for objects with no child and no parent.</li>
+</ul>
+<p>Additionally, all models recognized as <code>static</code> will evaluate as their own geometry object, as levels dont support object hierarchies for static geometry.</p>
+<hr />
+<h2 id="static-type-properties">Static-type properties<a class="headerlink" href="#static-type-properties" title="Permanent link">🔗&#xFE0E;</a></h2>
 <h3 id="surface-attributes">Surface Attributes<a class="headerlink" href="#surface-attributes" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>These define how a model is rendered and collided with. Both SA1 and SA2 have different sets of surface attributes to accomodate for different functionalities between the games, but many are shared.</p>
 <p>By changing the edit mode (<strong>Universal</strong> by default), you can change which attributes you want to see and edit, making it easier to manage surface attributes for a specific game.</p>
@@ -195,6 +213,16 @@
 </figure>
 <p>This is a hexadecimal <a href="https://en.wikipedia.org/wiki/Mask_(computing)"><strong>bitmask</strong></a> that is used by Blockmaps. Blockmaps help the adventure games render larger levels by grouping geometry together in blocks and processing only the geometry associated with the block that the player is currently inside. The blockbit defines which blocks the object is part of, each bit defining a single group (allowing for a total of 32 blocks).</p>
 <p>In coding, each bit is assigned a color, which are then used in a blockmap image. The game then looks up which pixel in the map the player is located in, and will only process geometry which have set the corresponding bit as the pixels color.</p>
+<hr />
+<h2 id="animated-type-properties">Animated-type properties<a class="headerlink" href="#animated-type-properties" title="Permanent link">🔗&#xFE0E;</a></h2>
+<h3 id="start-frame-offset">Start Frame Offset<a class="headerlink" href="#start-frame-offset" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>This property is actually used by the game to store the current animation time.
+<br/> By setting it to a custom value, you can make the object start playing the animation at an offset.
+<br/> This allows you to reuse the same animation between multiple objects, without having them play in sync.</p>
+<h3 id="speed">Speed<a class="headerlink" href="#speed" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Animation playback speed</p>
+<h3 id="texlist-pointer">Texlist pointer<a class="headerlink" href="#texlist-pointer" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Pointer to the texture list to use. Leaving a <code>0</code> will make it use the landtable textures.</p>
               
             </div>
           </div><footer>

@@ -93,11 +93,11 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#tails-tails">Tails Tails</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#override-upgrades">Override Upgrades</a>
+    <li class="toctree-l4"><a class="reference internal" href="#integrated-upgrades">Integrated Upgrades</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#attach-upgrades">Attach Upgrades</a>
+    <li class="toctree-l4"><a class="reference internal" href="#overlay-upgrades">Overlay Upgrades</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#uv-animations">UV Animations</a>
+    <li class="toctree-l4"><a class="reference internal" href="#texture-animations">Texture Animations</a>
     </li>
     </ul>
                 </li>
@@ -199,26 +199,26 @@
 <h2 id="tails-tails">Tails Tails<a class="headerlink" href="#tails-tails" title="Permanent link">🔗&#xFE0E;</a></h2>
 <p>Events allow for specifying an object or a bone as "tails tails", which will then animate the tails with a procedural vertex displacement animation.</p>
 <hr />
-<h2 id="override-upgrades">Override Upgrades<a class="headerlink" href="#override-upgrades" title="Permanent link">🔗&#xFE0E;</a></h2>
+<h2 id="integrated-upgrades">Integrated Upgrades<a class="headerlink" href="#integrated-upgrades" title="Permanent link">🔗&#xFE0E;</a></h2>
 <p><img align="right" alt="" src="../../../img/ui_scene_event_override_upgrades.png" /></p>
-<p>Override upgrades let you hide and show specific models for when an upgrade is used. This is primarily used for Mech Parts, but can be used for all upgrades.</p>
+<p>Integrated upgrades let you hide and show specific models for when an upgrade is used. This is primarily used for Mech Parts, but can be used for all upgrades.</p>
 <p><br clear="right"/></p>
 <h3 id="base">Base<a class="headerlink" href="#base" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>Gets hidden when upgrade is enabled</p>
-<h3 id="override-1-2">Override 1 &amp; 2<a class="headerlink" href="#override-1-2" title="Permanent link">🔗&#xFE0E;</a></h3>
+<h3 id="integrated-1-2">Integrated 1 &amp; 2<a class="headerlink" href="#integrated-1-2" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>Get shown when upgrade is enabled</p>
 <hr />
-<h2 id="attach-upgrades">Attach Upgrades<a class="headerlink" href="#attach-upgrades" title="Permanent link">🔗&#xFE0E;</a></h2>
+<h2 id="overlay-upgrades">Overlay Upgrades<a class="headerlink" href="#overlay-upgrades" title="Permanent link">🔗&#xFE0E;</a></h2>
 <p><img align="right" alt="" src="../../../img/ui_scene_event_attach_upgrades.png" /></p>
-<p>Attach upgrades take a model and attach it to a node. This is used for upgrades like sonics light speed shoes, Knuckles hammer gloves, and so on.
+<p>Overlay upgrades take a model and renders them attached to a node. This is used for upgrades like sonics light speed shoes, Knuckles hammer gloves, and so on.
 <br/> Will not only hide model itself, but also its children.</p>
 <h3 id="model-1-2">Model 1 &amp; 2<a class="headerlink" href="#model-1-2" title="Permanent link">🔗&#xFE0E;</a></h3>
-<p>The model that gets attached</p>
+<p>The model that gets overlaid</p>
 <h3 id="target-1-2">Target 1 &amp; 2<a class="headerlink" href="#target-1-2" title="Permanent link">🔗&#xFE0E;</a></h3>
-<p>The node to which respective model should be attached</p>
+<p>The node to which respective model should be attached to</p>
 <p><br clear="right"/></p>
 <hr />
-<h2 id="uv-animations">UV Animations<a class="headerlink" href="#uv-animations" title="Permanent link">🔗&#xFE0E;</a></h2>
+<h2 id="texture-animations">Texture Animations<a class="headerlink" href="#texture-animations" title="Permanent link">🔗&#xFE0E;</a></h2>
 <p><img align="right" alt="" src="../../../img/ui_scene_event_uv_animations.png" /></p>
 <p>Specifies Texture ranges for animations. Then, any material referenced by <a href="../../object/event_node_uv_animations/">Event node UV Animations</a> that uses a texture in the sequence.</p>
 <h3 id="tex">Tex<a class="headerlink" href="#tex" title="Permanent link">🔗&#xFE0E;</a></h3>

@@ -184,8 +184,10 @@
 <li><code>Scene per File</code>: When importing multiple model files, every model will be put into its own scene.</li>
 <li><code>Optimize</code>: If enabled, the addon will attempt and remove any duplicate vertices.</li>
 <li><code>Import as Armature</code>: Will import the model regardless of whether it is weighted or not.</li>
+<li><code>All weighted meshes</code>: Meshes that would usually be parented to a bone will instead receive weights for that specific bone and receive an armature modifier.</li>
 <li><code>Merge Meshes</code>: Merges all meshes to one for imported armatures.</li>
 <li><code>Ensure sibling order</code>: Will add a three-digit prefix to all object names ("001_", "002_", etc.).</li>
+<li><code>Flip Vertex colors</code>: (<strong>SA2 Only</strong>) Flips the channel order of vertex colors (BGRA &lt;-&gt; ARGB). Used on chao garden models like trees.</li>
 </ul>
 <hr />
 <h2 id="import-landtable">Import Landtable.<a class="headerlink" href="#import-landtable" title="Permanent link">🔗&#xFE0E;</a></h2>
@@ -194,7 +196,9 @@
 <li><code>Scene per File</code>: When importing multiple level files, every level will be put into its own scene.</li>
 <li><code>Optimize</code>: If enabled, the addon will attempt and remove any duplicate vertices.</li>
 <li><code>Adjust clip distance</code>: Changes the 3D view clip distance to make viewing the geometry easier.</li>
+<li><code>Ensure landentry order</code>: Will add a four-digit prefix to all land entry names ("0001_", "0002_", etc.).</li>
 </ul>
+<p>Parameters found under the "Animation" tab apply to animated geometry. See <a href="#import-node-animation">Animation</a> for info on the advanced options.</p>
 <hr />
 <h2 id="import-sa2-event">Import SA2 Event<a class="headerlink" href="#import-sa2-event" title="Permanent link">🔗&#xFE0E;</a></h2>
 <p>Import main sa2 event files.</p>
@@ -210,7 +214,6 @@
 <p>Node animations hold Position, Rotation and Transform animations.
 <br/>Can only be used on objects that have no children or armatures. If no target is selected, it will be greyed out.</p>
 <ul>
-<li><code>Force Sort Bones</code>: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.</li>
 <li><code>Rotation Mode</code>: How rotations should be imported<ul>
 <li><code>KEEP</code>: Will use target rotation modes. This means that, if an animation uses euler animations, but the target uses e.g. Quaternion, <strong>the rotations will be converted</strong> to Quaternion.</li>
 <li><code>ANIMATION</code>: Will use rotation modes to suit the imported animation. This means that, if an animation uses euler animations, but the target uses e.g. Quaternion, the <strong>targets rotation mode will be changed</strong> to use euler.</li>

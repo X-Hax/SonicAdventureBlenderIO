@@ -103,6 +103,8 @@
     <ul class="current">
     <li class="toctree-l4"><a class="reference internal" href="#force-vertex-colors">Force vertex colors</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#texcoord-precision-level">Texcoord precision level</a>
+    </li>
     </ul>
                 </li>
                 <li class="toctree-l3"><a class="reference internal" href="../material/">Material Properties</a>
@@ -184,6 +186,37 @@
 <h3 id="force-vertex-colors">Force vertex colors<a class="headerlink" href="#force-vertex-colors" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>If you have a model with multiple vertex weights the addon will export it with normals, regardless of whether it has color attributes or not. This is because the SA2 mesh format doesn't allow for smooth weights and vertex colors to be combined (or rather, the games do not support it).</p>
 <p>Forcing vertex colors will export the model with binary weights (each vertex will be tied to a specific bone) to keep the vertex colors on it.</p>
+<h3 id="texcoord-precision-level">Texcoord precision level<a class="headerlink" href="#texcoord-precision-level" title="Permanent link">🔗&#xFE0E;</a></h3>
+<p>Some export formats allow for increasing the precision of texture coordinates in exchange for reduced range.
+<br/> Increasing the level by one gives you double the precision than the previous level, but reduces the available range by half.</p>
+<p>Each format has a different supported precision level range:</p>
+<table>
+<thead>
+<tr>
+<th>Game</th>
+<th>Format</th>
+<th>Range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SA1</td>
+<td>BASIC</td>
+<td>0 - Allows for no precision</td>
+</tr>
+<tr>
+<td>SA2</td>
+<td>CHUNK</td>
+<td>0 or 2</td>
+</tr>
+<tr>
+<td>SA2B</td>
+<td>GC</td>
+<td>0 through 7</td>
+</tr>
+</tbody>
+</table>
+<p>On import, the precision level is currently only maintained for SA2B/GC.</p>
               
             </div>
           </div><footer>
