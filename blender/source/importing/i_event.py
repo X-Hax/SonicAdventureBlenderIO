@@ -186,6 +186,7 @@ class EventImporter:
             self.base_scene.collection,
             False,
             False,
+            False,
             self.model_name_lut
         )
 
@@ -465,7 +466,6 @@ class EventImporter:
         action = NodeMotionProcessor.process_motion(
             motion,
             obj,
-            False,
             "ANIM",
             0.01)
 

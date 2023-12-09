@@ -1,6 +1,7 @@
 ﻿using BCnEncoder.Shared;
 using SA3D.Common;
 using SA3D.Common.Lookup;
+using SA3D.Modeling.Animation;
 using SA3D.Modeling.File;
 using SA3D.Modeling.Mesh;
 using SA3D.Modeling.Mesh.Basic;
@@ -53,7 +54,7 @@ namespace SAIO.NET
                     throw new InvalidOperationException($"Landtable format {landtable.Format} not a single mesh landtable");
             }
 
-            Attach[] attaches = wbas.Select(x => x.ToAttach(attachFormat, optimize, false)).ToArray();
+            Attach[] attaches = wbas.Select(x => x.ToAttach(attachFormat, optimize)).ToArray();
             List<LandEntry> geometry = new();
 
             foreach(LandEntryStruct landentry in landentries)
@@ -104,8 +105,8 @@ namespace SAIO.NET
                 }
             }
 
-            Attach?[] visualAttaches = visualWBAs.Select(x => x?.ToAttach(attachFormat, optimize, false)).ToArray();
-            Attach?[] collisionAttaches = collisionWBAs.Select(x => x?.ToAttach(AttachFormat.BASIC, optimize, false)).ToArray();
+            Attach?[] visualAttaches = visualWBAs.Select(x => x?.ToAttach(attachFormat, optimize)).ToArray();
+            Attach?[] collisionAttaches = collisionWBAs.Select(x => x?.ToAttach(AttachFormat.BASIC, optimize)).ToArray();
 
             List<LandEntry> geometry = new();
 
@@ -125,12 +126,13 @@ namespace SAIO.NET
                 geometry.Add(le);
             }
 
-            landtable.Geometry = new LabeledArray<LandEntry>("geometry_" + StringExtensions.GenerateIdentifier(), geometry.ToArray());
+            landtable.Geometry = new LabeledArray<LandEntry>("collist_" + StringExtensions.GenerateIdentifier(), geometry.ToArray());
         }
 
         public static LandTable ProcessLandtable(
             LandEntryStruct[] landentries,
             MeshStruct[] weightedAttaches,
+            LandEntryMotion[] motions,
             ModelFormat format,
             string name,
             float drawDistance,
@@ -139,7 +141,8 @@ namespace SAIO.NET
             bool optimize,
             bool writeSpecular,
             bool fallbackSurfaceAttributes,
-            bool automaticNodeAttributes)
+            bool automaticNodeAttributes,
+            bool ensurePositiveEulerAngles)
         {
             if(landentries.Length == 0)
             {
@@ -182,12 +185,31 @@ namespace SAIO.NET
                     break;
             }
 
+            if(motions.Length > 0)
+            {
+                landtable.GeometryAnimations = new LabeledArray<LandEntryMotion>("animlist_" + landtable.Label, motions);
+            }
+
+            if(ensurePositiveEulerAngles)
+            {
+                foreach(LandEntry landEntry in landtable.Geometry)
+                {
+                    landEntry.Model.EnsurePositiveEulerAnglesTree();
+                }
+
+                foreach(LandEntryMotion landEntryMotion in landtable.GeometryAnimations)
+                {
+                    landEntryMotion.Model.EnsurePositiveEulerAnglesTree();
+                }
+            }
+
             return landtable;
         }
 
         public static void Export(
             LandEntryStruct[] landentries,
             MeshStruct[] weightedAttaches,
+            LandEntryMotion[] motions,
             ModelFormat format,
             string name,
             float drawDistance,
@@ -198,12 +220,14 @@ namespace SAIO.NET
             bool writeSpecular,
             bool fallbackSurfaceAttributes,
             bool automaticNodeAttributes,
+            bool ensurePositiveEulerAngles,
             string author,
             string description)
         {
             LandTable landtable = ProcessLandtable(
                 landentries,
                 weightedAttaches,
+                motions,
                 format,
                 name,
                 drawDistance,
@@ -212,7 +236,8 @@ namespace SAIO.NET
                 optimize,
                 writeSpecular,
                 fallbackSurfaceAttributes,
-                automaticNodeAttributes);
+                automaticNodeAttributes,
+                ensurePositiveEulerAngles);
 
             MetaData metaData = new()
             {
@@ -270,7 +295,12 @@ namespace SAIO.NET
                 wbas[item.Value] = WeightedMesh.FromAttach(item.Key, BufferMode.None);
             }
 
-            return new(level.Level, level.MetaData, landEntries.ToArray(), wbas, visualCount);
+            return new(
+                level.Level, 
+                level.MetaData, 
+                landEntries.ToArray(), 
+                wbas, 
+                visualCount);
         }
 
     }

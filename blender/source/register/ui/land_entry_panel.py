@@ -175,15 +175,10 @@ class SAIO_PT_LandEntry(PropertiesPanel):
                 box.prop(land_entry_properties, attribute)
 
     @staticmethod
-    def draw_land_entry_properties(
+    def draw_static_properties(
             layout: bpy.types.UILayout,
-            is_level: bool,
             land_entry_properties: SAIO_LandEntry,
             panel_settings: SAIO_PanelSettings):
-
-        if not is_level:
-            layout.box().label(text="Scene is not marked as a level")
-            return
 
         prop_advanced(
             layout,
@@ -202,6 +197,73 @@ class SAIO_PT_LandEntry(PropertiesPanel):
             panel_settings,
             panel_settings.advanced_surface_attributes)
 
+    @staticmethod
+    def draw_animated_properties(
+            layout: bpy.types.UILayout,
+            land_entry_properties: SAIO_LandEntry):
+
+        layout.prop(land_entry_properties, "anim_start_frame")
+        layout.prop(land_entry_properties, "anim_speed")
+
+        prop_advanced(
+            layout,
+            "Texlist Pointer (hex):  0x",
+            land_entry_properties,
+            "tex_list_pointer"
+        )
+
+
+    @staticmethod
+    def draw_land_entry_properties(
+            layout: bpy.types.UILayout,
+            is_level: bool,
+            obj: bpy.types.Object,
+            panel_settings: SAIO_PanelSettings):
+
+        if not is_level:
+            layout.box().label(text="Scene is not marked as a level")
+            return
+
+        land_entry_properties: SAIO_LandEntry = obj.saio_land_entry
+
+        if obj.parent is not None:
+
+            parent = obj.parent
+            while parent.parent is not None:
+                parent = parent.parent
+
+            if parent.saio_land_entry.geometry_type == 'ANIMATED':
+                layout.box().label(text="Part of animated object.")
+                return
+
+            elif parent.type == 'ARMATURE':
+                layout.box().label(text="Part of an armature/animated object.")
+                return
+
+            else:
+                geometry_type = 'STATIC'
+
+        elif obj.type == 'ARMATURE':
+            layout.box().label(text="Armature; Type is Animated.")
+            geometry_type = 'ANIMATED'
+
+        elif obj.type != 'MESH':
+            layout.box().label(text="Not a mesh and does not qualify as level geometry.")
+            return
+
+        elif obj.parent is None and len(obj.children) == 0:
+            layout.prop(land_entry_properties, "geometry_type")
+            geometry_type = land_entry_properties.geometry_type
+
+        else:
+            layout.box().label(text="Not a root or as children; Type is Static.")
+            geometry_type = 'STATIC'
+
+        if geometry_type == 'STATIC':
+            SAIO_PT_LandEntry.draw_static_properties(layout, land_entry_properties, panel_settings)
+        else:
+            SAIO_PT_LandEntry.draw_animated_properties(layout, land_entry_properties)
+
     # === overriden methods === #
 
     @classmethod
@@ -214,10 +276,6 @@ class SAIO_PT_LandEntry(PropertiesPanel):
         if context.active_object is None:
             return "No active object"
 
-        error = SAIO_LandEntry.check_is_land_entry(context.active_object)
-        if error is not None:
-            return error
-
         return None
 
     def draw_panel(self, context):
@@ -225,5 +283,5 @@ class SAIO_PT_LandEntry(PropertiesPanel):
         SAIO_PT_LandEntry.draw_land_entry_properties(
             self.layout,
             context.scene.saio_scene.scene_type == "LVL",
-            context.active_object.saio_land_entry,
+            context.active_object,
             context.scene.saio_scene.panels)

@@ -84,6 +84,10 @@ def encode_texture_archive(
         directory = path.dirname(normpath)
         file_name = path.splitext(path.basename(normpath))[0]
 
+        if path.sep != "\\":
+            # PAK requires windows seperators
+            directory.replace(path.sep, "\\")
+
         if "\\gd_pc\\" in directory:
             pak_path = (
                 "..\\..\\..\\sonic2\\resource"
@@ -114,11 +118,9 @@ def save_texture_archive(
         archive_type: str,
         compress: bool):
 
-    from os import path
-
     archive = encode_texture_archive(texture_set, filepath, archive_type)
 
-    file_data = archive.Write()
+    file_data = archive.WriteArchiveToBytes()
     if compress:
         file_data = SA3D_Archival.PRS.CompressPRS(file_data)
 

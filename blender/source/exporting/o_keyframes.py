@@ -122,7 +122,7 @@ class KeyframeEvaluator:
             frames.update(self._eval_export_frames(curve))
 
         result: dict[int, list[float]] = {}
-        for frame in frames:
+        for frame in sorted(frames):
             result[frame - self._start] = [
                 (vc.evaluate(frame) if vc is not None else fallback)
                 for vc in fcurves]
@@ -155,7 +155,8 @@ class KeyframeEvaluator:
     def _get_complementary_matrices(
             self,
             euler: Euler,
-            previous_euler: Euler):
+            previous_euler: Euler,
+            base_rotation: Matrix):
 
         if previous_euler is None:
             return None
@@ -190,7 +191,7 @@ class KeyframeEvaluator:
                 previous_euler.order
             )
 
-            mtx = self._rotation_matrix @ compl_euler.to_matrix().to_4x4()
+            mtx = base_rotation @ (self._rotation_matrix @ compl_euler.to_matrix().to_4x4())
             net_mtx = o_matrix.bpy_to_net_matrix(mtx)
 
             result.append(net_mtx)
@@ -225,7 +226,7 @@ class KeyframeEvaluator:
                 add_rotation(i, euler.to_matrix())
 
                 complementary = self._get_complementary_matrices(
-                    euler, previous_euler)
+                    euler, previous_euler, base_rotation)
 
                 if complementary is not None:
                     compl_matrices.Add(previous_frame, complementary)
@@ -345,6 +346,10 @@ class KeyframeEvaluator:
             self._evaluate_scale(scale_curves, base_matrix)
 
         self._optimize_keyframes()
+
+        if self._anim_parameters.ensure_positive_euler_angles:
+            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.EnsurePositiveEulerRotationAngles(self._output, True)
+
         return self._output
 
     def _get_camera_curves(self, camera_actions: camera_utils.CameraActionSet):

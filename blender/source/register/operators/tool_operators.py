@@ -55,6 +55,12 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         default="EULER"
     )
 
+    out_ensure_positive_euler_angles: BoolProperty(
+        name="Ensure positive euler angles",
+        description="Ensure that all exported euler rotation angles are positive.",
+        default=True
+    )
+
     out_interpolation_threshold: FloatProperty(
         name="Interpolation conversion deviation threshold",
         description=(
@@ -172,6 +178,8 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
 
         layout.prop(self, "out_bone_localspace")
         layout.prop(self, "out_short_rot")
+        layout.prop(self, "out_ensure_positive_euler_angles")
+
         box = layout.box()
         if expand_menu(box, self, "out_show_advanced"):
             box.prop(self, "out_rotation_mode")
@@ -208,7 +216,8 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
             self.out_quaternion_threshold,
             self.out_general_optim_thresh,
             self.out_quaternion_optim_thresh,
-            self.out_short_rot
+            self.out_short_rot,
+            self.out_ensure_positive_euler_angles
         )
 
         out = o_motion.convert_to_node_motion(
@@ -228,7 +237,6 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         in_action = i_motion.NodeMotionProcessor.process_motion(
             in_motion,
             armature_object,
-            False,
             self.in_rotation_mode,
             self.in_quaternion_threshold
         )
@@ -271,6 +279,12 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
                ('ZXY', "ZXY Euler", "ZXY Euler - prone to Gimbal Lock."),
                ('ZYX', "ZYX Euler", "ZYX Euler - prone to Gimbal Lock.")),
         default='XYZ'
+    )
+
+    all_weighted_meshes: BoolProperty(
+        name="All weighted meshes",
+        description="All meshes receive weights instead of being parented to bones",
+        default=False
     )
 
     merge_meshes: BoolProperty(
@@ -322,7 +336,7 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
         from ...exporting.o_node import NodeEvaluator
 
         evaluator = NodeEvaluator(context, False, False, True, True)
-        structure = evaluator.evaluate(objects)
+        structure = evaluator.evaluate(set(objects))
 
         # creating a fake SAIO Node hierarchy to use in the
         # armature_from_node_tree function
@@ -384,6 +398,7 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
             context,
             collection,
             False,
+            self.all_weighted_meshes,
             self.merge_meshes
         )
 

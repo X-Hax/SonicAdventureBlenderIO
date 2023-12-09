@@ -66,8 +66,8 @@ def get_frame_range(actions: list[bpy.types.Action]):
         if action is None:
             continue
 
-        ac_start = math.ceil(action.frame_range[0])
-        ac_end = math.floor(action.frame_range[1])
+        ac_start = math.floor(action.frame_range[0])
+        ac_end = math.ceil(action.frame_range[1])
 
         if start is None:
             start = ac_start
@@ -89,8 +89,8 @@ def convert_to_node_motion(
 
     load_dotnet()
 
-    start = math.ceil(frame_range[0])
-    end = math.floor(frame_range[1])
+    start = math.floor(frame_range[0])
+    end = math.ceil(frame_range[1])
 
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)

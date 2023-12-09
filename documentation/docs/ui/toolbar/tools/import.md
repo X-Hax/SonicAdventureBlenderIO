@@ -13,8 +13,10 @@ Imports *.*mdl files.
 - `Scene per File`: When importing multiple model files, every model will be put into its own scene.
 - `Optimize`: If enabled, the addon will attempt and remove any duplicate vertices.
 - `Import as Armature`: Will import the model regardless of whether it is weighted or not.
+- `All weighted meshes`: Meshes that would usually be parented to a bone will instead receive weights for that specific bone and receive an armature modifier.
 - `Merge Meshes`: Merges all meshes to one for imported armatures.
 - `Ensure sibling order`: Will add a three-digit prefix to all object names ("001_", "002_", etc.).
+- `Flip Vertex colors`: (**SA2 Only**) Flips the channel order of vertex colors (BGRA <-> ARGB). Used on chao garden models like trees.
 
 ---
 
@@ -24,6 +26,9 @@ Imports *.*lvl files and changes the scene to a landtable scene.
 - `Scene per File`: When importing multiple level files, every level will be put into its own scene.
 - `Optimize`: If enabled, the addon will attempt and remove any duplicate vertices.
 - `Adjust clip distance`: Changes the 3D view clip distance to make viewing the geometry easier.
+- `Ensure landentry order`: Will add a four-digit prefix to all land entry names ("0001_", "0002_", etc.).
+
+Parameters found under the "Animation" tab apply to animated geometry. See [Animation](#import-node-animation) for info on the advanced options.
 
 ---
 
@@ -45,7 +50,6 @@ Imports a node animation.
 Node animations hold Position, Rotation and Transform animations.
 <br/>Can only be used on objects that have no children or armatures. If no target is selected, it will be greyed out.
 
-- `Force Sort Bones`: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.
 - `Rotation Mode`: How rotations should be imported
 	- `KEEP`: Will use target rotation modes. This means that, if an animation uses euler animations, but the target uses e.g. Quaternion, **the rotations will be converted** to Quaternion.
 	- `ANIMATION`: Will use rotation modes to suit the imported animation. This means that, if an animation uses euler animations, but the target uses e.g. Quaternion, the **targets rotation mode will be changed** to use euler.

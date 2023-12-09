@@ -12,19 +12,19 @@ namespace SAIO.NET
         public MeshStruct[] WeightedAttaches { get; set; }
         public AttachFormat Format { get; set; }
         public bool Optimize { get; set; }
-        public bool IgnoreWeights { get; set; }
         public bool WriteSpecular { get; set; }
         public bool AutoNodeAttributes { get; set; }
+        public bool FlipVertexColorChannels { get; set; }
 
-        public DebugModel(NodeStruct[] nodes, MeshStruct[] weightedAttaches, AttachFormat format, bool optimize, bool ignoreWeights, bool writeSpecular, bool autoNodeAttributes)
+        public DebugModel(NodeStruct[] nodes, MeshStruct[] weightedAttaches, AttachFormat format, bool optimize, bool writeSpecular, bool autoNodeAttributes, bool flipVertexColorChannels)
         {
             Nodes = nodes;
             WeightedAttaches = weightedAttaches;
             Format = format;
             Optimize = optimize;
-            IgnoreWeights = ignoreWeights;
             WriteSpecular = writeSpecular;
             AutoNodeAttributes = autoNodeAttributes;
+            FlipVertexColorChannels = flipVertexColorChannels;
         }
 
         public void ToFile(string filename)
@@ -50,9 +50,9 @@ namespace SAIO.NET
                 WeightedAttaches,
                 Format,
                 Optimize,
-                IgnoreWeights,
                 WriteSpecular,
-                AutoNodeAttributes);
+                AutoNodeAttributes,
+                FlipVertexColorChannels);
         }
     }
 }

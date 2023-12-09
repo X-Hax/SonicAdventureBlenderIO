@@ -1,3 +1,4 @@
+import os
 from .system import System
 from .textcopy import TextCopy
 from .sa3d_common import SA3D_Common
@@ -35,22 +36,23 @@ def load_dotnet():
             "Could not install python.net, please try running blender with"
             " admin rights")) from exc
 
-    path = get_path() + "\\DLL\\"
-    dll_paths = [
+    path = os.path.join(get_path(), "DLL")
+    dll_names = [
         "SAIO.NET.dll",
         "SA3D.Archival.dll",
         "SA3D.SA2Event.dll",
         "TextCopy.dll",
     ]
 
-    runtime_config = f"{path}SAIO.NET.runtimeconfig.json"
+    runtime_config = os.path.join(path, "SAIO.NET.runtimeconfig.json")
 
     import pythonnet
     pythonnet.load("coreclr", runtime_config=runtime_config)
 
     import clr
-    for dll_path in dll_paths:
-        clr.AddReference(path + dll_path) # pylint: disable=no-member
+    for dll_name in dll_names:
+        dll_path = os.path.join(path, dll_name)
+        clr.AddReference(dll_path) # pylint: disable=no-member
 
     for library in LIBRARIES:
         library.load()

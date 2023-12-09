@@ -20,38 +20,38 @@ Events allow for specifying an object or a bone as "tails tails", which will the
 
 ---
 
-## Override Upgrades
+## Integrated Upgrades
 ![](../../img/ui_scene_event_override_upgrades.png){ align=right }
 
-Override upgrades let you hide and show specific models for when an upgrade is used. This is primarily used for Mech Parts, but can be used for all upgrades.
+Integrated upgrades let you hide and show specific models for when an upgrade is used. This is primarily used for Mech Parts, but can be used for all upgrades.
 
 <br clear="right"/>
 
 ### Base
 Gets hidden when upgrade is enabled
 
-### Override 1 & 2
+### Integrated 1 & 2
 Get shown when upgrade is enabled
 
 ---
 
-## Attach Upgrades
+## Overlay Upgrades
 ![](../../img/ui_scene_event_attach_upgrades.png){ align=right }
 
-Attach upgrades take a model and attach it to a node. This is used for upgrades like sonics light speed shoes, Knuckles hammer gloves, and so on.
+Overlay upgrades take a model and renders them attached to a node. This is used for upgrades like sonics light speed shoes, Knuckles hammer gloves, and so on.
 <br/> Will not only hide model itself, but also its children.
 
 ### Model 1 & 2
-The model that gets attached
+The model that gets overlaid
 
 ### Target 1 & 2
-The node to which respective model should be attached
+The node to which respective model should be attached to
 
 <br clear="right"/>
 
 ---
 
-## UV Animations
+## Texture Animations
 ![](../../img/ui_scene_event_uv_animations.png){ align=right }
 
 Specifies Texture ranges for animations. Then, any material referenced by [Event node UV Animations](../object/event_node_uv_animations.md) that uses a texture in the sequence.

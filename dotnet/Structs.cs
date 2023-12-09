@@ -75,6 +75,7 @@ namespace SAIO.NET
         public int RootNodeIndex { get; set; }
         public bool HasVertexColors { get; set; }
         public bool ForceVertexColors { get; set; }
+        public byte TexcoordPrecisionLevel { get; set; }
 
         public MeshStruct(
             string label,
@@ -83,7 +84,8 @@ namespace SAIO.NET
             BufferMaterial[] materials,
             int rootNodeIndex,
             bool hasVertexColors,
-            bool forceVertexColors)
+            bool forceVertexColors,
+            byte texcoordPrecisionLevel)
         {
             Label = label;
             Vertices = vertices;
@@ -92,6 +94,7 @@ namespace SAIO.NET
             RootNodeIndex = rootNodeIndex;
             HasVertexColors = hasVertexColors;
             ForceVertexColors = forceVertexColors;
+            TexcoordPrecisionLevel = texcoordPrecisionLevel;
         }
 
         public WeightedMesh ToWeightedBuffer(bool writeSpecular)
@@ -102,6 +105,7 @@ namespace SAIO.NET
             wba.RootIndices.Add(RootNodeIndex);
             wba.ForceVertexColors = ForceVertexColors;
             wba.WriteSpecular = writeSpecular;
+            wba.TexcoordPrecisionLevel = TexcoordPrecisionLevel;
 
             return wba;
         }

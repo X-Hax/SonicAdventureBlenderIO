@@ -6,7 +6,6 @@ from . import i_enum
 from ..utility import material_setup
 from ..register.property_groups.material_properties import SAIO_Material
 from ..utility.color_utils import srgb_to_linear
-from ..dotnet import SAIO_NET
 
 
 class MeshData:
@@ -227,6 +226,7 @@ class MeshProcessor:
     def _create_mesh(self):
         self.output.mesh = bpy.data.meshes.new(self.name)
         self.output.mesh.from_pydata(self.vertices, [], self.polygons)
+        self.output.mesh.saio_mesh.texcoord_precision_level = self.weighted_buffer.TexcoordPrecisionLevel
 
         for mat in self.materials:
             self.output.mesh.materials.append(mat)

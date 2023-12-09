@@ -286,8 +286,8 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
             layout.label(text=f"\"{action.name}\" for \"{obj.name}\"")
 
     def export(self, context: bpy.types.Context):
-        objects = list(context.active_object.children_recursive)
-        objects.insert(0, context.active_object)
+        objects = { context.active_object }
+        objects.update(context.active_object.children_recursive)
 
         model_eval = o_model.ModelEvaluator(
             context,

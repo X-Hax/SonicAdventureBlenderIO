@@ -409,7 +409,8 @@ class ModelMesh:
             materials,
             root_index,
             len(self._evaluated_mesh.color_attributes) > 0,
-            self.object.data.saio_mesh.force_vertex_colors
+            self.object.data.saio_mesh.force_vertex_colors,
+            self.object.data.saio_mesh.texcoord_precision_level
         )
 
     @staticmethod

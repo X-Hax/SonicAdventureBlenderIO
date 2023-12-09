@@ -2,6 +2,8 @@ import bpy
 from bpy.props import (
     BoolProperty,
     StringProperty,
+    EnumProperty,
+    FloatProperty
 )
 from bpy.types import Context
 
@@ -10,6 +12,8 @@ from .base_export_operators import (
     NodeAnimExportOperator
 )
 
+from ...utility.anim_parameters import AnimParameters
+from ...utility.draw import expand_menu
 from ...dotnet import SA3D_Modeling
 
 
@@ -29,36 +33,8 @@ class ExportMDLOperator(ExportModelOperator):
         default=False
     )
 
-    auto_root: BoolProperty(
-        name="Automatic root",
-        description=(
-            "Creates a root on export when the objects to export are not in a"
-            " shared hierarchy"
-        ),
-        default=True
-    )
-
-    force_sort_bones: BoolProperty(
-        name="Force sort bones",
-        description=(
-            "Blender doesnt sort bones by name, although this may be desired"
-            " in certain scenarios. This ensure the bones are sorted by name"),
-        default=False
-    )
-
-    debug_output: BoolProperty(
-        name="Developer tool: Debug output",
-        description=(
-            "Outputs the raw exported model data as a json file for debugging."
-            " DONT TOUCH IF YOU ARE NOT A DEVELOPER FOR THE SAIO ADDON! It"
-            " will dramatically increase export time!"),
-        default=False
-    )
-
     filename_ext = ".nj"
-
     model_file_extension: str
-
 
     @classmethod
     def poll(cls, context: Context):
@@ -85,32 +61,41 @@ class ExportMDLOperator(ExportModelOperator):
 
     def export_models(self, context, objects):
         from ...exporting.o_model import ModelEvaluator
+        from ...exporting.o_enum import to_model_format
+
         evaluator = ModelEvaluator(
             context,
             self.format, # pylint: disable=no-member
             self.auto_root,
             self.optimize,
-            self.ignore_weights, # pylint: disable=no-member
             self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.apply_posing,
-            self.auto_node_attributs,
-            self.force_sort_bones)
+            self.auto_node_attributes,
+            self.force_sort_bones,
+            self.flip_vertex_color_channels) # pylint: disable=no-member
 
         data = evaluator.evaluate(objects)
+
+        if self.ensure_positive_euler_angles:
+            data.outdata.EnsurePositiveEulerAnglesTree()
+
+        if self.debug_output:
+            evaluator.save_debug(self.filepath + ".json")
 
         metadata = SA3D_Modeling.META_DATA()
         metadata.Author = context.scene.saio_scene.author
         metadata.Description = context.scene.saio_scene.description
 
+        model_format = to_model_format(self.format) # pylint: disable=no-member
+
         SA3D_Modeling.MODEL_FILE.WriteToFile(
             self.filepath,
             data.outdata,
             self.nj_file,
-            metadata)
-
-        if self.debug_output:
-            evaluator.save_debug(self.filepath + ".json")
+            metadata,
+            model_format
+            )
 
         return {'FINISHED'}
 
@@ -128,8 +113,8 @@ class SAIO_OT_Export_SA1MDL(ExportMDLOperator):
     )
 
     format = "SA1"
-    ignore_weights = True
     write_specular = True
+    flip_vertex_color_channels = False
 
 
 class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
@@ -145,11 +130,16 @@ class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
     )
 
     format = "SA2"
-    ignore_weights = False
 
     write_specular: BoolProperty(
         name="Write Specular",
         description="Write specular info to materials",
+        default=False
+    )
+
+    flip_vertex_color_channels: BoolProperty(
+        name="Flip vertex color channels",
+        description="Flips vertex color channels from ARGB to BGRA.",
         default=False
     )
 
@@ -167,8 +157,8 @@ class SAIO_OT_Export_SA2BMDL(ExportMDLOperator):
     )
 
     format = "SA2B"
-    ignore_weights = True
     write_specular = False
+    flip_vertex_color_channels = False
 
 ###############################################
 
@@ -184,14 +174,155 @@ class ExportLVLOperator(ExportModelOperator):
         default=True
     )
 
-    debug_output: BoolProperty(
-        name="Developer tool: Debug output",
-        description=(
-            "Outputs the raw exported level data as a json file for debugging."
-            " DONT TOUCH IF YOU ARE NOT A DEVELOPER FOR THE SAIO ADDON! It"
-            " will dramatically increase export time!"),
+    #######################################
+
+    show_animation: BoolProperty(
+        name="Animation",
         default=False
     )
+
+    show_advanced: BoolProperty(
+        name="Advanced",
+        default=False
+    )
+
+
+    short_rot: BoolProperty(
+        name="Use 16 bit rotations",
+        description="Whether to use 16 bit BAMS for the rotation keyframes",
+        default=False
+    )
+
+    rotation_mode: EnumProperty(
+        name="Rotation Mode",
+        description="How rotations should be exported",
+        items=(
+            ("EULER", "Euler", "Export rotations as euler"
+                " (sonic adventure compatible)"),
+            ("QUATERNION", "Quaternion", "Export rotations as quaternion"
+                " (compatible with games like PSO2)"),
+            ("KEEP", "Keep",
+                "Export bone rotation modes"),
+        ),
+        default="EULER"
+    )
+
+    quaternion_threshold: FloatProperty(
+        name="Quaternion conversion deviation threshold",
+        description=(
+            "If the animations rotation data doesnt match the export"
+            " rotation mode, the data will have to be converted. converting"
+            " between euler and quaternion rotations is inaccurate, as the"
+            " interpolation between those types is not linear. This value"
+            " determines the threshold, from which a keyframe should be"
+            " removed."
+
+            "\n0 means all interpolated keyframes, 1 means none."
+
+            "\nUsually, a value around 0.05 is enough and gets rid of most"
+            " unnecessary keyframes."
+
+            "\nDoes not affect keyframes determined by the addon"
+        ),
+        min=0,
+        max=1,
+        default=0
+    )
+
+    quaternion_optimization_threshold: FloatProperty(
+        name="Quaternion Optimization deviation threshold",
+        description=(
+            "Utilized for optimization of quaternions. If a keyframe deviates"
+            " less than the threshold from its linear interpolated"
+            " counterpart, it will be removed."
+
+            "\n0 will not optimize at all"
+
+            "\nAffects all frames"
+        ),
+        min=0,
+        default=0
+    )
+
+    interpolation_threshold: FloatProperty(
+        name="Interpolation conversion deviation threshold",
+        description=(
+            "Keyframes between non linear keyframes need to be baked for"
+            " export. This factor determines that, if a keyframes deviates"
+            " less than the given value from its linear interpolated"
+            " counterpart, it will be removed."
+
+            "\n0 is gonna bake every value (except for keyframes using linear"
+            " or constant interpolation)."
+
+            "\nDoes not affect manually placed keyframes"
+        ),
+        min=0,
+        default=0,
+    )
+
+    general_optimization_threshold: FloatProperty(
+        name="Optimization deviation threshold",
+        description=(
+            "Utilized for optimization of all but rotations. If a keyframe"
+            " deviates less than the threshold from its linear interpolated"
+            " counterpart, it will be removed."
+
+            "\n0 will not optimize at all"
+
+            "\nAffects all frames"
+        ),
+        min=0,
+        default=0
+    )
+
+    #######################################
+
+    multi_export = True
+
+    def draw_insert(self):
+        return
+
+    def draw(self, context: bpy.types.Context):
+        layout = self.layout
+
+        layout.prop(self, "select_mode")
+        layout.prop(self, "apply_modifs")
+        layout.prop(self, "optimize")
+        layout.prop(self, "auto_node_attributes")
+        layout.prop(self, "ensure_positive_euler_angles")
+        layout.prop(self, "debug_output")
+
+        layout.separator()
+        layout.prop(self, "fallback_surface_attributes")
+        self.draw_insert()
+
+        box = layout.box()
+        if expand_menu(box, self, "show_animation"):
+
+            box.prop(self, "auto_root")
+            box.prop(self, "force_sort_bones")
+            box.prop(self, "short_rot")
+
+            box2 = box.box()
+            if expand_menu(box2, self, "show_advanced"):
+                box2.prop(self, "rotation_mode")
+                box2.prop(self, "interpolation_threshold")
+                box2.prop(self, "quaternion_threshold")
+                box2.prop(self, "general_optimization_threshold")
+                box2.prop(self, "quaternion_optimization_threshold")
+
+    def get_anim_parameters(self):
+        return AnimParameters(
+            True,
+            self.rotation_mode,
+            self.interpolation_threshold,
+            self.quaternion_threshold,
+            self.general_optimization_threshold,
+            self.quaternion_optimization_threshold,
+            self.short_rot,
+            self.ensure_positive_euler_angles
+        )
 
     def export_models(self, context, objects):
         from ...exporting import o_landtable
@@ -203,14 +334,17 @@ class ExportLVLOperator(ExportModelOperator):
             self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.fallback_surface_attributes,
-            self.auto_node_attributs)
+            self.auto_node_attributes,
+            self.auto_root,
+            self.force_sort_bones,
+            self.get_anim_parameters())
 
         evaluator.evaluate(objects)
-        evaluator.export(self.filepath)
 
         if self.debug_output:
             evaluator.save_debug(self.filepath + ".json")
 
+        evaluator.export(self.filepath)
         return {'FINISHED'}
 
 
@@ -249,6 +383,9 @@ class SAIO_OT_Export_SA2LVL(ExportLVLOperator):
         description="Write specular info to materials",
         default=False
     )
+
+    def draw_insert(self):
+        self.layout.prop(self, "write_specular")
 
 
 class SAIO_OT_Export_SA2BLVL(ExportLVLOperator):

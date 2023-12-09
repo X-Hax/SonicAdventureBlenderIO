@@ -18,25 +18,32 @@ Common parameters between the model exporters:
 - `Optimize`: Optimize vertex data and get rid of any duplicate.
 	<br/>**WARNING:** This may alter vertex order! Do not use for things that morph, like chao models or chao trees.
 - `Automatic Node attributes`: Automatically determines several node attributes on export. [More info here](../../object/node.md).
+- `Ensure positive euler angles`: Ensures that all nodes are exported with positive euler angles; E.g. -90° becomes 270°.
+- `Automatic Root`: If the exported objects dont share a common root, a root parent will be created between them.
+- `Force Sort Bones`: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.
+- `Developer Output: Debug Output`: Exports a .json file containing the processable mesh data that would be passed to the external library. **Only for debugging purposes, do not touch unless a developer**
+
 - `Write Specular`: (**SA2 Only**) Include specular colors in material info.
+- `Flip Vertex colors`: (**SA2 Only**) Flips the channel order of vertex colors (BGRA <-> ARGB). Used on chao garden models like trees.
 
 ### Export \*MDL
 Exports the targeted objects as a model (*.*mdl) file.
 
 Note that, when selecting only specific objects from the same hierarchy, only those objects will be exported, even if objects between them are missing. This allows for exporting models and deliberately leaving out specific models (but also any other object).
 
-- `Automatic Node attributes`: Automatically determines several node attributes on export. [More info here](../../object/node.md).
 - `Apply armature posing`: If exporting an armature that is posed, the armature will be exported the way it is posed. Otherwise with default transforms.
 - `NJ File`: Exports the file in .nj format.
-- `Automatic Root`: If the exported objects dont share a common root, a root parent will be created between them.
-- `Force Sort Bones`: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.
-- `Developer Output: Debug Output`: Exports a .json file containing the processable mesh data that would be passed to the external library. **Only for debugging purposes, do not touch unless a developer**
+
+---
 
 ### Export \*LVL
 Exports the targeted objected as a landtable (*.*lvl) file.
 
-- `Fallback szrface attributes`: If an object has no surface attributes, it will receive the `Visible` and `Solid` attributes.
-- `Developer Output: Debug Output`: Exports a .json file containing the processable level data that would be passed to the external library. **Only for debugging purposes, do not touch unless a developer**
+- `Fallback surface attributes`: If an object has no surface attributes, it will receive the `Visible` and `Solid` attributes.
+
+Parameters found under the "Animation" tab apply to animated geometry. See [Animation](#export-animations), and more specifivally [node animation](#export-node-animation) for info on the advanced options.
+
+---
 
 ### Export SA2 Event
 Export the current SA2 event.
@@ -79,6 +86,7 @@ Common parameters between the exporters:
 	- `Euler`: Exports as euler rotations
 	- `Quaternion`: Exports as quaternion rotations (not used by the sonic adventure games, but other titles using the ninja formats, like phantasy star online)
 	- `Keep`: Export based on the rotation modes on objects
+- `Ensure positive euler angles`: Ensures that all euler rotations are exported with positive angles; E.g. -90° becomes 270°.
 - <details markdown><summary>`Interpolation conversion deviation threshold`: (**Advanced**) | Click to expand</summary>
 	- **Problem**: Blender allows for non-linear keyframes
 	- **Solution**: Baking the interpolated keyframes

@@ -2,16 +2,47 @@ import bpy
 from bpy.props import (
     BoolProperty,
     StringProperty,
-    PointerProperty
+    PointerProperty,
+    EnumProperty,
+    FloatProperty
 )
 
 
 class SAIO_LandEntry(bpy.types.PropertyGroup):
     """Property Group for managing Land Entry surface flags"""
 
+    geometry_type: EnumProperty(
+        name="Type",
+        description="Type of the level geometry",
+        items=(
+            ('STATIC', "Static", "Regular land entry."),
+            ('ANIMATED', "Animated", "Aniamted land entry. Not supported by SA2")
+        ),
+        default='STATIC'
+    )
+
     blockbit: StringProperty(
         name="Blockbit (hex)",
         description="BitFlags for LandEntry Objects",
+        default="0"
+    )
+
+    # ===== Land entry motion properties =====
+
+    anim_start_frame: FloatProperty(
+        name="Start Frame Offset",
+        description="Frame at which the animation should start playing once loaded.",
+        default=0
+    )
+
+    anim_speed: FloatProperty(
+        name="Speed",
+        description="Animation playback speed",
+        default=1
+    )
+
+    tex_list_pointer: StringProperty(
+        name="Texture List Pointer (hex)",
         default="0"
     )
 
@@ -252,10 +283,3 @@ class SAIO_LandEntry(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
         bpy.types.Object.saio_land_entry = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
-
-    @staticmethod
-    def check_is_land_entry(obj: bpy.types.Object):
-        if obj.type != 'MESH':
-            return "Object is not a mesh"
-
-        return None

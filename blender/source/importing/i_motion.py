@@ -22,13 +22,12 @@ class ObjectMotionProcessor:
 
     _bonemap: list[str]
 
-    def __init__(self, force_sort_bones: bool = False):
+    def __init__(self):
 
         self._shape_motion = False
         self._motion = None
         self._bobject = None
         self._bonemap = []
-        self._force_sort_bones = force_sort_bones
 
     def _verify(self):
         if self._bobject is None:
@@ -40,7 +39,7 @@ class ObjectMotionProcessor:
 
             from ..utility import bone_utils
             self._bonemap = bone_utils.get_bone_map(
-                self._bobject, self._force_sort_bones, self._shape_motion)
+                self._bobject, False, self._shape_motion)
 
         elif (self._motion.Keyframes.Count > 1
               or not self._motion.Keyframes.ContainsKey(0)):
@@ -70,9 +69,8 @@ class NodeMotionProcessor(ObjectMotionProcessor):
     def __init__(
             self,
             rotation_mode: str,
-            quaternion_conversion_deviation: float,
-            force_sort_bones: bool = False):
-        super().__init__(force_sort_bones)
+            quaternion_conversion_deviation: float):
+        super().__init__()
 
         self._action = None
 
@@ -140,14 +138,12 @@ class NodeMotionProcessor(ObjectMotionProcessor):
     def process_motion(
             motion: any,
             obj: bpy.types.Object,
-            force_sort_bones: bool,
             rotation_mode: str,
             quaternion_conversion_deviation: float):
 
         processor = NodeMotionProcessor(
             rotation_mode,
-            quaternion_conversion_deviation,
-            force_sort_bones)
+            quaternion_conversion_deviation)
 
         return processor.process(motion, obj)
 
@@ -161,8 +157,8 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
 
     _optimize: bool
 
-    def __init__(self, optimize: bool, force_sort_bones: bool = False):
-        super().__init__(force_sort_bones)
+    def __init__(self, optimize: bool):
+        super().__init__()
 
         self._processors = {}
         self._actions = None
@@ -195,9 +191,7 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
         self._actions[obj] = action
 
     def _verify_keyframes(self, keyframe_set):
-
         if keyframe_set.Vertex.Count == 0:
-            print("Shape motion has non-shape keyframes!")
             return False
         return True
 
@@ -237,8 +231,12 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
             last = None
             for last in node_keyframes.Value.Vertex.Keys:
                 pass
-            if last > min_frame_count:
+
+            if last is not None and last > min_frame_count:
                 min_frame_count = last
+
+        if min_frame_count == 0:
+            raise UserException(f"Motion \"{motion.Label}\" has no vertex animations")
 
         if self._bobject.type != 'ARMATURE':
             self._convert(

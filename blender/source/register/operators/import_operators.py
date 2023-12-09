@@ -4,12 +4,15 @@ from bpy.props import (
     BoolProperty,
     StringProperty,
     CollectionProperty,
+    EnumProperty,
+    FloatProperty
 )
 from bpy.types import Context
 
 from .base import SAIOBaseFileLoadOperator
 
 from ...dotnet import load_dotnet, SAIO_NET
+from ...utility.draw import expand_menu
 
 
 class ModelImportOperator(SAIOBaseFileLoadOperator):
@@ -32,24 +35,13 @@ class ModelImportOperator(SAIOBaseFileLoadOperator):
         default=False
     )
 
-    @classmethod
-    def poll(cls, context: Context):
-        return context.mode == 'OBJECT'
-
-
-class SAIO_OT_Import_Model(ModelImportOperator):
-    bl_idname = "saio.import_mdl"
-    bl_label = "Sonic Adv. model (.*mdl)"
-
-    filter_glob: StringProperty(
-        default="*.sa1mdl;*.sadxmdl;*.sa2mdl;*.sa2bmdl;*.nj;",
-        options={'HIDDEN'},
-    )
-
-    import_as_armature: BoolProperty(
-        name="Import as Armature",
-        description="Import as an armature, even if the model is not weighted",
-        default=False
+    all_weighted_meshes: BoolProperty(
+        name="All weighted meshes",
+        description=(
+            "When importing and armature (whether forced or not), import"
+            " all meshes as weighted meshes, even if they are weighted to"
+            " only one bone and could just be parented"
+        )
     )
 
     merge_meshes: BoolProperty(
@@ -71,6 +63,35 @@ class SAIO_OT_Import_Model(ModelImportOperator):
         default=True
     )
 
+
+    @classmethod
+    def poll(cls, context: Context):
+        return context.mode == 'OBJECT'
+
+
+class SAIO_OT_Import_Model(ModelImportOperator):
+    bl_idname = "saio.import_mdl"
+    bl_label = "Sonic Adv. model (.*mdl)"
+
+    filter_glob: StringProperty(
+        default="*.sa1mdl;*.sadxmdl;*.sa2mdl;*.sa2bmdl;*.nj;",
+        options={'HIDDEN'},
+    )
+
+    import_as_armature: BoolProperty(
+        name="Import as Armature",
+        description="Import as an armature, even if the model is not weighted",
+        default=False
+    )
+
+    flip_vertex_colors: BoolProperty(
+        name="Flip vertex colors",
+        description=(
+            "Some SA2 models use BGRA vertex colors, instead of AGBR."
+            " Enabling this flips the channels."),
+        default=False
+    )
+
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
@@ -83,7 +104,8 @@ class SAIO_OT_Import_Model(ModelImportOperator):
 
             filepath = os.path.join(directory, file.name)
             try:
-                import_data = SAIO_NET.MODEL.Import(filepath, self.optimize)
+                import_data = SAIO_NET.MODEL.Import(
+                    filepath, self.optimize, self.flip_vertex_colors)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -107,6 +129,7 @@ class SAIO_OT_Import_Model(ModelImportOperator):
                 None,
                 None,
                 self.import_as_armature,
+                self.all_weighted_meshes,
                 self.merge_meshes,
                 self.ensure_order
             )
@@ -129,6 +152,91 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
         default=False
     )
 
+    ensure_static_order: BoolProperty(
+        name="Ensure landentry order",
+        description=(
+            "Ensure that landentries retain order regardless of their imported"
+            " name by prepending their entry index to their name"
+            " (e.g. 001_landentry_name)"
+        ),
+        default=True
+    )
+
+    ###################################
+
+    show_anim: BoolProperty(
+        name="Animation",
+        default=False
+    )
+
+    ###################################
+
+    rotation_mode: EnumProperty(
+        name="Rotation Mode",
+        description="How rotations should be imported",
+        items=(
+            ("ANIM", "Animation", "Adjust bone rotation modes to match the"
+             " animation"),
+            ("KEEP", "Keep", "Import into bone rotation modes"),
+        ),
+        default="ANIM"
+    )
+
+    quaternion_threshold: FloatProperty(
+        name="Quaternion conversion deviation threshold",
+        description=(
+            "If the animations rotation data doesnt match the bones"
+            " rotation mode, the data will have to be converted. converting"
+            " between euler and quaternion rotations is inaccurate, as the"
+            " interpolation between those types is not linear. This value"
+            " determines the threshold, from which a keyframe should be"
+            " removed. 0 means all interpolated keyframes, 1 means none."
+            " usually, a value around 0.05 is enough and gets rid of most"
+            " unnecessary keyframes"
+        ),
+        default=0,
+        min=0
+    )
+
+    short_rot: BoolProperty(
+        name="Read as 16 bit rotations",
+        description=(
+            "Fallback value. Only required to be set if the file version is 0"
+        ),
+        default=False
+    )
+
+    show_advanced_anim: BoolProperty(
+        name="Advanced Animation",
+        default=False
+    )
+
+    ###################################
+
+    def draw(self, context: Context):
+        layout = self.layout
+
+        layout.prop(self, "scene_per_file")
+        layout.prop(self, "optimize")
+        layout.prop(self, "fix_view")
+        layout.prop(self, "ensure_static_order")
+
+        box = layout.box()
+        if expand_menu(box, self, "show_anim"):
+            box.prop(self, "all_weighted_meshes")
+            box.prop(self, "merge_meshes")
+            box.prop(self, "ensure_order")
+
+            box.separator()
+
+            box.prop(self, "rotation_mode")
+
+            box2 = box.box()
+            if expand_menu(box2, self, "show_advanced_anim"):
+                box2.prop(self, "quaternion_threshold")
+                box2.prop(self, "short_rot")
+
+
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
 
@@ -139,7 +247,8 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
             filepath = os.path.join(directory, file.name)
 
             try:
-                import_data = SAIO_NET.LANDTABLE_WRAPPER.Import(filepath, self.optimize)
+                import_data = SAIO_NET.LANDTABLE_WRAPPER.Import(
+                    filepath, self.optimize)
             except Exception as error:
                 print(f"An error occured while importing {file.name}")
                 raise error
@@ -156,7 +265,14 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
                 context,
                 import_data,
                 file.name,
-                self.optimize)
+                self.optimize,
+                self.ensure_static_order,
+                self.all_weighted_meshes,
+                self.merge_meshes,
+                self.ensure_order,
+                self.rotation_mode,
+                self.quaternion_threshold,
+                self.short_rot)
 
         return {'FINISHED'}
 
@@ -186,7 +302,8 @@ class SAIO_OT_Import_Event(SAIOBaseFileLoadOperator):
         load_dotnet()
 
         try:
-            import_data = SAIO_NET.CUTSCENE.Import(self.filepath, self.optimize)
+            import_data = SAIO_NET.CUTSCENE.Import(
+                self.filepath, self.optimize)
         except Exception as error:
             print(f"An error occured while importing {self.filepath}")
             raise error

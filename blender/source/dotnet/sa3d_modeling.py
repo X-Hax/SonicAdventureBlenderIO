@@ -42,6 +42,9 @@ class SA3D_Modeling:
     MOTION: any = None
     '''Class SA3D.Modeling.Animation.Motion'''
 
+    LAND_ENTRY_MOTION: any = None
+    '''Class SA3D.Modeling.Animation.LandEntryMotion'''
+
     KEYFRAMES: any = None
     '''Class SA3D.Modeling.Animation.Keyframes'''
 
@@ -68,6 +71,7 @@ class SA3D_Modeling:
 
     GEN_COMPLEMENTARY_MATRIX_DICT: any = None
     '''Generic type: Dictionary<uint, Matrix4x4[]>'''
+
 
     @classmethod
     def load(cls):
@@ -98,6 +102,7 @@ class SA3D_Modeling:
 
         from SA3D.Modeling.Animation import (  # pylint: disable=import-error
             Motion,
+            LandEntryMotion,
             Keyframes,
             KeyframeAttributes,
         )
@@ -124,6 +129,7 @@ class SA3D_Modeling:
         cls.WEIGHTED_VERTEX = WeightedVertex
         cls.MODEL_FORMAT = ModelFormat
         cls.MOTION = Motion
+        cls.LAND_ENTRY_MOTION = LandEntryMotion
         cls.KEYFRAMES = Keyframes
         cls.KEYFRAME_ATTRIBUTES = KeyframeAttributes
         cls.KEYFRAME_ROTATION_UTILS = KeyframeRotationUtils
@@ -150,6 +156,7 @@ class SA3D_Modeling:
         cls.BUFFER_CORNER = None
         cls.WEIGHTED_VERTEX = None
         cls.MOTION = None
+        cls.LAND_ENTRY_MOTION = None
         cls.KEYFRAMES = None
         cls.KEYFRAME_ATTRIBUTES = None
         cls.KEYFRAME_ROTATION_UTILS = None

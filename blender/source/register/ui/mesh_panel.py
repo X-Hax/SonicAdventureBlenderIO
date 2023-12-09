@@ -15,6 +15,7 @@ class SAIO_PT_Mesh(PropertiesPanel):
             mesh_properites: SAIO_Mesh):
 
         layout.prop(mesh_properites, "force_vertex_colors")
+        layout.prop(mesh_properites, "texcoord_precision_level")
 
     @classmethod
     def poll(cls, context):
