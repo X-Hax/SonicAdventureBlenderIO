@@ -12,10 +12,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="TextCopy" Version="6.2.1" />
-		<PackageReference Include="SA3D.Common" Version="1.4.3" />
+		<PackageReference Include="SA3D.Common" Version="1.4.4" />
 		<PackageReference Include="SA3D.Texturing" Version="1.3.5" />
 		<PackageReference Include="SA3D.Archival" Version="1.1.0" />
-		<PackageReference Include="SA3D.Modeling" Version="1.0.7" />
+		<PackageReference Include="SA3D.Modeling" Version="1.1.0" />
 		<PackageReference Include="SA3D.Modeling.JSON" Version="1.0.1" />
 		<PackageReference Include="SA3D.SA2Event" Version="1.0.2" />
 	</ItemGroup>
