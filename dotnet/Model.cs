@@ -143,16 +143,19 @@ namespace SAIO.NET
                     meshes = WeightedMesh.MergeAtRoots(meshes);
                 }
 
-                foreach(WeightedMesh mesh in meshes)
+                if(flipVertexColors)
                 {
-                    foreach(BufferCorner[] corners in mesh.TriangleSets)
+                    foreach(WeightedMesh mesh in meshes)
                     {
-                        for(int i = 0; i < corners.Length; i++)
+                        foreach(BufferCorner[] corners in mesh.TriangleSets)
                         {
-                            Color color = corners[i].Color;
-                            (color.Alpha, color.Blue) = (color.Blue, color.Alpha);
-                            (color.Red, color.Green) = (color.Green, color.Red);
-                            corners[i].Color = color;
+                            for(int i = 0; i < corners.Length; i++)
+                            {
+                                Color color = corners[i].Color;
+                                (color.Alpha, color.Blue) = (color.Blue, color.Alpha);
+                                (color.Red, color.Green) = (color.Green, color.Red);
+                                corners[i].Color = color;
+                            }
                         }
                     }
                 }
