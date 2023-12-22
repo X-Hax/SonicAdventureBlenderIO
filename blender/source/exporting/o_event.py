@@ -207,6 +207,9 @@ class EventExporter:
                 if obj not in self.entry_source_scene:
                     self.entry_source_scene[obj] = cutinfo.scene
 
+            cutinfo.entries.sort(key=lambda x: x.name)
+            cutinfo.particles.sort(key=lambda x: x.name)
+
         if len(self.blare) > 64:
             raise UserException("Can't have more than 64 blare models!")
 
@@ -268,11 +271,10 @@ class EventExporter:
             self.uv_animated_objects.extend(uv_meshes)
 
     def _convert_models(self):
-        base_entries = []
-        base_entries.extend(self.shared_entries)
-        base_entries.extend(self.shadows)
-        base_entries.extend(self.upgrades)
-        base_entries = set(base_entries)
+        base_entries = set()
+        base_entries.update(self.shared_entries)
+        base_entries.update(self.shadows)
+        base_entries.update(self.upgrades)
 
         for entry in base_entries:
             self._convert_model(entry)
