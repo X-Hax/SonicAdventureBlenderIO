@@ -14,7 +14,7 @@ def _get_bone(
 
     children = list(bone.children)
     if force_sort:
-        children.sort(key=lambda b: b.name)
+        children.sort(key=lambda b: b.name.lower())
     for b in children:
         _get_bone(b, force_sort, shape, result)
 

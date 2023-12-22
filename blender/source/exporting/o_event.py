@@ -158,7 +158,7 @@ class EventExporter:
 
             self.entry_source_scene[obj] = self.base_scene
 
-        self.shared_entries.sort(key=lambda x: x.name)
+        self.shared_entries.sort(key=lambda x: x.name.lower())
 
         event_properties = self.base_scene.saio_scene.event
         for name in OVERLAY_UPGRADE_LUT.values():
@@ -207,8 +207,8 @@ class EventExporter:
                 if obj not in self.entry_source_scene:
                     self.entry_source_scene[obj] = cutinfo.scene
 
-            cutinfo.entries.sort(key=lambda x: x.name)
-            cutinfo.particles.sort(key=lambda x: x.name)
+            cutinfo.entries.sort(key=lambda x: x.name.lower())
+            cutinfo.particles.sort(key=lambda x: x.name.lower())
 
         if len(self.blare) > 64:
             raise UserException("Can't have more than 64 blare models!")

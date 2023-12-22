@@ -315,7 +315,7 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
             resultMeshes.append(parent)
 
         children: list[bpy.types.Object] = [child for child in parent.children]
-        children.sort(key=lambda x: x.name)
+        children.sort(key=lambda x: x.name.lower())
 
         for child in children:
             SAIO_OT_ArmatureFromObjects.add_children(
