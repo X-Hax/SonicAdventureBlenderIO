@@ -28,8 +28,7 @@ class SAIO_Texture(bpy.types.PropertyGroup):
     global_index: IntProperty(
         name="Global Index",
         description="The global texture id in the texture file",
-        default=0,
-        min=0
+        default=0
     )
 
     override_width: IntProperty(

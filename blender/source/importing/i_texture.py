@@ -15,7 +15,7 @@ def process_texture_set(texture_set, texture_list):
         img.pack()
 
         tex = texture_list.new(name=texture.Name, image=img)
-        tex.global_index = texture.GlobalIndex
+        tex.global_index = SAIO_NET.TEXTURE.ToSigned(texture.GlobalIndex)
         tex.override_width = texture.OverrideWidth
         tex.override_height = texture.OverrideHeight
 

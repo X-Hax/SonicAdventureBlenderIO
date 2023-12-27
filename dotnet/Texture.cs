@@ -27,11 +27,13 @@ namespace SAIO.NET
             return result;
         }
 
-        public static Image Create(string name, uint globalIndex, int width, int height, bool? index4, float[] colors)
+        public static Image Create(string name, int globalIndex, int width, int height, bool? index4, float[] colors)
         {
             ReadOnlySpan<float> source = colors;
             int destIndex = 0;
             int pixRowSize = width * 4;
+
+            uint unsignedGlobalIndex = unchecked((uint)globalIndex);
 
             if(index4 == null)
             {
@@ -47,7 +49,7 @@ namespace SAIO.NET
                     }
                 }
 
-                return new ColorTexture(width, height, pixelData, name, globalIndex);
+                return new ColorTexture(width, height, pixelData, name, unsignedGlobalIndex);
             }
             else
             {
@@ -67,11 +69,16 @@ namespace SAIO.NET
                     }
                 }
 
-                return new IndexTexture(width, height, pixelData, name, globalIndex)
+                return new IndexTexture(width, height, pixelData, name, unsignedGlobalIndex)
                 {
                     IsIndex4 = index4.Value
                 };
             }
+        }
+    
+        public static int ToSigned(uint number)
+        {
+            return unchecked((int)number);
         }
     }
 }
