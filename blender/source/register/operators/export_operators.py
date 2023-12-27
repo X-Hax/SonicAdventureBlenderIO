@@ -413,6 +413,19 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
 
     show_bone_localspace = False
 
+    event_type: EnumProperty(
+        name="Event Type",
+        description="Type of event to export",
+        items=(
+            ('DCBETA', "Dreamcast Beta", "Event targetting Dreamcast beta builds"),
+            ('DC', "Dreamcast", "Event targetting Dreamcast"),
+            ('DCGC', "Dreamcast-Gamecube",
+                "Event targetting Gamecube (and ports) but with Greamcast formatting"),
+            ('GC', "Gamecube", "Event targetting Gamecube and ports"),
+        ),
+        default='GC'
+    )
+
     optimize: BoolProperty(
         name="Optimize",
         description="Optimize if possible",
@@ -445,6 +458,7 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
     )
 
     def draw(self, context: bpy.types.Context):
+        self.layout.prop(self, "event_type")
         self.layout.prop(self, "optimize")
         self.layout.prop(self, "auto_node_attributes")
         self.layout.prop(self, "export_textures")
@@ -459,6 +473,7 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
 
         exporter = o_event.EventExporter(
             context,
+            self.event_type,
             self.optimize,
             self.auto_node_attributes,
             anim_parameters)

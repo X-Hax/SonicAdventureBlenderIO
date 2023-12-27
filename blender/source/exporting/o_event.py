@@ -1,6 +1,7 @@
 import bpy
 from bpy.types import Object as BObject
 
+from . import o_enum
 from .o_event_cutinfo import CutInfo
 from .o_shapemotion import ShapeMotionEvaluator
 from .o_model import ModelEvaluator, ModelData
@@ -46,6 +47,7 @@ def get_base_scene(context: bpy.types.Context):
 class EventExporter:
 
     context: bpy.types.Context
+    event_type: str
     optimize: bool
     anim_parameters: AnimParameters
 
@@ -75,11 +77,13 @@ class EventExporter:
     def __init__(
             self,
             context: bpy.types.Context,
+            event_type: str,
             optimize: bool,
             auto_node_attributes: bool,
             anim_parameters: AnimParameters):
 
         self.context = context
+        self.event_type = event_type
         self.optimize = optimize
         self.anim_parameters = anim_parameters
 
@@ -630,7 +634,7 @@ class EventExporter:
         return result
 
     def _setup_eventdata(self):
-        self.event_data = SA3D_SA2Event.MODEL_DATA(SA3D_SA2Event.EVENT_TYPE.gc)
+        self.event_data = SA3D_SA2Event.MODEL_DATA(o_enum.to_event_type(self.event_type))
         self.event_data.EnableDropShadows = \
             self.base_scene.saio_scene.event.drop_shadow_control
 
