@@ -1,6 +1,7 @@
 import bpy
 from bpy.types import Object as BObject
 
+from . import o_enum
 from .o_event_cutinfo import CutInfo
 from .o_shapemotion import ShapeMotionEvaluator
 from .o_model import ModelEvaluator, ModelData
@@ -46,6 +47,7 @@ def get_base_scene(context: bpy.types.Context):
 class EventExporter:
 
     context: bpy.types.Context
+    event_type: str
     optimize: bool
     anim_parameters: AnimParameters
 
@@ -75,11 +77,13 @@ class EventExporter:
     def __init__(
             self,
             context: bpy.types.Context,
+            event_type: str,
             optimize: bool,
             auto_node_attributes: bool,
             anim_parameters: AnimParameters):
 
         self.context = context
+        self.event_type = event_type
         self.optimize = optimize
         self.anim_parameters = anim_parameters
 
@@ -158,7 +162,7 @@ class EventExporter:
 
             self.entry_source_scene[obj] = self.base_scene
 
-        self.shared_entries.sort(key=lambda x: x.name)
+        self.shared_entries.sort(key=lambda x: x.name.lower())
 
         event_properties = self.base_scene.saio_scene.event
         for name in OVERLAY_UPGRADE_LUT.values():
@@ -206,6 +210,9 @@ class EventExporter:
 
                 if obj not in self.entry_source_scene:
                     self.entry_source_scene[obj] = cutinfo.scene
+
+            cutinfo.entries.sort(key=lambda x: x.name.lower())
+            cutinfo.particles.sort(key=lambda x: x.name.lower())
 
         if len(self.blare) > 64:
             raise UserException("Can't have more than 64 blare models!")
@@ -268,11 +275,10 @@ class EventExporter:
             self.uv_animated_objects.extend(uv_meshes)
 
     def _convert_models(self):
-        base_entries = []
-        base_entries.extend(self.shared_entries)
-        base_entries.extend(self.shadows)
-        base_entries.extend(self.upgrades)
-        base_entries = set(base_entries)
+        base_entries = set()
+        base_entries.update(self.shared_entries)
+        base_entries.update(self.shadows)
+        base_entries.update(self.upgrades)
 
         for entry in base_entries:
             self._convert_model(entry)
@@ -623,12 +629,13 @@ class EventExporter:
             motion = None
             if obj in cutinfo.motions:
                 motion = cutinfo.motions[obj]
+            motion.EnsureKeyframes(posrot)
             result.ParticleMotions.Add(motion)
 
         return result
 
     def _setup_eventdata(self):
-        self.event_data = SA3D_SA2Event.MODEL_DATA(SA3D_SA2Event.EVENT_TYPE.gc)
+        self.event_data = SA3D_SA2Event.MODEL_DATA(o_enum.to_event_type(self.event_type))
         self.event_data.EnableDropShadows = \
             self.base_scene.saio_scene.event.drop_shadow_control
 

@@ -444,7 +444,7 @@ def assemble_texture_list(
     texlist = world.saio_texture_list
 
     texs = list(texs)
-    texs.sort(key=lambda x: x.name)
+    texs.sort(key=lambda x: x.name.lower())
     index = global_index_offset
     for tex in texs:
         item = texlist.new(image=tex)

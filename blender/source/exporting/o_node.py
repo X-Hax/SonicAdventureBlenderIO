@@ -239,9 +239,9 @@ class NodeEvaluator:
                 self._hierarchy_dictionary[obj] = []
 
         for hierarchy_objects in self._hierarchy_dictionary.values():
-            hierarchy_objects.sort(key=lambda x: x.name)
+            hierarchy_objects.sort(key=lambda x: x.name.lower())
 
-        self._parentless.sort(key=lambda x: x.name)
+        self._parentless.sort(key=lambda x: x.name.lower())
 
     def _eval_object(self, obj: BObject, parent_index: int):
 
@@ -261,7 +261,7 @@ class NodeEvaluator:
         children = list(bone.children)
 
         if self._force_sort_bones:
-            children.sort(key=lambda x: x.name)
+            children.sort(key=lambda x: x.name.lower())
 
         for child in children:
             self._eval_bone(child, index)

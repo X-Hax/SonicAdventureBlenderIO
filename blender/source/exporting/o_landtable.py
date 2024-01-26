@@ -195,10 +195,10 @@ class LandtableEvaluator:
             self._optimize,
             self._write_specular,
             self._apply_modifs,
-            False, # apply posing
+            False,  # Dont apply posing
             self._automatic_node_attributes,
             self._force_sort_bones,
-            False) # flip vertex colors
+            False)  # Dont flip vertex colors
 
         modeldata = evaluator.evaluate(objects)
 
@@ -233,10 +233,10 @@ class LandtableEvaluator:
         self._setup()
         self._organize_objects(objects)
 
-        for objects in self._anim_objects:
-            self._eval_animated(objects)
+        for anim_tree in self._anim_objects:
+            self._eval_animated(anim_tree)
 
-        for obj in self._le_objects:
+        for obj in sorted(self._le_objects, key=lambda x: x.name.lower()):
             if obj.type == 'MESH' and len(obj.data.polygons) > 0:
                 self._eval_entry(obj)
 

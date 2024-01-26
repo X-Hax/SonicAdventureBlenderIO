@@ -144,8 +144,8 @@ class SAIO_PT_Material(PropertiesPanel):
         rendering_menu.separator(factor=2)
 
         rendering_prop("Double Sided:", "double_sided")
+        rendering_prop("Ignore Lighting:", "ignore_diffuse")
         rendering_prop("Ignore Ambient Lighting:", "ignore_ambient")
-        rendering_prop("Ignore Diffuse Lighting:", "ignore_diffuse")
         rendering_prop("Ignore Specular Lighting:", "ignore_specular")
         rendering_prop("Flat Shading:", "flat_shading")
 

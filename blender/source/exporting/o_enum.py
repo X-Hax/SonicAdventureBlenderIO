@@ -7,9 +7,10 @@ from ..utility.enum_lut import (
     GC_TEXCOORD_SOURCE,
     GC_TEXCOORD_MATRIX,
     ATTACH_FORMAT,
-    MODEL_FORMAT
+    MODEL_FORMAT,
+    EVENT_TYPE
 )
-from ..dotnet import SAIO_NET, SA3D_Modeling
+from ..dotnet import SAIO_NET, SA3D_Modeling, SA3D_SA2Event
 
 
 def to_node_attributes(node_properties):
@@ -80,3 +81,6 @@ def to_attach_format(attach_format: str):
 
 def to_model_format(model_format: str):
     return getattr(SA3D_Modeling.MODEL_FORMAT, MODEL_FORMAT[model_format])
+
+def to_event_type(event_type: str):
+    return getattr(SA3D_SA2Event.EVENT_TYPE, EVENT_TYPE[event_type])

@@ -377,3 +377,17 @@ MODEL_FORMAT = {
     'SA2': 'SA2',
     'SA2B': 'SA2B'
 }
+
+EVENT_TYPE = {
+    "dcbeta": "DCBETA",
+    "DCBETA" : "dcbeta",
+
+    "dc": "DC",
+    "DC" : "dc",
+
+    "dcgc": "DCGC",
+    "DCGC" : "dcgc",
+
+    "gc": "GC",
+    "GC" : "gc"
+}

@@ -92,7 +92,7 @@ class ModelEvaluator:
             apply_pose: bool = False,
             automatic_node_attributes: bool = True,
             force_sort_bones: bool = False,
-            flip_vertex_color_channels: bool = False,):
+            flip_vertex_color_channels: bool = False):
 
         self._context = context
         self._attach_format = attach_format
