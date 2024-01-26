@@ -169,7 +169,7 @@ class CutInfo:
             self,
             action: bpy.types.Action,
             obj: BObject,
-            only_location: bool = False):
+            no_scale: bool = False):
 
         def create_curve(field, length):
             for i in range(length):
@@ -181,15 +181,14 @@ class CutInfo:
 
         create_curve("location", 3)
 
-        if only_location:
-            return
-
-        create_curve("scale", 3)
-
         if obj.rotation_mode == 'QUATERNION':
             create_curve("rotation_quaternion", 4)
         else:
             create_curve("rotation_euler", 3)
+
+        if not no_scale:
+            create_curve("scale", 3)
+
 
     def _setup_temp_target_action(self, action: bpy.types.Action, obj):
 
@@ -324,7 +323,7 @@ class CutInfo:
             action = self._setup_action(
                 particle.animation_data,
                 particle.name,
-                lambda x: self._setup_temp_object_action(x, particle, True))
+                lambda x: self._setup_temp_object_action(x, particle))
 
             if action is not None:
                 self.output_actions[particle] = action

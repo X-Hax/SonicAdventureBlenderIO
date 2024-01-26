@@ -629,6 +629,7 @@ class EventExporter:
             motion = None
             if obj in cutinfo.motions:
                 motion = cutinfo.motions[obj]
+            motion.EnsureKeyframes(posrot)
             result.ParticleMotions.Add(motion)
 
         return result
