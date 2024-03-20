@@ -1408,7 +1408,7 @@ def register(bl_info):
     # update. If a pattern file is not found in new update, no action is taken
     # NOTE: This does NOT delete anything proactively, rather only defines what
     # is allowed to be overwritten during an update execution.
-    updater.overwrite_patterns = ["*.png", "*.jpg", "README.md", "LICENSE.txt"]
+    updater.overwrite_patterns = ["*.dll", "*.json", "*.blend"]
     # updater.overwrite_patterns = []
     # other examples:
     # ["*"] means ALL files/folders will be overwritten by update, was the
@@ -1446,7 +1446,7 @@ def register(bl_info):
     # but the user has the option from user preferences to directly
     # update to the master branch or any other branches specified using
     # the "install {branch}/older version" operator.
-    updater.include_branches = True
+    updater.include_branches = False
 
     # (GitHub only) This options allows using "releases" instead of "tags",
     # which enables pulling down release logs/notes, as well as installs update
