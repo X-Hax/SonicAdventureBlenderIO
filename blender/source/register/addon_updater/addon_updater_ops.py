@@ -1408,7 +1408,7 @@ def register(bl_info):
     # update. If a pattern file is not found in new update, no action is taken
     # NOTE: This does NOT delete anything proactively, rather only defines what
     # is allowed to be overwritten during an update execution.
-    updater.overwrite_patterns = ["*.png", "*.jpg", "README.md", "LICENSE.txt"]
+    updater.overwrite_patterns = ["*.dll", "*.json", "*.blend"]
     # updater.overwrite_patterns = []
     # other examples:
     # ["*"] means ALL files/folders will be overwritten by update, was the
