@@ -84,16 +84,12 @@ class ModelMesh:
                 modifier.show_viewport = False
 
         # add edge split modifier
-        if self.object.data.use_auto_smooth:
-            self._edge_split_modifier = self.object.modifiers.new(
-                "ExportEdgeSplit",
-                'EDGE_SPLIT')
+        self._edge_split_modifier = self.object.modifiers.new(
+            "ExportEdgeSplit",
+            'EDGE_SPLIT')
 
-            self._edge_split_modifier.split_angle \
-                = self.object.data.auto_smooth_angle
-
-            self._edge_split_modifier.use_edge_angle \
-                = not self.object.data.has_custom_normals
+        self._edge_split_modifier.use_edge_angle = False
+        self._edge_split_modifier.use_edge_sharp = True
 
         # add triangulate modifier
         self._triangulate_modifier = self.object.modifiers.new(
@@ -197,13 +193,12 @@ class ModelMesh:
     @staticmethod
     def get_normals(mesh: bpy.types.Mesh):
         normals = [vert.normal for vert in mesh.vertices]
-        if not mesh.use_auto_smooth:
+        if not mesh.has_custom_normals:
             return normals
 
         split_normals = [Vector() for _ in normals]
         split_normal_count = [0] * len(normals)
 
-        mesh.calc_normals_split()
         for loop, normal in zip(mesh.loops, mesh.corner_normals):
             split_normals[loop.vertex_index] += normal.vector
             split_normal_count[loop.vertex_index] += 1
