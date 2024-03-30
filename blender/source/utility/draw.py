@@ -31,30 +31,6 @@ def prop_advanced(
         row.prop(prop1, prop1Name, text="")
 
 
-def expand_icon(value):
-    if value:
-        return "TRIA_DOWN"
-    else:
-        return "TRIA_RIGHT"
-
-
-def expand_menu(
-        layout: bpy.types.UILayout,
-        prop: any,
-        name: str):
-
-    opened = getattr(prop, name)
-
-    layout.prop(
-        prop,
-        name,
-        icon=expand_icon(opened),
-        emboss=False
-    )
-
-    return getattr(prop, name)
-
-
 TOOL_PROPERTY = tuple[str, str, dict]
 
 

@@ -13,7 +13,6 @@ from .base_export_operators import (
 )
 
 from ...utility.anim_parameters import AnimParameters
-from ...utility.draw import expand_menu
 from ...dotnet import SA3D_Modeling
 
 
@@ -297,15 +296,16 @@ class ExportLVLOperator(ExportModelOperator):
         layout.prop(self, "fallback_surface_attributes")
         self.draw_insert()
 
-        box = layout.box()
-        if expand_menu(box, self, "show_animation"):
-
+        header, box = layout.panel("saio_ot_lvle_animation", default_closed=True)
+        header.label(text="Animation")
+        if box:
             box.prop(self, "auto_root")
             box.prop(self, "force_sort_bones")
             box.prop(self, "short_rot")
 
-            box2 = box.box()
-            if expand_menu(box2, self, "show_advanced"):
+            header2, box2 = box.panel("saio_ot_lvle_advanced", default_closed=True)
+            header2.label(text="Advanced")
+            if box2:
                 box2.prop(self, "rotation_mode")
                 box2.prop(self, "interpolation_threshold")
                 box2.prop(self, "quaternion_threshold")

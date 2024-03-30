@@ -6,7 +6,6 @@ from bpy.props import (
     StringProperty
 )
 from .base import SAIOBaseFileSaveOperator
-from ...utility.draw import expand_menu
 from ...utility.anim_parameters import AnimParameters
 
 class ExportOperator(SAIOBaseFileSaveOperator):
@@ -171,11 +170,6 @@ class AnimationExportOperator(ExportOperator):
         default=0
     )
 
-    show_advanced: BoolProperty(
-        name="Advanced",
-        default=False
-    )
-
     def get_anim_parameters(self):
         return AnimParameters(
             True,
@@ -187,8 +181,9 @@ class AnimationExportOperator(ExportOperator):
         )
 
     def draw(self, context: bpy.types.Context):
-        box = self.layout.box()
-        if expand_menu(box, self, "show_advanced"):
+        header, box = self.layout.panel("saio_ot_ae_advanced", default_closed=True)
+        header.label(text="Advanced")
+        if box:
             box.prop(self, "interpolation_threshold")
             box.prop(self, "general_optimization_threshold")
 
@@ -295,8 +290,10 @@ class NodeAnimExportOperator(AnimationExportOperator):
             layout.prop(self, "force_sort_bones")
         layout.prop(self, "short_rot")
         layout.prop(self, "ensure_positive_euler_angles")
-        box = layout.box()
-        if expand_menu(box, self, "show_advanced"):
+
+        header, box = layout.panel("saio_ot_nae_advanced", default_closed=True)
+        header.label(text="Advanced")
+        if box:
             box.prop(self, "rotation_mode")
             box.prop(self, "interpolation_threshold")
             box.prop(self, "quaternion_threshold")

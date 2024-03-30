@@ -12,7 +12,6 @@ from bpy.types import Context
 from .base import SAIOBaseFileLoadOperator
 
 from ...dotnet import load_dotnet, SAIO_NET
-from ...utility.draw import expand_menu
 
 
 class ModelImportOperator(SAIOBaseFileLoadOperator):
@@ -221,8 +220,9 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
         layout.prop(self, "fix_view")
         layout.prop(self, "ensure_static_order")
 
-        box = layout.box()
-        if expand_menu(box, self, "show_anim"):
+        header, box = layout.panel("saio_ot_lvli_animation", default_closed=True)
+        header.label(text="Animation")
+        if box:
             box.prop(self, "all_weighted_meshes")
             box.prop(self, "merge_meshes")
             box.prop(self, "ensure_order")
@@ -231,8 +231,9 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
 
             box.prop(self, "rotation_mode")
 
-            box2 = box.box()
-            if expand_menu(box2, self, "show_advanced_anim"):
+            header2, box2 = box.panel("saio_ot_lvli_advanced", default_closed=True)
+            header2.label(text="Advanced")
+            if box2:
                 box2.prop(self, "quaternion_threshold")
                 box2.prop(self, "short_rot")
 

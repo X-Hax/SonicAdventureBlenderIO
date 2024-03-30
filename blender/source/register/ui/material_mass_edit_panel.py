@@ -45,7 +45,6 @@ class SAIO_PT_MaterialMassEdit(viewport_toolbar.ViewportToolPanel):
             self.layout.box(),
             None,
             mass_edit_properties.material_properties,
-            mass_edit_properties.panels,
             mass_edit_properties,
             False,
             False)

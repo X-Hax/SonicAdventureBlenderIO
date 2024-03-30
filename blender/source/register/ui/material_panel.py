@@ -4,7 +4,6 @@ from bpy.types import Context
 from .base_panel import PropertiesPanel
 
 from ..property_groups.material_properties import SAIO_Material
-from ..property_groups.panel_properties import SAIO_PanelSettings
 from ..property_groups.material_mass_edit_properties import (
     SAIO_MaterialMassEdit
 )
@@ -12,7 +11,7 @@ from ..operators.material_operators import (
     SAIO_OT_Material_UpdateActiveProperties
 )
 
-from ...utility.draw import prop_advanced, expand_menu
+from ...utility.draw import prop_advanced
 
 
 class SAIO_PT_Material(PropertiesPanel):
@@ -24,15 +23,12 @@ class SAIO_PT_Material(PropertiesPanel):
             layout: bpy.types.UILayout,
             material: bpy.types.Material,
             material_properties: bpy.types.Material,
-            panel_settings: SAIO_PanelSettings,
             mass_edit_properties: SAIO_MaterialMassEdit = None,
             darken_panels=True):
 
-        texture_menu = layout.box()
-        if not expand_menu(
-                texture_menu,
-                panel_settings,
-                "expanded_texture_properties"):
+        header, texture_menu = layout.panel("saio_mat_texture", default_closed=True)
+        header.label(text="Texture properties")
+        if not texture_menu:
             return
 
         texture_menu.prop(
@@ -100,15 +96,12 @@ class SAIO_PT_Material(PropertiesPanel):
     def draw_rendering_properties(
             layout: bpy.types.UILayout,
             material_properties: SAIO_Material,
-            panel_settings: SAIO_PanelSettings,
             mass_edit_properties: SAIO_MaterialMassEdit = None,
             darken_panels=True):
 
-        rendering_menu = layout.box()
-        if not expand_menu(
-                rendering_menu,
-                panel_settings,
-                "expanded_rendering_properties"):
+        header, rendering_menu = layout.panel("saio_mat_rendering", default_closed=True)
+        header.label(text="Rendering properties")
+        if not rendering_menu:
             return
 
         def rendering_prop(label, name):
@@ -153,14 +146,11 @@ class SAIO_PT_Material(PropertiesPanel):
     def draw_gc_properties(
             layout: bpy.types.UILayout,
             material_properties: SAIO_Material,
-            panel_settings: SAIO_PanelSettings,
             quick_edit_properties: SAIO_MaterialMassEdit = None):
 
-        gc_menu = layout.box()
-        if not expand_menu(
-                gc_menu,
-                panel_settings,
-                "expanded_gc_properties"):
+        header, gc_menu = layout.panel("saio_mat_gc", default_closed=True)
+        header.label(text="SA2B specific")
+        if not gc_menu:
             return
 
         def gc_prop(label, name, qe_name):
@@ -190,7 +180,6 @@ class SAIO_PT_Material(PropertiesPanel):
             layout: bpy.types.UILayout,
             material: bpy.types.Material,
             material_properties: bpy.types.Material,
-            panel_settings: SAIO_PanelSettings,
             mass_edit_properties: SAIO_MaterialMassEdit = None,
             darken_panels=True,
             show_operator=True):
@@ -217,21 +206,18 @@ class SAIO_PT_Material(PropertiesPanel):
             layout,
             material,
             material_properties,
-            panel_settings,
             mass_edit_properties,
             darken_panels)
 
         SAIO_PT_Material.draw_rendering_properties(
             layout,
             material_properties,
-            panel_settings,
             mass_edit_properties,
             darken_panels)
 
         SAIO_PT_Material.draw_gc_properties(
             layout,
             material_properties,
-            panel_settings,
             mass_edit_properties)
 
     # === overriden methods === #
@@ -259,5 +245,4 @@ class SAIO_PT_Material(PropertiesPanel):
         SAIO_PT_Material.draw_material_properties(
             self.layout,
             context.active_object.active_material,
-            context.active_object.active_material.saio_material,
-            context.scene.saio_scene.panels)
+            context.active_object.active_material.saio_material)
