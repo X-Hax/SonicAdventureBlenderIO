@@ -34,7 +34,7 @@ For more information on the toolset, visit [the wiki](https://github.com/X-Hax/s
 
 ## Installing Blender
 
-The Addon is only supported on versions of [Blender](https://blender.org) 3.6 and above.
+The Addon is only supported on versions of [Blender](https://blender.org) 4.1 and above.
 <br/> A recommendation is to get Blender through [**Steam**](https://store.steampowered.com/app/365670). This will ensure you're always on the latest release version.
 
 ## Installing the Addon
