@@ -153,7 +153,7 @@ namespace SAIO.NET
             List<Model> models = new();
             foreach(Node node in nodes)
             {
-                models.Add(Model.Process(node, optimize));
+                models.Add(Model.Process(node, null, optimize));
             }
 
             // compare texture list with texture names
