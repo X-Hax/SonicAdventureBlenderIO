@@ -71,7 +71,7 @@ class TexlistManager:
 
     _compiled_tex_lists: dict[SAIO_TextureList, CompiledTexlist]
     _texname_strings: dict[SAIO_TextureNameList, str]
-    _compiled_tex_name_lists: dict[str, CompiledTexlist]
+    _compiled_tex_name_lists: dict[SAIO_TextureList, dict[str, CompiledTexlist]]
 
     _list_mapping: dict[CompiledTexlist, set[bpy.types.Material]]
     _material_mapping: dict[bpy.types.Material, CompiledTexlist]
@@ -101,7 +101,6 @@ class TexlistManager:
                 compiled_list = self._compiled_tex_lists[texture_list]
 
         else:
-
             # getting the texname string
             if texture_names not in self._texname_strings:
                 texname_string = ""
@@ -182,6 +181,17 @@ class TexlistManager:
         self._root_texlist = self._get_compiled_tex_list(
             texture_list, texture_names)
 
+        parentless = set()
+
+        for obj in scene.objects:
+            target = obj
+            while target.parent is not None:
+                target = target.parent
+            parentless.add(target)
+
+        for obj in parentless:
+            self._eval_obj_materials(obj, texture_list, texture_names, self._root_texlist)
+
         all_materials = set()
         for material_list in self._list_mapping.values():
             all_materials.update(material_list)
@@ -189,7 +199,7 @@ class TexlistManager:
         for material in all_materials:
             compiled_list = None
             for key, material_list in self._list_mapping.items():
-                if material not in material_list:
+                if material in material_list:
                     if compiled_list is not None:
                         compiled_list = self._root_texlist
                         break
