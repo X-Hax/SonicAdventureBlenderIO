@@ -12,7 +12,6 @@ from .base import SAIOBaseFileLoadOperator
 from ...dotnet import load_dotnet, SA3D_Modeling
 from ...utility import bone_utils, camera_utils
 from ...utility.general import target_anim_editor
-from ...utility.draw import expand_menu
 from ...importing import i_motion
 
 
@@ -89,8 +88,9 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
         layout = self.layout
         layout.prop(self, "rotation_mode")
 
-        box = layout.box()
-        if expand_menu(box, self, "show_advanced"):
+        header, box = layout.panel("saio_ot_ina_advanced", default_closed=True)
+        header.label(text="Advanced")
+        if box:
             box.prop(self, "quaternion_threshold")
             box.prop(self, "short_rot")
 

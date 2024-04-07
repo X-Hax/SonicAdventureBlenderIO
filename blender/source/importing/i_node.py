@@ -1,7 +1,7 @@
 import bpy
 from mathutils import Matrix, Vector, Quaternion
 
-from . import i_enum, i_matrix, i_mesh
+from . import i_enum, i_matrix, i_mesh, i_texture
 from ..exceptions import SAIOException
 
 class NodeProcessor:
@@ -396,10 +396,18 @@ class NodeProcessor:
         nodes = import_data.Root.GetTreeNodes()
         if force_armature or import_data.Weighted:
             self.process_as_armature(nodes, name)
-            return self._armature_obj
+            result = self._armature_obj
         else:
             self.process_as_objects(nodes)
-            return self.object_map[nodes[0]]
+            result = self.object_map[nodes[0]]
+
+        if import_data.TextureNames is not None:
+            result.saio_texturename_world = bpy.data.worlds.new(name + "_tex")
+            i_texture.process_texture_names(
+                import_data.TextureNames,
+                result.saio_texturename_world.saio_texturename_list)
+
+        return result
 
 
     def setup_materials(self):

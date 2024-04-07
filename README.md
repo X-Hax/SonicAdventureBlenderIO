@@ -1,6 +1,6 @@
 # Sonic Adventure Blender I/O Addon
 
-### Current Minimum Blender Version: 4.0+
+### Current Minimum Blender Version: 4.1+
 
 This addon adds support for the Sonic Adventure formats regarding import, export, animation editing, and additional features.
 

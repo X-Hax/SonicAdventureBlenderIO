@@ -207,8 +207,6 @@ class MeshProcessor:
 
     def _setup_mesh_normals(self):
         self.output.mesh.normals_split_custom_set_from_vertices(self.normals)
-        self.output.mesh.use_auto_smooth = True
-        self.output.mesh.auto_smooth_angle = 180
 
     def _setup_mesh_colors(self):
         if self.weighted_buffer.HasColors:

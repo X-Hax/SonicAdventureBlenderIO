@@ -1,8 +1,7 @@
 import bpy
 from .base_panel import PropertiesPanel
-from ..property_groups.panel_properties import SAIO_PanelSettings
 from ..property_groups.scene_properties import SAIO_Scene
-from ...utility.draw import prop_advanced, expand_menu
+from ...utility.draw import prop_advanced
 
 
 class SAIO_PT_Scene(PropertiesPanel):
@@ -12,26 +11,23 @@ class SAIO_PT_Scene(PropertiesPanel):
     @staticmethod
     def draw_lighting_panel(
             layout: bpy.types.UILayout,
-            setting_properties: SAIO_Scene,
-            panel_settings: SAIO_PanelSettings):
+            setting_properties: SAIO_Scene):
 
-        box = layout.box()
-        if not expand_menu(
-                box,
-                panel_settings,
-                "expanded_lighting_panel"):
+        header, panel = layout.panel("saio_scene_lighting", default_closed=True)
+        header.label(text="Lighting Data")
+        if not panel:
             return
 
         def lighting_prop(label, name):
-            prop_advanced(box, label, setting_properties, name)
+            prop_advanced(panel, label, setting_properties, name)
 
         lighting_prop("Light Direction", "light_dir")
         lighting_prop("Light Color", "light_color")
         lighting_prop("Ambient Color", "light_ambient_color")
 
-        box.separator()
+        panel.separator()
 
-        box.prop(setting_properties, "display_specular")
+        panel.prop(setting_properties, "display_specular")
         lighting_prop("Viewport blend mode", "viewport_alpha_type")
         if setting_properties.viewport_alpha_type == 'CLIP':
             lighting_prop("Viewport blend cutoff", "viewport_alpha_cutoff")
@@ -40,8 +36,7 @@ class SAIO_PT_Scene(PropertiesPanel):
     @staticmethod
     def draw_scene_properties(
             layout: bpy.types.UILayout,
-            scene: bpy.types.Scene,
-            panel_settings: SAIO_PanelSettings):
+            scene: bpy.types.Scene):
         setting_properties: SAIO_Scene = scene.saio_scene
 
         layout.prop(setting_properties, "author")
@@ -51,12 +46,10 @@ class SAIO_PT_Scene(PropertiesPanel):
 
         SAIO_PT_Scene.draw_lighting_panel(
             layout,
-            setting_properties,
-            panel_settings
+            setting_properties
         )
 
     def draw_panel(self, context):
         SAIO_PT_Scene.draw_scene_properties(
             self.layout,
-            context.scene,
-            context.scene.saio_scene.panels)
+            context.scene)

@@ -6,7 +6,7 @@ from ..property_groups.scene_properties import SAIO_Scene
 from ..property_groups.land_entry_properties import SAIO_LandEntry
 from ..property_groups.panel_properties import SAIO_PanelSettings
 
-from ...utility.draw import prop_advanced, expand_menu
+from ...utility.draw import prop_advanced
 
 
 LAND_ENTRY_ATTRIBUTE_LISTS = {
@@ -159,8 +159,9 @@ class SAIO_PT_LandEntry(PropertiesPanel):
             panel_settings: SAIO_PanelSettings,
             draw_unknown: bool):
 
-        box = layout.box()
-        if not expand_menu(box, panel_settings, "expanded_surface_attributes"):
+        header, box = layout.panel("saio_obj_surface", default_closed=True)
+        header.label(text="Surface attributes")
+        if not box:
             return
 
         attribute_list = LAND_ENTRY_ATTRIBUTE_LISTS[

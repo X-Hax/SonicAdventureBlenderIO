@@ -12,7 +12,6 @@ from .anim_export_operators import SAIO_OT_Export_Node_Animation
 
 from ..property_groups.node_properties import SAIO_Node
 
-from ...utility.draw import expand_menu
 from ...utility.general import target_anim_editor
 from ...exceptions import SAIOException
 from ...dotnet import load_dotnet, TextCopy
@@ -130,11 +129,6 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         default=0.01
     )
 
-    out_show_advanced: BoolProperty(
-        name="Advanced",
-        default=False
-    )
-
     in_rotation_mode: EnumProperty(
         name="Rotation Mode",
         description="How rotations should be imported",
@@ -163,10 +157,6 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         max=1
     )
 
-    in_show_advanced: BoolProperty(
-        name="Advanced",
-        default=False
-    )
 
     @classmethod
     def poll(cls, context):
@@ -180,8 +170,9 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         layout.prop(self, "out_short_rot")
         layout.prop(self, "out_ensure_positive_euler_angles")
 
-        box = layout.box()
-        if expand_menu(box, self, "out_show_advanced"):
+        header, box = layout.panel("saio_ot_tba_out_advanced", default_closed=True)
+        header.label(text="Advanced")
+        if box:
             box.prop(self, "out_rotation_mode")
             box.prop(self, "out_interpolation_threshold")
             box.prop(self, "out_quaternion_threshold")
@@ -193,8 +184,9 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
 
         layout.prop(self, "in_rotation_mode")
 
-        box = layout.box()
-        if expand_menu(box, self, "in_show_advanced"):
+        header, box = layout.panel("saio_ot_tba_in_advanced", default_closed=True)
+        header.label(text="Advanced")
+        if box:
             box.prop(self, "in_quaternion_threshold")
 
     def _execute(self, context: bpy.types.Context):

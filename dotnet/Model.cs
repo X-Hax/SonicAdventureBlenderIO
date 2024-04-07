@@ -5,6 +5,7 @@ using SA3D.Modeling.Mesh.Weighted;
 using SA3D.Modeling.ObjectData;
 using SA3D.Modeling.ObjectData.Enums;
 using SA3D.Modeling.Structs;
+using SA3D.Texturing.Texname;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -15,17 +16,19 @@ namespace SAIO.NET
     {
         public Node Root { get; }
         public WeightedMesh[] Attaches { get; }
+        public TextureNameList? TextureNames { get; }
         public bool Weighted { get; }
         public string Author { get; }
         public string Description { get; }
 
-        public Model(Node root, WeightedMesh[] attaches, bool weighted, string author, string description)
+        public Model(Node root, WeightedMesh[] attaches, TextureNameList? textureNames, bool weighted, string author, string description)
         {
             Root = root;
             Attaches = attaches;
             Weighted = weighted;
             Author = author;
             Description = description;
+            TextureNames = textureNames;
         }
 
         public static Node ToNodeStructure(
@@ -123,10 +126,10 @@ namespace SAIO.NET
         public static Model Import(string filepath, bool optimize, bool flipVertexColors)
         {
             ModelFile file = ModelFile.ReadFromFile(filepath);
-            return Process(file.Model, optimize, flipVertexColors, file.MetaData.Author ?? string.Empty, file.MetaData.Description ?? string.Empty);
+            return Process(file.Model, file.TextureNames, optimize, flipVertexColors, file.MetaData.Author ?? string.Empty, file.MetaData.Description ?? string.Empty);
         }
 
-        public static Model Process(Node node, bool optimize, bool flipVertexColors = false, string author = "", string desription = "")
+        public static Model Process(Node node, TextureNameList? textureNames, bool optimize, bool flipVertexColors = false, string author = "", string desription = "")
         {
             node.BufferMeshData(optimize);
             WeightedMesh[] meshes = WeightedMesh.FromModel(node, BufferMode.None);
@@ -161,7 +164,7 @@ namespace SAIO.NET
                 }
             }
 
-            return new Model(node, meshes, weighted, author, desription);
+            return new Model(node, meshes, textureNames, weighted, author, desription);
         }
     }
 }

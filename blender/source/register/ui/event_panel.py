@@ -8,8 +8,6 @@ from ..property_groups.event_properties import SAIO_Event
 from ..property_groups.panel_properties import SAIO_PanelSettings
 from ..operators import event_operators as eveop
 
-from ...utility.draw import expand_menu
-
 EVENTLIST_TOOLS = [
     (
         eveop.SAIO_OT_EventScene_Add.bl_idname,
@@ -211,25 +209,25 @@ class SAIO_PT_Event(PropertiesPanel):
         SAIO_PT_Event.draw_object_bone(
             box, event_properties, "tails_tails")
 
-        box = layout.box()
-        if expand_menu(box, panel_properties,
-                       "expanded_override_upgrade_menu"):
-
+        header, box = layout.panel("saio_scene_override_upgrades", default_closed=True)
+        header.label(text="Integrated Upgrades")
+        if box:
             SAIO_PT_Event.draw_override_upgrade_menu(
                 box,
                 event_properties,
                 panel_properties)
 
-        box = layout.box()
-        if expand_menu(box, panel_properties, "expanded_attach_upgrade_menu"):
-
+        header, box = layout.panel("saio_scene_attach_upgrades", default_closed=True)
+        header.label(text="Overlay Upgrades")
+        if box:
             SAIO_PT_Event.draw_attach_upgrade_menu(
                 box,
                 event_properties,
                 panel_properties)
 
-        box = layout.box()
-        if expand_menu(box, panel_properties, "expanded_uv_animations_menu"):
+        header, box = layout.panel("saio_scene_tex_anim", default_closed=True)
+        header.label(text="Texture animations")
+        if box:
             draw_event_uv_anim_list(box, event_properties.uv_animations)
 
     # === Overriden methods ===

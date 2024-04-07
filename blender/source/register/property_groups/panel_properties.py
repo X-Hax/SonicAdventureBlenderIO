@@ -8,34 +8,7 @@ from bpy.props import (
 class SAIO_PanelSettings(bpy.types.PropertyGroup):
     """Property Group for managing expanded menus"""
 
-    # === Material ===
-
-    expanded_texture_properties: BoolProperty(
-        name="Texture properties",
-        default=False
-    )
-
-    expanded_rendering_properties: BoolProperty(
-        name="Rendering properties",
-        default=False
-    )
-
-    expanded_gc_properties: BoolProperty(
-        name="SA2B specific",
-        default=False
-    )
-
-    expanded_gc_texgen: BoolProperty(
-        name="Generate texture coords",
-        default=False
-    )
-
     # === Land Entry ===
-
-    expanded_surface_attributes: BoolProperty(
-        name="Surface Attributes",
-        default=False
-    )
 
     advanced_surface_attributes: BoolProperty(
         name="Advanced Surface Attributes",
@@ -63,11 +36,6 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
     )
 
     # == Event ==
-
-    expanded_override_upgrade_menu: BoolProperty(
-        name="Integrated Upgrades",
-        default=False
-    )
 
     override_upgrade_menu: EnumProperty(
         name="Upgrade",
@@ -111,11 +79,6 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
         default="SONLS"
     )
 
-    expanded_attach_upgrade_menu: BoolProperty(
-        name="Overlay Upgrades",
-        default=False
-    )
-
     attach_upgrade_menu: EnumProperty(
         name="Upgrade",
         items=[
@@ -143,16 +106,4 @@ class SAIO_PanelSettings(bpy.types.PropertyGroup):
             ("EGGWS", "Eggman Windshield (Transparency)", ""),
         ],
         default="SONLS"
-    )
-
-    expanded_uv_animations_menu: BoolProperty(
-        name="UV Animations",
-        default=False
-    )
-
-    # === Scene ===
-
-    expanded_lighting_panel: BoolProperty(
-        name="Lighting Data",
-        default=False
     )
