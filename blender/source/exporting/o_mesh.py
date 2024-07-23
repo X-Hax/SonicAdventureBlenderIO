@@ -98,7 +98,7 @@ class ModelMesh:
         self._triangulate_modifier.quad_method = 'FIXED'
         self._triangulate_modifier.ngon_method = 'CLIP'
         self._triangulate_modifier.min_vertices = 4
-        #self._triangulate_modifier.keep_custom_normals = True
+        #TODO: Enable in 4.2.1; self._triangulate_modifier.keep_custom_normals = True
 
     def _collect_depending_bones(self):
         group_indices = set()
