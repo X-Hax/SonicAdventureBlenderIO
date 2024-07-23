@@ -28,9 +28,6 @@ class SAIO_PT_Scene(PropertiesPanel):
         panel.separator()
 
         panel.prop(setting_properties, "display_specular")
-        lighting_prop("Viewport blend mode", "viewport_alpha_type")
-        if setting_properties.viewport_alpha_type == 'CLIP':
-            lighting_prop("Viewport blend cutoff", "viewport_alpha_cutoff")
         lighting_prop("Enable Backface Culling", "enable_backface_culling")
 
     @staticmethod

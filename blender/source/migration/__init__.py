@@ -3,9 +3,6 @@ import bpy
 MIGRATE_KEY = "saio_migrated"
 ARMATURE_KEY = "saio_armature_migrated"
 
-VIEWPORT_ALPHA_TYPE = [
-    'BLEND', 'HASHED', 'CLIP']
-
 ALPHA_MODE = [
     'ZERO', 'ONE', 'OTHER', 'INV_OTHER',
     'SRC', 'INV_SRC', 'DST', 'INV_DST']
@@ -90,9 +87,6 @@ def migrate_scene(scene: bpy.types.Scene, remigrate: bool):
     out.light_ambient_color = data.gets(
         "LightAmbientColor", (0.3, 0.3, 0.3, 1.0))
     out.display_specular = data.get("DisplaySpecular", True)
-    out.viewport_alpha_type = VIEWPORT_ALPHA_TYPE[data.get(
-        "viewportAlphaType", 0)]
-    out.viewport_alpha_cutoff = data.get("viewportAlphaCutoff", 0.5)
 
     ltbl = out.landtable
     ltbl.name = data.get("landtableName", "")

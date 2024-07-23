@@ -36,13 +36,10 @@ def _update_material_outputs(self, context): # pylint: disable=unused_argument
 
 def _update_materials(self, context):
     sceneprops = context.scene.saio_scene
-    blend_method = sceneprops.viewport_alpha_type
-    clip_threshold = sceneprops.viewport_alpha_cutoff
     enable_backface_culling = sceneprops.enable_backface_culling
 
     for material in bpy.data.materials:
-        update_material_values(
-            material, blend_method, clip_threshold, enable_backface_culling)
+        update_material_values(material, enable_backface_culling)
 
 
 class SAIO_Scene(bpy.types.PropertyGroup):
@@ -129,24 +126,6 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         description="Display specular in the blender material view",
         default=False,
         update=_update_scene_lighting
-    )
-
-    viewport_alpha_type: EnumProperty(
-        name="Viewport Alpha Type",
-        description="The Eevee alpha type to display transparent materials",
-        items=(('BLEND', "Blend", "The default blending"),
-               ('HASHED', "Hashed", "Hashed transparency"),
-               ('CLIP', "Clip", "Sharp edges for certain thresholds")),
-        default='BLEND',
-        update=_update_materials
-    )
-
-    viewport_alpha_cutoff: FloatProperty(
-        name="Viewport blend Cutoff",
-        description="Cutoff value for the eevee alpha cutoff transparency",
-        min=0, max=1,
-        default=0.5,
-        update=_update_materials
     )
 
     enable_backface_culling: BoolProperty(
