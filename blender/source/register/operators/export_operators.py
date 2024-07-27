@@ -64,15 +64,14 @@ class ExportMDLOperator(ExportModelOperator):
 
         evaluator = ModelEvaluator(
             context,
-            self.format, # pylint: disable=no-member
+            self.format,  # pylint: disable=no-member
             self.auto_root,
             self.optimize,
-            self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.apply_posing,
             self.auto_node_attributes,
             self.force_sort_bones,
-            self.flip_vertex_color_channels) # pylint: disable=no-member
+            self.flip_vertex_color_channels)  # pylint: disable=no-member
 
         data = evaluator.evaluate(objects)
 
@@ -86,7 +85,8 @@ class ExportMDLOperator(ExportModelOperator):
         metadata.Author = context.scene.saio_scene.author
         metadata.Description = context.scene.saio_scene.description
 
-        model_format = to_model_format(self.format) # pylint: disable=no-member
+        model_format = to_model_format(
+            self.format)  # pylint: disable=no-member
 
         SA3D_Modeling.MODEL_FILE.WriteToFile(
             self.filepath,
@@ -94,7 +94,7 @@ class ExportMDLOperator(ExportModelOperator):
             self.nj_file,
             metadata,
             model_format
-            )
+        )
 
         return {'FINISHED'}
 
@@ -112,7 +112,6 @@ class SAIO_OT_Export_SA1MDL(ExportMDLOperator):
     )
 
     format = "SA1"
-    write_specular = True
     flip_vertex_color_channels = False
 
 
@@ -129,12 +128,6 @@ class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
     )
 
     format = "SA2"
-
-    write_specular: BoolProperty(
-        name="Write Specular",
-        description="Write specular info to materials",
-        default=False
-    )
 
     flip_vertex_color_channels: BoolProperty(
         name="Flip vertex color channels",
@@ -156,7 +149,6 @@ class SAIO_OT_Export_SA2BMDL(ExportMDLOperator):
     )
 
     format = "SA2B"
-    write_specular = False
     flip_vertex_color_channels = False
 
 ###############################################
@@ -184,7 +176,6 @@ class ExportLVLOperator(ExportModelOperator):
         name="Advanced",
         default=False
     )
-
 
     short_rot: BoolProperty(
         name="Use 16 bit rotations",
@@ -296,14 +287,16 @@ class ExportLVLOperator(ExportModelOperator):
         layout.prop(self, "fallback_surface_attributes")
         self.draw_insert()
 
-        header, box = layout.panel("saio_ot_lvle_animation", default_closed=True)
+        header, box = layout.panel(
+            "saio_ot_lvle_animation", default_closed=True)
         header.label(text="Animation")
         if box:
             box.prop(self, "auto_root")
             box.prop(self, "force_sort_bones")
             box.prop(self, "short_rot")
 
-            header2, box2 = box.panel("saio_ot_lvle_advanced", default_closed=True)
+            header2, box2 = box.panel(
+                "saio_ot_lvle_advanced", default_closed=True)
             header2.label(text="Advanced")
             if box2:
                 box2.prop(self, "rotation_mode")
@@ -329,9 +322,8 @@ class ExportLVLOperator(ExportModelOperator):
 
         evaluator = o_landtable.LandtableEvaluator(
             context,
-            self.format, # pylint: disable=no-member
+            self.format,  # pylint: disable=no-member
             self.optimize,
-            self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.fallback_surface_attributes,
             self.auto_node_attributes,
@@ -361,7 +353,6 @@ class SAIO_OT_Export_SA1LVL(ExportLVLOperator):
     )
 
     format = 'SA1'
-    write_specular = True
 
 
 class SAIO_OT_Export_SA2LVL(ExportLVLOperator):
@@ -378,15 +369,6 @@ class SAIO_OT_Export_SA2LVL(ExportLVLOperator):
 
     format = 'SA2'
 
-    write_specular: BoolProperty(
-        name="Write Specular",
-        description="Write specular info to materials",
-        default=False
-    )
-
-    def draw_insert(self):
-        self.layout.prop(self, "write_specular")
-
 
 class SAIO_OT_Export_SA2BLVL(ExportLVLOperator):
     bl_idname = "saio.export_sa2blvl"
@@ -401,7 +383,6 @@ class SAIO_OT_Export_SA2BLVL(ExportLVLOperator):
     )
 
     format = 'SA2B'
-    write_specular = False
 
 ###############################################
 
