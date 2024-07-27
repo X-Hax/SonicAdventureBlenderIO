@@ -237,7 +237,7 @@ def _material_update_blending(
     )
     material.use_backface_culling_shadow = material.use_backface_culling
 
-    material.blend_method = 'DITHERED'
+    material.surface_render_method = 'DITHERED'
     material.use_transparent_shadow = False
 
 ###############################################################################
