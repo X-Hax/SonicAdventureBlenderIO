@@ -73,7 +73,7 @@ class ModelEvaluator:
     _optimize: bool
     _apply_modifs: bool
     _apply_pose: bool
-    _automatic_node_attributes: bool
+    _auto_node_attribute_mode: any
     _force_sort_bones: bool
     _flip_vertex_color_channels: bool
     _node_evaluator: o_node.NodeEvaluator
@@ -88,7 +88,7 @@ class ModelEvaluator:
             optimize: bool = True,
             apply_modifs: bool = True,
             apply_pose: bool = False,
-            automatic_node_attributes: bool = True,
+            auto_node_attribute_mode: any = 'MISSING',
             force_sort_bones: bool = False,
             flip_vertex_color_channels: bool = False):
 
@@ -98,7 +98,12 @@ class ModelEvaluator:
         self._optimize = optimize
         self._apply_modifs = apply_modifs
         self._apply_pose = apply_pose
-        self._automatic_node_attributes = automatic_node_attributes
+
+        if isinstance(auto_node_attribute_mode, str):
+            self._auto_node_attribute_mode = o_enum.to_auto_node_attribute_mode(auto_node_attribute_mode)
+        else:
+            self._auto_node_attribute_mode = auto_node_attribute_mode
+
         self._flip_vertex_color_channels = flip_vertex_color_channels
         self._node_evaluator = o_node.NodeEvaluator(
             context, self._auto_root, True, apply_pose, force_sort_bones)
@@ -126,7 +131,7 @@ class ModelEvaluator:
             self._output.attach_format,
             self._optimize,
             True,
-            self._automatic_node_attributes,
+            self._auto_node_attribute_mode,
             self._flip_vertex_color_channels)
 
     def save_debug(self, filepath: str):
@@ -136,7 +141,7 @@ class ModelEvaluator:
             self._output.attach_format,
             self._optimize,
             True,
-            self._automatic_node_attributes,
+            self._auto_node_attribute_mode,
             self._flip_vertex_color_channels
         ).ToFile(filepath)
 

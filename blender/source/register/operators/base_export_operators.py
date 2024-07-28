@@ -8,10 +8,11 @@ from bpy.props import (
 from .base import SAIOBaseFileSaveOperator
 from ...utility.anim_parameters import AnimParameters
 
+
 class ExportOperator(SAIOBaseFileSaveOperator):
     bl_options = {'PRESET', 'UNDO'}
 
-    def export(self, context: bpy.types.Context): # pylint: disable=unused-argument
+    def export(self, context: bpy.types.Context):  # pylint: disable=unused-argument
         return {'FINISHED'}
 
     def _execute(self, context):
@@ -50,12 +51,19 @@ class ExportModelOperator(ExportOperator):
         default=False,
     )
 
-    auto_node_attributes: BoolProperty(
-        name="Automatic Node Attributes",
+    auto_node_attribute_mode: EnumProperty(
+        name="Automatic Node Attribute Mode",
         description=(
             "Automatically determine node attributes for the exported model"
         ),
-        default=True
+        items=(
+            ('NONE', "None", "Do no automatically evaluate node attributes"),
+            ('MISSING', "Missing",
+             "Automatically evaluate node attributes as well as keep those enabled in objects"),
+            ('OVERRIDE', "Override",
+             "Automatically evaluate node attributes and override those enabled in objects"),
+        ),
+        default='MISSING'
     )
 
     ensure_positive_euler_angles: BoolProperty(
@@ -92,7 +100,7 @@ class ExportModelOperator(ExportOperator):
 
     multi_export = False
 
-    def export_models(self, context, objects): # pylint: disable=unused-argument
+    def export_models(self, context, objects):  # pylint: disable=unused-argument
         return {'FINISHED'}
 
     @staticmethod
@@ -105,7 +113,7 @@ class ExportModelOperator(ExportOperator):
             def check(x: bpy.types.Object):
                 return x.select_get()
         else:
-            def check(x: bpy.types.Object): # pylint: disable=unused-argument
+            def check(x: bpy.types.Object):  # pylint: disable=unused-argument
                 return True
 
         result = {obj for obj in context.scene.objects if check(obj)}
@@ -125,7 +133,8 @@ class ExportModelOperator(ExportOperator):
         return result
 
     def export(self, context):
-        objects = ExportModelOperator._collect_objects(self.select_mode, context, self.multi_export)
+        objects = ExportModelOperator._collect_objects(
+            self.select_mode, context, self.multi_export)
         return self.export_models(context, objects)
 
 
@@ -181,7 +190,8 @@ class AnimationExportOperator(ExportOperator):
         )
 
     def draw(self, context: bpy.types.Context):
-        header, box = self.layout.panel("saio_ot_ae_advanced", default_closed=True)
+        header, box = self.layout.panel(
+            "saio_ot_ae_advanced", default_closed=True)
         header.label(text="Advanced")
         if box:
             box.prop(self, "interpolation_threshold")

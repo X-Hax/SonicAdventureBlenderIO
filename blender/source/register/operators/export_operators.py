@@ -69,7 +69,7 @@ class ExportMDLOperator(ExportModelOperator):
             self.optimize,
             self.apply_modifs,
             self.apply_posing,
-            self.auto_node_attributes,
+            self.auto_node_attribute_mode,
             self.force_sort_bones,
             self.flip_vertex_color_channels)  # pylint: disable=no-member
 
@@ -279,7 +279,7 @@ class ExportLVLOperator(ExportModelOperator):
         layout.prop(self, "select_mode")
         layout.prop(self, "apply_modifs")
         layout.prop(self, "optimize")
-        layout.prop(self, "auto_node_attributes")
+        layout.prop(self, "auto_node_attribute_mode")
         layout.prop(self, "ensure_positive_euler_angles")
         layout.prop(self, "debug_output")
 
@@ -326,7 +326,7 @@ class ExportLVLOperator(ExportModelOperator):
             self.optimize,
             self.apply_modifs,
             self.fallback_surface_attributes,
-            self.auto_node_attributes,
+            self.auto_node_attribute_mode,
             self.auto_root,
             self.force_sort_bones,
             self.get_anim_parameters())
@@ -413,12 +413,19 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
         default=True,
     )
 
-    auto_node_attributes: BoolProperty(
-        name="Automatic Node Attributes",
+    auto_node_attribute_mode: EnumProperty(
+        name="Automatic Node Attribute Mode",
         description=(
-            "Automaticall determine node attributes for the exported model"
+            "Automatically determine node attributes for the exported model"
         ),
-        default=True
+        items=(
+            ('NONE', "None", "Do no automatically evaluate node attributes"),
+            ('MISSING', "Missing",
+             "Automatically evaluate node attributes as well as keep those enabled in objects"),
+            ('OVERRIDE', "Override",
+             "Automatically evaluate node attributes and override those enabled in objects"),
+        ),
+        default='MISSING'
     )
 
     export_textures: BoolProperty(
@@ -441,7 +448,7 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
     def draw(self, context: bpy.types.Context):
         self.layout.prop(self, "event_type")
         self.layout.prop(self, "optimize")
-        self.layout.prop(self, "auto_node_attributes")
+        self.layout.prop(self, "auto_node_attribute_mode")
         self.layout.prop(self, "export_textures")
 
         return super().draw(context)
@@ -456,7 +463,7 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
             context,
             self.event_type,
             self.optimize,
-            self.auto_node_attributes,
+            self.auto_node_attribute_mode,
             anim_parameters)
 
         exporter.process()

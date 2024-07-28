@@ -9,6 +9,13 @@ using System.Numerics;
 
 namespace SAIO.NET
 {
+    public enum AutoNodeAttributeMode
+    {
+        None,
+        Missing,
+        Override
+    }
+
     public struct NodeStruct
     {
         public string Label { get; set; }
@@ -45,7 +52,7 @@ namespace SAIO.NET
         }
 
 
-        public LandEntry ToLandEntry(Attach attach, bool automaticNodeAttributes)
+        public readonly LandEntry ToLandEntry(Attach attach, AutoNodeAttributeMode autoNodeAttributeMode)
         {
             Matrix4x4.Decompose(WorldMatrix, out Vector3 scale, out Quaternion rotation, out Vector3 position);
             Vector3 euler = rotation.QuaternionToEuler(NodeAttributes.HasFlag(NodeAttributes.RotateZYX));
@@ -57,9 +64,9 @@ namespace SAIO.NET
             result.Model.SetAllNodeAttributes(NodeAttributes);
             result.Model.UpdateTransforms(position, euler, scale);
 
-            if(automaticNodeAttributes)
+            if(autoNodeAttributeMode != AutoNodeAttributeMode.None)
             {
-                result.Model.AutoNodeAttributes();
+                result.Model.AutoNodeAttributes(autoNodeAttributeMode == AutoNodeAttributeMode.Override);
             }
 
             return result;
@@ -97,7 +104,7 @@ namespace SAIO.NET
             TexcoordPrecisionLevel = texcoordPrecisionLevel;
         }
 
-        public WeightedMesh ToWeightedBuffer(bool writeSpecular)
+        public readonly WeightedMesh ToWeightedBuffer(bool writeSpecular)
         {
             WeightedMesh wba = WeightedMesh.Create(Vertices, Corners, Materials, HasVertexColors);
 

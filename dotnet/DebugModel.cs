@@ -13,17 +13,17 @@ namespace SAIO.NET
         public AttachFormat Format { get; set; }
         public bool Optimize { get; set; }
         public bool WriteSpecular { get; set; }
-        public bool AutoNodeAttributes { get; set; }
+        public AutoNodeAttributeMode AutoNodeAttributeMode { get; set; }
         public bool FlipVertexColorChannels { get; set; }
 
-        public DebugModel(NodeStruct[] nodes, MeshStruct[] weightedAttaches, AttachFormat format, bool optimize, bool writeSpecular, bool autoNodeAttributes, bool flipVertexColorChannels)
+        public DebugModel(NodeStruct[] nodes, MeshStruct[] weightedAttaches, AttachFormat format, bool optimize, bool writeSpecular, AutoNodeAttributeMode autoNodeAttributeMode, bool flipVertexColorChannels)
         {
             Nodes = nodes;
             WeightedAttaches = weightedAttaches;
             Format = format;
             Optimize = optimize;
             WriteSpecular = writeSpecular;
-            AutoNodeAttributes = autoNodeAttributes;
+            AutoNodeAttributeMode = autoNodeAttributeMode;
             FlipVertexColorChannels = flipVertexColorChannels;
         }
 
@@ -51,7 +51,7 @@ namespace SAIO.NET
                 Format,
                 Optimize,
                 WriteSpecular,
-                AutoNodeAttributes,
+                AutoNodeAttributeMode,
                 FlipVertexColorChannels);
         }
     }

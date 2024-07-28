@@ -391,3 +391,14 @@ EVENT_TYPE = {
     "gc": "GC",
     "GC" : "gc"
 }
+
+AUTO_NODE_ATTRIBUTE_MODE = {
+	"NONE" : "None",
+	"None" : "NONE",
+
+    "MISSING" : "Missing",
+	"Missing" : "MISSING",
+
+    "OVERRIDE" : "Override",
+	"Override" : "OVERRIDE"
+}

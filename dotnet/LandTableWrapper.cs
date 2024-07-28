@@ -1,5 +1,4 @@
-﻿using BCnEncoder.Shared;
-using SA3D.Common;
+﻿using SA3D.Common;
 using SA3D.Common.Lookup;
 using SA3D.Modeling.Animation;
 using SA3D.Modeling.File;
@@ -37,7 +36,7 @@ namespace SAIO.NET
             LandEntryStruct[] landentries,
             WeightedMesh[] wbas,
             bool optimize,
-            bool automaticNodeAttributes)
+            AutoNodeAttributeMode autoNodeAttributeMode)
         {
             AttachFormat attachFormat;
             switch(landtable.Format)
@@ -60,7 +59,7 @@ namespace SAIO.NET
             foreach(LandEntryStruct landentry in landentries)
             {
                 Attach attach = attaches[landentry.MeshIndex];
-                geometry.Add(landentry.ToLandEntry(attach, automaticNodeAttributes));
+                geometry.Add(landentry.ToLandEntry(attach, autoNodeAttributeMode));
             }
 
             landtable.Geometry = new LabeledArray<LandEntry>("geometry_" + StringExtensions.GenerateIdentifier(), geometry.ToArray());
@@ -71,7 +70,7 @@ namespace SAIO.NET
             LandEntryStruct[] landentries,
             WeightedMesh[] wbas,
             bool optimize,
-            bool automaticNodeAttributes)
+            AutoNodeAttributeMode autoNodeAttributeMode)
         {
             AttachFormat attachFormat = landtable.Format switch
             {
@@ -113,7 +112,7 @@ namespace SAIO.NET
             foreach(LandEntryStruct landentry in visualLandentries)
             {
                 Attach attach = visualAttaches[landentry.MeshIndex] ?? throw new InvalidOperationException($"Attach {landentry.MeshIndex} was not converted as visual");
-                LandEntry le = landentry.ToLandEntry(attach, automaticNodeAttributes);
+                LandEntry le = landentry.ToLandEntry(attach, autoNodeAttributeMode);
                 le.SurfaceAttributes &= SurfaceAttributes.VisualMask;
                 geometry.Add(le);
             }
@@ -121,7 +120,7 @@ namespace SAIO.NET
             foreach(LandEntryStruct landentry in collisionLandentries)
             {
                 Attach attach = collisionAttaches[landentry.MeshIndex] ?? throw new InvalidOperationException($"Attach {landentry.MeshIndex} was not converted as collision");
-                LandEntry le = landentry.ToLandEntry(attach, automaticNodeAttributes);
+                LandEntry le = landentry.ToLandEntry(attach, autoNodeAttributeMode);
                 le.SurfaceAttributes &= SurfaceAttributes.CollisionMask;
                 geometry.Add(le);
             }
@@ -141,7 +140,7 @@ namespace SAIO.NET
             bool optimize,
             bool writeSpecular,
             bool fallbackSurfaceAttributes,
-            bool automaticNodeAttributes,
+            AutoNodeAttributeMode autoNodeAttributeMode,
             bool ensurePositiveEulerAngles)
         {
             if(landentries.Length == 0)
@@ -177,11 +176,11 @@ namespace SAIO.NET
                 case ModelFormat.Buffer:
                 case ModelFormat.SA1:
                 case ModelFormat.SADX:
-                    ExportSingle(landtable, landentries, wbas, optimize, automaticNodeAttributes);
+                    ExportSingle(landtable, landentries, wbas, optimize, autoNodeAttributeMode);
                     break;
                 case ModelFormat.SA2:
                 case ModelFormat.SA2B:
-                    ExportDouble(landtable, landentries, wbas, optimize, automaticNodeAttributes);
+                    ExportDouble(landtable, landentries, wbas, optimize, autoNodeAttributeMode);
                     break;
             }
 
@@ -219,7 +218,7 @@ namespace SAIO.NET
             bool optimize,
             bool writeSpecular,
             bool fallbackSurfaceAttributes,
-            bool automaticNodeAttributes,
+            AutoNodeAttributeMode autoNodeAttributeMode,
             bool ensurePositiveEulerAngles,
             string author,
             string description)
@@ -236,7 +235,7 @@ namespace SAIO.NET
                 optimize,
                 writeSpecular,
                 fallbackSurfaceAttributes,
-                automaticNodeAttributes,
+                autoNodeAttributeMode,
                 ensurePositiveEulerAngles);
 
             MetaData metaData = new()

@@ -18,7 +18,7 @@ class LandtableEvaluator:
     _write_specular: bool
     _apply_modifs: bool
     _fallback_surface_attributes: bool
-    _automatic_node_attributes: bool
+    _auto_node_attribute_mode: any
 
     _auto_root: bool
     _force_sort_bones: bool
@@ -43,7 +43,7 @@ class LandtableEvaluator:
             write_specular: bool,
             apply_modifs: bool,
             fallback_surface_attributes: bool,
-            automatic_node_attributes: bool,
+            auto_node_attribute_mode: bool,
             auto_root: bool,
             force_sort_bones: bool,
             anim_parameters: AnimParameters):
@@ -55,7 +55,7 @@ class LandtableEvaluator:
         self._write_specular = write_specular
         self._apply_modifs = apply_modifs
         self._fallback_surface_attributes = fallback_surface_attributes
-        self._automatic_node_attributes = automatic_node_attributes
+        self._auto_node_attribute_mode = o_enum.to_auto_node_attribute_mode(auto_node_attribute_mode)
 
         self._auto_root = auto_root
         self._force_sort_bones = force_sort_bones
@@ -196,7 +196,7 @@ class LandtableEvaluator:
             self._write_specular,
             self._apply_modifs,
             False,  # Dont apply posing
-            self._automatic_node_attributes,
+            self._auto_node_attribute_mode,
             self._force_sort_bones,
             False)  # Dont flip vertex colors
 
@@ -262,7 +262,7 @@ class LandtableEvaluator:
             self._optimize,
             self._write_specular,
             self._fallback_surface_attributes,
-            self._automatic_node_attributes,
+            self._auto_node_attribute_mode,
             self._anim_parameters.ensure_positive_euler_angles,
             self._context.scene.saio_scene.author,
             self._context.scene.saio_scene.description
@@ -287,7 +287,7 @@ class LandtableEvaluator:
             self._optimize,
             self._write_specular,
             self._fallback_surface_attributes,
-            self._automatic_node_attributes,
+            self._auto_node_attribute_mode,
             self._anim_parameters.ensure_positive_euler_angles,
             self._context.scene.saio_scene.author,
             self._context.scene.saio_scene.description)

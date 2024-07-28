@@ -37,7 +37,7 @@ namespace SAIO.NET
             AttachFormat format,
             bool optimize,
             bool writeSpecular,
-            bool autoNodeAttributes,
+            AutoNodeAttributeMode autoNodeAttributeMode,
             bool flipVertexColorChannels)
         {
             if(nodes.Length == 0)
@@ -112,11 +112,11 @@ namespace SAIO.NET
 
             WeightedMesh.ToModel(root, meshes, format, optimize);
 
-            if(autoNodeAttributes)
+            if(autoNodeAttributeMode != AutoNodeAttributeMode.None)
             {
                 foreach(Node node in objNodes)
                 {
-                    node.AutoNodeAttributes();
+                    node.AutoNodeAttributes(autoNodeAttributeMode == AutoNodeAttributeMode.Override);
                 }
             }
 
