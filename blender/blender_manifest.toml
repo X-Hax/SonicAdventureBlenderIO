@@ -34,7 +34,6 @@ paths_exclude_pattern = [
   "/.git/",
   "*.bat",
   ".*",
-  "__initdev__.py",
   "blender_manifestdev.toml",
   "*.blend1"
 ]
