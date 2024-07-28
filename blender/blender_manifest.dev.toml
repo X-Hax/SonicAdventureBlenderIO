@@ -1,8 +1,8 @@
 schema_version = "1.0.0"
 
-id = "sonic_adventure_io"
-version = "2.2.0"
-name = "Sonic Adventure I/O"
+id = "sonic_adventure_io_dev"
+version = "2.200.1"
+name = "Sonic Adventure I/O DEV BUILD test"
 tagline = "Import/Exporter for Sonic Adventure Model, Animation and more"
 maintainer = "Justin113D, ItsEasyActually, X-Hax"
 type = "add-on"
@@ -35,5 +35,5 @@ paths_exclude_pattern = [
   "*.bat",
   ".*",
   "*.blend1",
-  "blender_manifest.dev.toml"
+  "blender_manifest.prod.toml"
 ]
