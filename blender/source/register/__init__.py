@@ -2,7 +2,6 @@
 
 import bpy
 from . import (
-    addon_updater,
     property_groups,
     operators,
     ui,
@@ -18,20 +17,8 @@ classes.extend(operators.to_register)
 classes.extend(ui.to_register)
 
 
-def _install_pythondotnet():
-    try:
-        import pythonnet  # pylint: disable=unused-import
-    except ModuleNotFoundError:
-        import pip
-        pip.main(["install", "pythonnet"])
-
-
-def register_classes(bl_info):
+def register_classes():
     """Loading API classes into blender"""
-
-    _install_pythondotnet()
-
-    addon_updater.register_addon_updater(bl_info)
 
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -47,8 +34,6 @@ def unregister_classes():
     """Unloading classes loaded in register(), as well as various cleanup"""
 
     unload_dotnet()
-
-    addon_updater.unregister_addon_updater()
 
     bpy.utils.unregister_manual_map(manual.add_manual_map)
 

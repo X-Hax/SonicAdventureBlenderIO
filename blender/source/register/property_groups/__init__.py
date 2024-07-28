@@ -15,7 +15,6 @@ from . import (
     event_node_uv_anim_properties,
     event_properties,
     scene_properties,
-    addon_preferences,
 )
 
 # Order is important
@@ -42,7 +41,5 @@ to_register = [
     event_properties.SAIO_Event,
 
     material_mass_edit_properties.SAIO_MaterialMassEdit,
-    scene_properties.SAIO_Scene,
-
-    addon_preferences.SAIO_AddonPreferences
+    scene_properties.SAIO_Scene
 ]
