@@ -17,7 +17,7 @@ classes.extend(operators.to_register)
 classes.extend(ui.to_register)
 
 
-def register_classes():
+def register():
     """Loading API classes into blender"""
 
     for cls in classes:
@@ -30,7 +30,7 @@ def register_classes():
     bpy.utils.register_manual_map(manual.add_manual_map)
 
 
-def unregister_classes():
+def unregister():
     """Unloading classes loaded in register(), as well as various cleanup"""
 
     unload_dotnet()
@@ -39,3 +39,20 @@ def unregister_classes():
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
+
+def reload_package(module_dict_main):
+    import importlib
+    from pathlib import Path
+
+    def reload_package_recursive(current_dir: Path, module_dict: dict[str, any]):
+        for path in current_dir.iterdir():
+            if "__init__" in str(path) or path.stem not in module_dict:
+                continue
+
+            if path.is_file() and path.suffix == ".py":
+                importlib.reload(module_dict[path.stem])
+            elif path.is_dir():
+                reload_package_recursive(path, module_dict[path.stem].__dict__)
+
+    reload_package_recursive(Path(__file__).parent, module_dict_main)

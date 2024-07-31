@@ -25,6 +25,7 @@ wheels = [
 
 [permissions]
 clipboard = "For copying selected vertex indices"
+files = "Importing and exporting files"
 
 [build]
 paths_exclude_pattern = [
@@ -35,5 +36,5 @@ paths_exclude_pattern = [
   "*.bat",
   ".*",
   "*.blend1",
-  "blender_manifest.prod.toml"
+  "*.prod.*",
 ]

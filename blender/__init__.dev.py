@@ -7,7 +7,7 @@ if "register" in locals():
 from .source.register import register, unregister
 
 bl_info = {
-    "name": "Sonic Adventure I/O",
+    "name": "Sonic Adventure I/O DEV BUILD",
     "author": "Justin113D, ItsEasyActually, X-Hax",
     "description": "Import/Exporter for Sonic Adventure Model, Animation and other Formats.",
     "version": (2, 2, 0),
