@@ -50,7 +50,7 @@ class ExportModelOperator(ExportOperator):
     use_active_scene: BoolProperty(
         name='Active Scene',
         description='Export active scene only',
-        default=False
+        default=True
     )
 
     collection: StringProperty(
@@ -120,23 +120,29 @@ class ExportModelOperator(ExportOperator):
 
     multi_export = False
 
-    def export_models(self, context, objects):  # pylint: disable=unused-argument
+    def export_models(self, context: bpy.types.Context, objects: set[bpy.types.Object]):  # pylint: disable=unused-argument
         return {'FINISHED'}
 
-    @staticmethod
-    def _collect_objects(mode: str, context: bpy.types.Context, multi_export: bool):
+    def collect_objects(self, context: bpy.types.Context):
 
-        if mode == 'VISIBLE':
-            def check(x: bpy.types.Object):
-                return not x.hide_get()
-        elif mode == 'SELECTED':
-            def check(x: bpy.types.Object):
-                return x.select_get()
+        if self.collection:
+            collection: bpy.types.Collection = bpy.data.collections[self.collection]
+            result = set(collection.all_objects)
         else:
-            def check(x: bpy.types.Object):  # pylint: disable=unused-argument
-                return True
+            result = set()
 
-        result = {obj for obj in context.scene.objects if check(obj)}
+            if self.use_active_collection:
+                objects = context.collection.all_objects
+            elif self.use_active_scene:
+                objects = context.scene.objects
+            else:
+                objects = bpy.data.objects
+
+            for obj in objects:
+                if (self.use_visible and not obj.visible_get()
+                    or self.use_selection and not obj.select_get()):
+                    continue
+                result.add(obj)
 
         roots = set()
         for obj in result:
@@ -145,7 +151,7 @@ class ExportModelOperator(ExportOperator):
                 parent = parent.parent
             roots.add(parent)
 
-        if len(roots) == 1 or multi_export:
+        if len(roots) == 1 or self.multi_export:
             for root in roots:
                 if root.type == 'ARMATURE':
                     result.add(root)
@@ -153,8 +159,7 @@ class ExportModelOperator(ExportOperator):
         return result
 
     def export(self, context):
-        objects = ExportModelOperator._collect_objects(
-            self.select_mode, context, self.multi_export)
+        objects = self.collect_objects(context)
         return self.export_models(context, objects)
 
     def draw(self, context: Context):
@@ -170,7 +175,7 @@ class ExportModelOperator(ExportOperator):
         self.draw_panel_debug(layout)
 
     def draw_panel_include(self, layout: UILayout, is_file_browser: bool):
-        if is_file_browser:
+        if not is_file_browser:
             return
 
         header, body = layout.panel(
@@ -282,7 +287,7 @@ class AnimationExportOperator(ExportOperator):
         header.label(text="Advanced")
 
         if body:
-            col = body.column(heading = "General Conversion", align = True)
+            col = body.column(heading="General Conversion", align=True)
             col.prop(self, "interpolation_threshold")
             col.prop(self, "general_optimization_threshold")
 
@@ -417,7 +422,7 @@ class NodeAnimExportOperator(AnimationExportOperator):
         body = super().draw_panel_advanced(layout)
 
         if body:
-            col = body.column(heading = "Rotation Conversion", align = True)
+            col = body.column(heading="Rotation Conversion", align=True)
             col.prop(self, "rotation_mode")
             col.prop(self, "quaternion_threshold")
             col.prop(self, "quaternion_optimization_threshold")
