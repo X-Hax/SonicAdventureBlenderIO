@@ -69,11 +69,6 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
         default=False
     )
 
-    show_advanced: BoolProperty(
-        name="Advanced",
-        default=False
-    )
-
     @classmethod
     def poll(cls, context):
         active = context.active_object
@@ -85,14 +80,32 @@ class SAIO_OT_Import_Node_Animation(MotionImportOperator):
             ))
 
     def draw(self, context: bpy.types.Context):
+        super().draw(context)
         layout = self.layout
-        layout.prop(self, "rotation_mode")
 
-        header, box = layout.panel("saio_ot_ina_advanced", default_closed=True)
+        self.draw_panel_general(layout)
+        self.draw_panel_advanced(layout)
+
+    def draw_panel_general(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_import_nodeanim_general", default_closed=True)
+        header.label(text="General")
+
+        if body:
+            body.prop(self, "rotation_mode")
+
+        return body
+
+    def draw_panel_advanced(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_import_nodeanim_advanced", default_closed=True)
         header.label(text="Advanced")
-        if box:
-            box.prop(self, "quaternion_threshold")
-            box.prop(self, "short_rot")
+
+        if body:
+            body.prop(self, "quaternion_threshold")
+            body.prop(self, "short_rot")
+
+        return body
 
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
@@ -210,6 +223,22 @@ class SAIO_OT_Import_Shape_Animation(MotionImportOperator):
                 active.type == 'ARMATURE'
                 or len(active.children) == 0
             ))
+
+    def draw(self, context: bpy.types.Context):
+        super().draw(context)
+        layout = self.layout
+
+        self.draw_panel_general(layout)
+
+    def draw_panel_general(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_import_shapeanim_general", default_closed=True)
+        header.label(text="General")
+
+        if body:
+            body.prop(self, "optimize")
+
+        return body
 
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)

@@ -187,6 +187,15 @@ class SAIO_OT_Export_Path(base.SAIOBaseFileSaveOperator):
         default='INI'
     )
 
+    struct_use_path: BoolProperty(
+        name="Use path structs",
+        description=(
+            "C export uses Loop and Loophead by default. Checking this will"
+            " export with pathtbl and pathtag instead."
+        ),
+        default=False
+    )
+
     curve_type: EnumProperty(
         name="Curve Code",
         description="Set the Code address for the Path to use in-game.",
@@ -216,33 +225,43 @@ class SAIO_OT_Export_Path(base.SAIOBaseFileSaveOperator):
         default="0",
     )
 
-    struct_use_path: BoolProperty(
-        name="Use path structs",
-        description=(
-            "C export uses Loop and Loophead by default. Checking this will"
-            " export with pathtbl and pathtag instead."
-        ),
-        default=False
-    )
-
     def draw(self, context: Context):
-        layout = self.layout
+        super().draw(context)
+        self.draw_panel_format(self.layout)
+        self.draw_panel_type(self.layout)
 
-        layout.prop(self, "format")
+    def draw_panel_format(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_export_path_format", default_closed=True)
+        header.label(text="Format")
 
-        if self.format == 'C':
-            layout.prop(self, "struct_use_path")
+        if body:
+            body.prop(self, "format")
 
-        layout.prop(self, "curve_type")
+            if self.format == 'C':
+                body.prop(self, "struct_use_path")
 
-        if self.curve_type == 'USER':
-            prop_advanced(
-                layout,
-                "Custom Code Address (Hex): 0x",
-                self,
-                "custom_code")
-        else:
-            layout.label(text=f"Code: 0x{PATH_CODE_LUT[self.curve_type]:X}")
+        return body
+
+    def draw_panel_type(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_export_path_type", default_closed=True)
+        header.label(text="Type")
+
+        if body:
+            body.prop(self, "curve_type")
+
+            if self.curve_type == 'USER':
+                prop_advanced(
+                    layout,
+                    "Custom Code Address (Hex): 0x",
+                    self,
+                    "custom_code")
+            else:
+                layout.label(
+                    text=f"Code: 0x{PATH_CODE_LUT[self.curve_type]:X}")
+
+        return body
 
     @classmethod
     def poll(cls, context):

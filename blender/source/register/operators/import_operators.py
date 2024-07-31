@@ -7,7 +7,7 @@ from bpy.props import (
     EnumProperty,
     FloatProperty
 )
-from bpy.types import Context
+from bpy.types import Context, UILayout
 
 from .base import SAIOBaseFileLoadOperator
 
@@ -62,10 +62,28 @@ class ModelImportOperator(SAIOBaseFileLoadOperator):
         default=True
     )
 
-
     @classmethod
     def poll(cls, context: Context):
         return context.mode == 'OBJECT'
+
+    def draw(self, context: Context):
+        super().draw(context)
+
+        self.draw_panel_general(self.layout)
+
+    def draw_panel_general(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_import_model_general", default_closed=True)
+        header.label(text="General")
+
+        if body:
+            body.prop(self, "scene_per_file")
+            body.prop(self, "optimize")
+            body.prop(self, "all_weighted_meshes")
+            body.prop(self, "merge_meshes")
+            body.prop(self, "ensure_order")
+
+        return body
 
 
 class SAIO_OT_Import_Model(ModelImportOperator):
@@ -135,6 +153,28 @@ class SAIO_OT_Import_Model(ModelImportOperator):
 
         return {'FINISHED'}
 
+    def draw(self, context: Context):
+        super().draw(context)
+        self.draw_panel_encoding(self.layout)
+
+    def draw_panel_general(self, layout: UILayout):
+        body = super().draw_panel_general(layout)
+
+        if body:
+            body.prop(self, "import_as_armature")
+
+        return body
+
+    def draw_panel_encoding(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_import_mdl_encoding", default_closed=True)
+        header.label(text="Encoding")
+
+        if body:
+            body.prop(self, "flip_vertex_colors")
+
+        return body
+
 
 class SAIO_OT_Import_Landtable(ModelImportOperator):
     bl_idname = "saio.import_lvl"
@@ -159,13 +199,6 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
             " (e.g. 001_landentry_name)"
         ),
         default=True
-    )
-
-    ###################################
-
-    show_anim: BoolProperty(
-        name="Animation",
-        default=False
     )
 
     ###################################
@@ -205,38 +238,52 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
         default=False
     )
 
-    show_advanced_anim: BoolProperty(
-        name="Advanced Animation",
-        default=False
-    )
-
     ###################################
 
     def draw(self, context: Context):
-        layout = self.layout
+        super().draw(context)
 
-        layout.prop(self, "scene_per_file")
-        layout.prop(self, "optimize")
-        layout.prop(self, "fix_view")
-        layout.prop(self, "ensure_static_order")
+        self.draw_panel_animation(self.layout)
 
-        header, box = layout.panel("saio_ot_lvli_animation", default_closed=True)
+    def draw_panel_general(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_import_level_general", default_closed=True)
+        header.label(text="General")
+
+        if body:
+            body.prop(self, "scene_per_file")
+            body.prop(self, "optimize")
+            body.prop(self, "fix_view")
+            body.prop(self, "ensure_static_order")
+
+        return body
+
+    def draw_panel_animation(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_import_level_animation", default_closed=True)
         header.label(text="Animation")
-        if box:
-            box.prop(self, "all_weighted_meshes")
-            box.prop(self, "merge_meshes")
-            box.prop(self, "ensure_order")
 
-            box.separator()
+        if body:
+            body.prop(self, "all_weighted_meshes")
+            body.prop(self, "merge_meshes")
+            body.prop(self, "ensure_order")
+            body.separator()
+            body.prop(self, "rotation_mode")
 
-            box.prop(self, "rotation_mode")
+            self.draw_panel_advanced_animation(body)
 
-            header2, box2 = box.panel("saio_ot_lvli_advanced", default_closed=True)
-            header2.label(text="Advanced")
-            if box2:
-                box2.prop(self, "quaternion_threshold")
-                box2.prop(self, "short_rot")
+        return body
 
+    def draw_panel_advanced_animation(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_import_level_advanced_anim", default_closed=True)
+        header.label(text="Advanced")
+
+        if body:
+            body.prop(self, "quaternion_threshold")
+            body.prop(self, "short_rot")
+
+        return body
 
     def _execute(self, context):
         directory = os.path.dirname(self.filepath)
@@ -298,6 +345,21 @@ class SAIO_OT_Import_Event(SAIOBaseFileLoadOperator):
     @classmethod
     def poll(cls, context: Context):
         return context.mode == 'OBJECT'
+
+    def draw(self, context: Context):
+        super().draw(context)
+
+        self.draw_panel_general(self.layout)
+
+    def draw_panel_general(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_import_event_general", default_closed=True)
+        header.label(text="General")
+
+        if body:
+            body.prop(self, "optimize")
+
+        return body
 
     def _execute(self, context):
         load_dotnet()

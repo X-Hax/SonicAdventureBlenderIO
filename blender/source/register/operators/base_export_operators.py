@@ -5,6 +5,7 @@ from bpy.props import (
     FloatProperty,
     StringProperty
 )
+from bpy.types import Context, UILayout
 from .base import SAIOBaseFileSaveOperator
 from ...utility.anim_parameters import AnimParameters
 
@@ -28,15 +29,34 @@ class ExportOperator(SAIOBaseFileSaveOperator):
 
 class ExportModelOperator(ExportOperator):
 
-    select_mode: EnumProperty(
-        name="Select mode",
-        description="Which objects to select for export",
-        items=(
-            ("ALL", "All", "All objects in the scene"),
-            ("VISIBLE", "Visible", "Visible objects only"),
-            ("SELECTED", "Selected", "Selected objects only")
-        ),
-        default="ALL"
+    use_selection: BoolProperty(
+        name='Selected Objects',
+        description='Export selected objects only',
+        default=False
+    )
+
+    use_visible: BoolProperty(
+        name='Visible Objects',
+        description='Export visible objects only',
+        default=False
+    )
+
+    use_active_collection: BoolProperty(
+        name='Active Collection',
+        description='Export objects in the active collection only',
+        default=False
+    )
+
+    use_active_scene: BoolProperty(
+        name='Active Scene',
+        description='Export active scene only',
+        default=False
+    )
+
+    collection: StringProperty(
+        name="Source Collection",
+        description="Export only objects from this collection (and its children)",
+        default="",
     )
 
     apply_modifs: BoolProperty(
@@ -49,6 +69,15 @@ class ExportModelOperator(ExportOperator):
         name="Optimize",
         description="Optimize if possible",
         default=False,
+    )
+
+    auto_root: BoolProperty(
+        name="Automatic root",
+        description=(
+            "Creates a root on export when the objects to export are not in a"
+            " shared hierarchy"
+        ),
+        default=True
     )
 
     auto_node_attribute_mode: EnumProperty(
@@ -72,15 +101,6 @@ class ExportModelOperator(ExportOperator):
         default=True
     )
 
-    auto_root: BoolProperty(
-        name="Automatic root",
-        description=(
-            "Creates a root on export when the objects to export are not in a"
-            " shared hierarchy"
-        ),
-        default=True
-    )
-
     force_sort_bones: BoolProperty(
         name="Force sort bones",
         description=(
@@ -96,12 +116,6 @@ class ExportModelOperator(ExportOperator):
             " DONT TOUCH IF YOU ARE NOT A DEVELOPER FOR THE SAIO ADDON! It"
             " will dramatically increase export time!"),
         default=False
-    )
-
-    collection: StringProperty(
-        name="Source Collection",
-        description="Export only objects from this collection (and its children)",
-        default="",
     )
 
     multi_export = False
@@ -142,6 +156,63 @@ class ExportModelOperator(ExportOperator):
         objects = ExportModelOperator._collect_objects(
             self.select_mode, context, self.multi_export)
         return self.export_models(context, objects)
+
+    def draw(self, context: Context):
+        super().draw(context)
+        layout = self.layout
+
+        # Are we inside the File browser
+        is_file_browser = context.space_data.type == 'FILE_BROWSER'
+
+        self.draw_panel_include(layout, is_file_browser)
+        self.draw_panel_general(layout)
+        self.draw_other(layout, is_file_browser)
+        self.draw_panel_debug(layout)
+
+    def draw_panel_include(self, layout: UILayout, is_file_browser: bool):
+        if is_file_browser:
+            return
+
+        header, body = layout.panel(
+            "SAIO_export_model_include", default_closed=True)
+        header.label(text="Include")
+
+        if body:
+            col = body.column(heading="Limit to", align=True)
+            col.prop(self, "use_selection")
+            col.prop(self, "use_visible")
+            col.prop(self, "use_active_collection")
+            col.prop(self, "use_active_scene")
+
+        return body
+
+    def draw_panel_general(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_model_general", default_closed=True)
+        header.label(text="General")
+
+        if body:
+            body.prop(self, "apply_modifs")
+            body.prop(self, "optimize")
+            body.prop(self, "auto_root")
+            body.prop(self, "auto_node_attribute_mode")
+            body.prop(self, "ensure_positive_euler_angles")
+            body.prop(self, "force_sort_bones")
+
+        return body
+
+    def draw_other(self, layout: UILayout, is_file_browser: bool):
+        return
+
+    def draw_panel_debug(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_model_debug", default_closed=True)
+        header.label(text="Debug")
+
+        if body:
+            body.prop(self, "debug_output")
+
+        return body
 
 
 class AnimationExportOperator(ExportOperator):
@@ -196,12 +267,26 @@ class AnimationExportOperator(ExportOperator):
         )
 
     def draw(self, context: bpy.types.Context):
-        header, box = self.layout.panel(
-            "saio_ot_ae_advanced", default_closed=True)
+        super().draw(context)
+        layout = self.layout
+
+        self.draw_other(layout)
+        self.draw_panel_advanced(layout)
+
+    def draw_other(self, layout):
+        return
+
+    def draw_panel_advanced(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_anim_advanced", default_closed=True)
         header.label(text="Advanced")
-        if box:
-            box.prop(self, "interpolation_threshold")
-            box.prop(self, "general_optimization_threshold")
+
+        if body:
+            col = body.column(heading = "General Conversion", align = True)
+            col.prop(self, "interpolation_threshold")
+            col.prop(self, "general_optimization_threshold")
+
+        return body
 
 
 class NodeAnimExportOperator(AnimationExportOperator):
@@ -216,10 +301,24 @@ class NodeAnimExportOperator(AnimationExportOperator):
         default=True
     )
 
+    force_sort_bones: BoolProperty(
+        name="Force sort bones",
+        description=(
+            "Blender doesnt sort bones by name, although this may be desired"
+            " in certain scenarios. This ensure the bones are sorted by name"),
+        default=False
+    )
+
     short_rot: BoolProperty(
         name="Use 16 bit rotations",
         description="Whether to use 16 bit BAMS for the rotation keyframes",
         default=False
+    )
+
+    ensure_positive_euler_angles: BoolProperty(
+        name="Ensure positive euler angles",
+        description="Ensure that all exported euler rotation angles are positive.",
+        default=True
     )
 
     rotation_mode: EnumProperty(
@@ -234,20 +333,6 @@ class NodeAnimExportOperator(AnimationExportOperator):
                 "Export bone rotation modes"),
         ),
         default="EULER"
-    )
-
-    ensure_positive_euler_angles: BoolProperty(
-        name="Ensure positive euler angles",
-        description="Ensure that all exported euler rotation angles are positive.",
-        default=True
-    )
-
-    force_sort_bones: BoolProperty(
-        name="Force sort bones",
-        description=(
-            "Blender doesnt sort bones by name, although this may be desired"
-            " in certain scenarios. This ensure the bones are sorted by name"),
-        default=False
     )
 
     quaternion_threshold: FloatProperty(
@@ -299,19 +384,42 @@ class NodeAnimExportOperator(AnimationExportOperator):
             self.ensure_positive_euler_angles
         )
 
-    def draw(self, context: bpy.types.Context):
-        layout = self.layout
-        if self.show_bone_localspace:
-            layout.prop(self, "bone_localspace")
-            layout.prop(self, "force_sort_bones")
-        layout.prop(self, "short_rot")
-        layout.prop(self, "ensure_positive_euler_angles")
+    def draw_other(self, layout: UILayout):
+        self.draw_panel_rotation(layout)
+        self.draw_panel_bones(layout)
 
-        header, box = layout.panel("saio_ot_nae_advanced", default_closed=True)
-        header.label(text="Advanced")
-        if box:
-            box.prop(self, "rotation_mode")
-            box.prop(self, "interpolation_threshold")
-            box.prop(self, "quaternion_threshold")
-            box.prop(self, "general_optimization_threshold")
-            box.prop(self, "quaternion_optimization_threshold")
+    def draw_panel_rotation(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_nodeanim_rotation", default_closed=True)
+        header.label(text="Rotation")
+
+        if body:
+            body.prop(self, "short_rot")
+            body.prop(self, "ensure_positive_euler_angles")
+
+        return body
+
+    def draw_panel_bones(self, layout: UILayout):
+        if not self.show_bone_localspace:
+            return
+
+        header, body = layout.panel(
+            "SAIO_export_nodeanim_bone", default_closed=True)
+        header.label(text="Bones")
+
+        if body:
+            body.prop(self, "bone_localspace")
+            body.prop(self, "force_sort_bones")
+
+        return body
+
+    def draw_panel_advanced(self, layout: UILayout):
+        body = super().draw_panel_advanced(layout)
+
+        if body:
+            col = body.column(heading = "Rotation Conversion", align = True)
+            col.prop(self, "rotation_mode")
+            col.prop(self, "quaternion_threshold")
+            col.prop(self, "quaternion_optimization_threshold")
+
+        return body
