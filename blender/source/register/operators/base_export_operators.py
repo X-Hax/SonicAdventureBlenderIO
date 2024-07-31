@@ -98,6 +98,12 @@ class ExportModelOperator(ExportOperator):
         default=False
     )
 
+    collection: StringProperty(
+        name="Source Collection",
+        description="Export only objects from this collection (and its children)",
+        default="",
+    )
+
     multi_export = False
 
     def export_models(self, context, objects):  # pylint: disable=unused-argument
