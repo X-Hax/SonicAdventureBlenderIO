@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "sonic_adventure_io_dev"
-version = "2.200.2"
+version = "2.200.3"
 name = "Sonic Adventure I/O DEV BUILD"
 tagline = "Import/Exporter for Sonic Adventure Model, Animation and more"
 maintainer = "Justin113D, ItsEasyActually, X-Hax"
