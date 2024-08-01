@@ -110,7 +110,6 @@ class EventExporter:
                 'SA2' if chunk else 'SA2B',
                 False,
                 self.optimize,
-                False,
                 True,
                 False,
                 auto_node_attribute_mode,

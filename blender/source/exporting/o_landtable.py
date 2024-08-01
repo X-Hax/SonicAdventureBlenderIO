@@ -15,7 +15,6 @@ class LandtableEvaluator:
     _format: str
     _model_format: str
     _optimize: bool
-    _write_specular: bool
     _apply_modifs: bool
     _fallback_surface_attributes: bool
     _auto_node_attribute_mode: any
@@ -40,7 +39,6 @@ class LandtableEvaluator:
             context: bpy.types.Context,
             model_format: str,
             optimize: bool,
-            write_specular: bool,
             apply_modifs: bool,
             fallback_surface_attributes: bool,
             auto_node_attribute_mode: bool,
@@ -52,7 +50,6 @@ class LandtableEvaluator:
         self._format = model_format
         self._model_format = o_enum.to_model_format(model_format)
         self._optimize = optimize
-        self._write_specular = write_specular
         self._apply_modifs = apply_modifs
         self._fallback_surface_attributes = fallback_surface_attributes
         self._auto_node_attribute_mode = o_enum.to_auto_node_attribute_mode(auto_node_attribute_mode)
@@ -193,7 +190,6 @@ class LandtableEvaluator:
             self._format,
             self._auto_root,
             self._optimize,
-            self._write_specular,
             self._apply_modifs,
             False,  # Dont apply posing
             self._auto_node_attribute_mode,
@@ -260,7 +256,6 @@ class LandtableEvaluator:
 
             filepath,
             self._optimize,
-            self._write_specular,
             self._fallback_surface_attributes,
             self._auto_node_attribute_mode,
             self._anim_parameters.ensure_positive_euler_angles,
@@ -285,7 +280,6 @@ class LandtableEvaluator:
 
             filepath,
             self._optimize,
-            self._write_specular,
             self._fallback_surface_attributes,
             self._auto_node_attribute_mode,
             self._anim_parameters.ensure_positive_euler_angles,
