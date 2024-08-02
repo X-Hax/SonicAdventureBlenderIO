@@ -390,6 +390,7 @@ class SAIO_OT_ArmatureFromObjects(SAIOBasePopupOperator):
             context,
             collection,
             False,
+            False,
             self.all_weighted_meshes,
             self.merge_meshes
         )

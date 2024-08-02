@@ -17,6 +17,7 @@ class EventImporter:
     context: bpy.types.Context
     name: str
     optimize: bool
+    auto_normals: bool
     event_data: any
     scene_data: list
 
@@ -49,11 +50,13 @@ class EventImporter:
             self,
             context: bpy.types.Context,
             name: str,
-            optimize: bool):
+            optimize: bool,
+            auto_normals: bool):
 
         self.context = context
         self.name = name
         self.optimize = optimize
+        self.auto_normals = auto_normals
         self.scene_data = []
         self.cuts = []
         self.cut_collections = []
@@ -185,6 +188,7 @@ class EventImporter:
             self.context,
             self.base_scene.collection,
             False,
+            self.auto_normals,
             False,
             False,
             self.model_name_lut

@@ -13,6 +13,7 @@ class LandtableProcessor:
 
     _context: bpy.types.Context
     _optimize: bool
+    _auto_normals: bool
     _ensure_static_order: bool
 
     _anim_all_weighted_meshes: bool
@@ -42,6 +43,7 @@ class LandtableProcessor:
             self,
             context: bpy.types.Context,
             optimize: bool,
+            auto_normals: bool,
             ensure_entry_order: bool,
             anim_all_weighted_meshes: bool,
             merge_anim_meshes: bool,
@@ -52,6 +54,7 @@ class LandtableProcessor:
 
         self._context = context
         self._optimize = optimize
+        self._auto_normals = auto_normals
         self._ensure_static_order = ensure_entry_order
 
         self._anim_all_weighted_meshes = anim_all_weighted_meshes
@@ -123,7 +126,8 @@ class LandtableProcessor:
         self._meshes = MeshProcessor.process_meshes(
             self._context,
             self._import_data.Attaches,
-            self._name)
+            self._name,
+            auto_normals=self._auto_normals)
 
     def _setup_object(self, landentry, index):
         from . import i_matrix
@@ -187,6 +191,7 @@ class LandtableProcessor:
             motion.NodeMotion.Label,
             node_lut,
             motion.Model.Child is not None or motion.Model.Next is not None,
+            self._auto_normals,
             self._anim_all_weighted_meshes,
             self._merge_anim_meshes,
             self._ensure_anim_order
@@ -254,6 +259,7 @@ class LandtableProcessor:
             import_data,
             name: str,
             optimize: bool,
+            auto_normals: bool,
             ensure_entry_order: bool,
             anim_all_weighted_meshes: bool,
             merge_anim_meshes: bool,
@@ -265,6 +271,7 @@ class LandtableProcessor:
         processor = LandtableProcessor(
             context,
             optimize,
+            auto_normals,
             ensure_entry_order,
             anim_all_weighted_meshes,
             merge_anim_meshes,

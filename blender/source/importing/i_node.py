@@ -29,6 +29,7 @@ class NodeProcessor:
             context: bpy.types.Context,
             collection: bpy.types.Collection,
             ensure_order: bool,
+            auto_normals: bool,
             all_weighted_meshes: bool,
             merge_meshes: bool,
             node_name_lut: dict[str, str] | None = None):
@@ -38,7 +39,7 @@ class NodeProcessor:
         self._ensure_order = ensure_order
         self._all_weighted_meshes = all_weighted_meshes
         self._merge_meshes = merge_meshes
-        self._mesh_processor = i_mesh.MeshProcessor()
+        self._mesh_processor = i_mesh.MeshProcessor(auto_normals)
 
         self.object_map = {}
         self.meshes = []
@@ -422,6 +423,7 @@ class NodeProcessor:
             mat_name: str | None = None,
             node_name_lut: dict[str, str] | None = None,
             force_armature: bool = False,
+            auto_normals: bool = True,
             all_weighted_meshes: bool = False,
             merge_meshes: bool = False,
             ensure_order: bool = True):
@@ -430,6 +432,7 @@ class NodeProcessor:
             context,
             collection,
             ensure_order,
+            auto_normals,
             all_weighted_meshes,
             merge_meshes,
             node_name_lut

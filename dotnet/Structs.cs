@@ -106,7 +106,7 @@ namespace SAIO.NET
 
         public readonly WeightedMesh ToWeightedBuffer(bool writeSpecular)
         {
-            WeightedMesh wba = WeightedMesh.Create(Vertices, Corners, Materials, HasVertexColors);
+            WeightedMesh wba = WeightedMesh.Create(Vertices, Corners, Materials, HasVertexColors, true);
 
             wba.Label = Label;
             wba.RootIndices.Add(RootNodeIndex);

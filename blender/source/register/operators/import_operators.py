@@ -34,6 +34,16 @@ class ModelImportOperator(SAIOBaseFileLoadOperator):
         default=False
     )
 
+    auto_normals: BoolProperty(
+        name="Auto normals for color-only meshes",
+        description=(
+            "SA2/SA2B models only have either vertex colors or vertex normals."
+            " If a mesh has no vertex colors, use blenders default automatic"
+            " normals, instead of importing the straight-up-facing normals."
+        ),
+        default=True
+    )
+
     all_weighted_meshes: BoolProperty(
         name="All weighted meshes",
         description=(
@@ -79,6 +89,7 @@ class ModelImportOperator(SAIOBaseFileLoadOperator):
         if body:
             body.prop(self, "scene_per_file")
             body.prop(self, "optimize")
+            body.prop(self, "auto_normals")
             body.prop(self, "all_weighted_meshes")
             body.prop(self, "merge_meshes")
             body.prop(self, "ensure_order")
@@ -146,6 +157,7 @@ class SAIO_OT_Import_Model(ModelImportOperator):
                 None,
                 None,
                 self.import_as_armature,
+                self.auto_normals,
                 self.all_weighted_meshes,
                 self.merge_meshes,
                 self.ensure_order
@@ -253,6 +265,7 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
         if body:
             body.prop(self, "scene_per_file")
             body.prop(self, "optimize")
+            body.prop(self, "auto_normals")
             body.prop(self, "fix_view")
             body.prop(self, "ensure_static_order")
 
@@ -314,6 +327,7 @@ class SAIO_OT_Import_Landtable(ModelImportOperator):
                 import_data,
                 file.name,
                 self.optimize,
+                self.auto_normals,
                 self.ensure_static_order,
                 self.all_weighted_meshes,
                 self.merge_meshes,
@@ -342,6 +356,16 @@ class SAIO_OT_Import_Event(SAIOBaseFileLoadOperator):
         default=True
     )
 
+    auto_normals: BoolProperty(
+        name="Auto normals for color-only meshes",
+        description=(
+            "SA2/SA2B models only have either vertex colors or vertex normals."
+            " If a mesh has no vertex colors, use blenders default automatic"
+            " normals, instead of importing the straight-up-facing normals."
+        ),
+        default=True
+    )
+
     @classmethod
     def poll(cls, context: Context):
         return context.mode == 'OBJECT'
@@ -358,6 +382,7 @@ class SAIO_OT_Import_Event(SAIOBaseFileLoadOperator):
 
         if body:
             body.prop(self, "optimize")
+            body.prop(self, "auto_normals")
 
         return body
 
@@ -375,6 +400,6 @@ class SAIO_OT_Import_Event(SAIOBaseFileLoadOperator):
         name = path.basename(path.splitext(self.filepath)[0])
 
         from ...importing import i_event
-        importer = i_event.EventImporter(context, name, self.optimize)
+        importer = i_event.EventImporter(context, name, self.optimize, self.auto_normals)
         importer.process(import_data)
         return {'FINISHED'}
