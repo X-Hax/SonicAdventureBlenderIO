@@ -280,6 +280,7 @@ class LandtableEvaluator:
 
             filepath,
             self._optimize,
+            True, # write specular
             self._fallback_surface_attributes,
             self._auto_node_attribute_mode,
             self._anim_parameters.ensure_positive_euler_angles,
