@@ -1,6 +1,7 @@
 ﻿using SA3D.Modeling.JSON;
 using SA3D.Modeling.Mesh;
 using SA3D.Modeling.ObjectData;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -43,7 +44,7 @@ namespace SAIO.NET
             return JsonSerializer.Deserialize<DebugModel>(File.ReadAllText(filename), options);
         }
 
-        public Node ToNodeStructure()
+        public Node ToNodeStructure(List<int[]?>? vertexMappingOutput)
         {
             return Model.ToNodeStructure(
                 Nodes,
@@ -52,7 +53,8 @@ namespace SAIO.NET
                 Optimize,
                 WriteSpecular,
                 AutoNodeAttributeMode,
-                FlipVertexColorChannels);
+                FlipVertexColorChannels,
+                vertexMappingOutput);
         }
     }
 }

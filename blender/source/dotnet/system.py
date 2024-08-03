@@ -7,6 +7,9 @@ class System:
     INT16: any = None
     '''struct System.Int16'''
 
+    INT32: any = None
+    '''struct System.Int32'''
+
     UINT32: any = None
     '''struct System.UInt32'''
 
@@ -21,6 +24,9 @@ class System:
 
     ARRAY: any = None
     '''class System.Array'''
+
+    LIST: any = None
+    '''class System.Collections.Generic.List<TValue>'''
 
     DICTIONARY: any = None
     '''class System.Collections.Generic.Dictionary<TKey, TValue>'''
@@ -37,6 +43,7 @@ class System:
         from System import (  # pylint: disable=import-error
             ValueTuple,
             Int16,
+            Int32,
             UInt32,
             Array
         )
@@ -48,17 +55,19 @@ class System:
         )
 
         from System.Collections.Generic import SortedDictionary  # pylint: disable=import-error
-        from System.Collections.Generic import Dictionary  # pylint: disable=import-error
+        from System.Collections.Generic import List, Dictionary  # pylint: disable=import-error
 
         from System.IO import File  # pylint: disable=import-error
 
         cls.VALUE_TUPLE = ValueTuple
         cls.INT16 = Int16
+        cls.INT32 = Int32
         cls.UINT32 = UInt32
         cls.VECTOR3 = Vector3
         cls.VECTOR2 = Vector2
         cls.MATRIX4X4 = Matrix4x4
         cls.ARRAY = Array
+        cls.LIST = List
         cls.DICTIONARY = Dictionary
         cls.SORTED_DICTIONARY = SortedDictionary
         cls.FILE = File
@@ -67,11 +76,13 @@ class System:
     def unload(cls):
         cls.VALUE_TUPLE = None
         cls.INT16 = None
+        cls.INT32 = None
         cls.UINT32 = None
         cls.VECTOR3 = None
         cls.VECTOR2 = None
         cls.MATRIX4X4 = None
         cls.ARRAY = None
+        cls.LIST = None
         cls.DICTIONARY = None
         cls.SORTED_DICTIONARY = None
         cls.File = None

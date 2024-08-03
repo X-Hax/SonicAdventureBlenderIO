@@ -6,6 +6,7 @@ using SA3D.Modeling.ObjectData;
 using SA3D.Modeling.ObjectData.Enums;
 using SA3D.Modeling.Structs;
 using SA3D.Texturing.Texname;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -38,7 +39,8 @@ namespace SAIO.NET
             bool optimize,
             bool writeSpecular,
             AutoNodeAttributeMode autoNodeAttributeMode,
-            bool flipVertexColorChannels)
+            bool flipVertexColorChannels,
+            List<int[]?>? vertexMappingOutput)
         {
             if(nodes.Length == 0)
             {
@@ -109,9 +111,9 @@ namespace SAIO.NET
                 meshes[i] = mesh;
             }
 
-
-            WeightedMesh.ToModel(root, meshes, format, optimize);
-
+            WeightedMesh.ToModel(root, meshes, format, optimize, out int[]?[] vertexMapping);    
+            vertexMappingOutput?.AddRange(vertexMapping);
+            
             if(autoNodeAttributeMode != AutoNodeAttributeMode.None)
             {
                 foreach(Node node in objNodes)

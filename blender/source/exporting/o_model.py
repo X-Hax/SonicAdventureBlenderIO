@@ -3,7 +3,7 @@ import bpy
 from . import o_node, o_enum
 from .o_mesh import ModelMesh
 
-from ..dotnet import SAIO_NET
+from ..dotnet import SAIO_NET, System
 
 
 class ModelData:
@@ -125,6 +125,7 @@ class ModelEvaluator:
             convert)
 
     def _convert_structures(self):
+        vertex_mapping = System.LIST[System.ARRAY[System.INT32]]()
         self._output.outdata = SAIO_NET.MODEL.ToNodeStructure(
             self._output.node_data.nodes,
             self._output.mesh_structs,
@@ -132,7 +133,12 @@ class ModelEvaluator:
             self._optimize,
             True,
             self._auto_node_attribute_mode,
-            self._flip_vertex_color_channels)
+            self._flip_vertex_color_channels,
+            vertex_mapping)
+
+        for map, modelmesh in zip(vertex_mapping, self._output.meshes.values()):
+            if map is not None:
+                modelmesh.vertex_mapping = list(map)
 
     def save_debug(self, filepath: str):
         SAIO_NET.DEBUG_MODEL(

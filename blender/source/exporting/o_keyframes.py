@@ -191,7 +191,8 @@ class KeyframeEvaluator:
                 previous_euler.order
             )
 
-            mtx = base_rotation @ (self._rotation_matrix @ compl_euler.to_matrix().to_4x4())
+            mtx = base_rotation @ (self._rotation_matrix @
+                                   compl_euler.to_matrix().to_4x4())
             net_mtx = o_matrix.bpy_to_net_matrix(mtx)
 
             result.append(net_mtx)
@@ -348,7 +349,8 @@ class KeyframeEvaluator:
         self._optimize_keyframes()
 
         if self._anim_parameters.ensure_positive_euler_angles:
-            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.EnsurePositiveEulerRotationAngles(self._output, True)
+            SA3D_Modeling.KEYFRAME_ROTATION_UTILS.EnsurePositiveEulerRotationAngles(
+                self._output, True)
 
         return self._output
 
@@ -565,6 +567,74 @@ class ShapeKeyframeEvaluator:
 
         return frames
 
+    def _create_vertex_array(
+            self,
+            shape_name: str,
+            mesh: bpy.types.Mesh,
+            matrix: Matrix, ):
+
+        def get_position(vertex):
+            position = matrix @ vertex.co
+            return System.VECTOR3(
+                position.x,
+                position.z,
+                -position.y,
+            )
+
+        if self._modelmesh.vertex_mapping is not None:
+            shape_positions = [
+                get_position(mesh.vertices[vertex_index])
+                for vertex_index in self._modelmesh.vertex_mapping]
+        else:
+            shape_positions = [get_position(vertex)
+                               for vertex in mesh.vertices]
+
+        return SA3D_Common.LABELED_ARRAY[System.VECTOR3](
+            shape_name.lower(), shape_positions)
+
+    def _create_normal_array(
+            self,
+            shape_name: str,
+            mesh: bpy.types.Mesh,
+            matrix: Matrix):
+
+        if self._normal_mode not in ['NULLED', 'FULL']:
+            return None
+
+        if self._normal_mode == 'NULLED':
+            shape_normals = [System.VECTOR3(0, 0, 0)]
+        else:  # 'FULL'
+            normals = ModelMesh.get_normals(mesh)
+
+            def get_normal(normal):
+                normal = matrix @ normal
+                return System.VECTOR3(
+                    normal.x,
+                    normal.z,
+                    -normal.y,
+                )
+
+            if self._modelmesh.vertex_mapping is not None:
+                shape_normals = [
+                    get_normal(normals[vertex_index])
+                    for vertex_index in self._modelmesh.vertex_mapping]
+            else:
+                shape_normals = [get_normal(normal) for normal in normals]
+
+        normal_name = (
+            shape_name
+            .lower()
+            .replace("vtx", "nrm")
+            .replace("vertex", "normal")
+            .replace("vert", "norm")
+        )
+
+        if normal_name == shape_name.lower():
+            normal_name += "_normal"
+
+        return SA3D_Common.LABELED_ARRAY[System.VECTOR3](
+            normal_name, shape_normals)
+
     def _create_keyframes(self):
 
         keyframes = SA3D_Modeling.KEYFRAMES()
@@ -577,51 +647,20 @@ class ShapeKeyframeEvaluator:
                 shape_name = ref_name
 
             if shape_name not in self._shape_dict:
-                shape_positions = []
                 shape_mesh = self._modelmesh.get_shape_model(
                     shape_name, self._depsgraph)
 
-                for vertex in shape_mesh.vertices:
-                    position = vertex_matrix @ vertex.co
-                    shape_positions.append(System.VECTOR3(
-                        position.x,
-                        position.z,
-                        -position.y,
-                    ))
+                vertex_array = self._create_vertex_array(
+                    shape_name,
+                    shape_mesh,
+                    vertex_matrix
+                )
 
-                vertex_array = SA3D_Common.LABELED_ARRAY[System.VECTOR3](
-                    shape_name.lower(), shape_positions)
-
-                if self._normal_mode not in ['NULLED', 'FULL']:
-                    normal_array = None
-                else:
-
-                    if self._normal_mode == 'NULLED':
-                        shape_normals = [System.VECTOR3(0, 0, 0)]
-                    else:  # 'FULL'
-                        shape_normals = []
-                        normals = ModelMesh.get_normals(shape_mesh)
-                        for normal in normals:
-                            normal = normal_matrix @ normal
-                            shape_normals.append(System.VECTOR3(
-                                normal.x,
-                                normal.z,
-                                -normal.y,
-                            ))
-
-                    normal_name = (
-                        shape_name
-                        .lower()
-                        .replace("vtx", "nrm")
-                        .replace("vertex", "normal")
-                        .replace("vert", "norm")
-                    )
-
-                    if normal_name == vertex_array.Label:
-                        normal_name += "_normal"
-
-                    normal_array = SA3D_Common.LABELED_ARRAY[System.VECTOR3](
-                        normal_name, shape_normals)
+                normal_array = self._create_normal_array(
+                    shape_name,
+                    shape_mesh,
+                    normal_matrix
+                )
 
                 self._shape_dict[shape_name] = (vertex_array, normal_array)
             else:
