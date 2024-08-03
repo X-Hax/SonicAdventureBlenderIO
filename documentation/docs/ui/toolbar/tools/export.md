@@ -11,13 +11,17 @@ Several tools for exporting data to files.
 
 Common parameters between the model exporters:
 
-- `Select Mode`: Determines which objects to target.
-	- `All`: All objects in the current scene will be exported.
-	- `Visible`: Only the visible object will be exported.
-	- `Selected`: Only the selected objects will be exported.
+- `Limit to`: Filters out objects that don't meet the selected conditions:
+	- `Visible Objects`: Invisible objects will be ignored.
+	- `Selected Objects`: Objects that are not selected will be ignored.
+	- `Active Collection`: Exports only objects within the active collection.
+	- `Active Scene`: Exports only objects within the active scene (ignored when using `Active Collection`).
 - `Optimize`: Optimize vertex data and get rid of any duplicate.
 	<br/>**WARNING:** This may alter vertex order! Do not use for things that morph, like chao models or chao trees.
-- `Automatic Node attributes`: Automatically determines several node attributes on export. [More info here](../../object/node.md).
+- `Automatic Node attribute mode`: Automatically determines several node attributes on export. [More info here](../../object/node.md).
+	- `None`: Will not automatically evaluate node attributes
+	- `Missing`: Will automatically evaluate node attributes and "add" those to the existing ones
+	- `Override`: Will automatically evaluate node attributes and ignore the previously set ones.
 - `Ensure positive euler angles`: Ensures that all nodes are exported with positive euler angles; E.g. -90° becomes 270°.
 - `Automatic Root`: If the exported objects dont share a common root, a root parent will be created between them.
 - `Force Sort Bones`: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.

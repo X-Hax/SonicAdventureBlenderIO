@@ -12,6 +12,7 @@ Imports *.*mdl files.
 
 - `Scene per File`: When importing multiple model files, every model will be put into its own scene.
 - `Optimize`: If enabled, the addon will attempt and remove any duplicate vertices.
+- `Auto normals for color-ony meshes`: If enabled, will ignore the single-directional normals provided by the addon for models that do not have actual normal data, and instead use flat shading.
 - `Import as Armature`: Will import the model regardless of whether it is weighted or not.
 - `All weighted meshes`: Meshes that would usually be parented to a bone will instead receive weights for that specific bone and receive an armature modifier.
 - `Merge Meshes`: Merges all meshes to one for imported armatures.
@@ -25,6 +26,7 @@ Imports *.*lvl files and changes the scene to a landtable scene.
 
 - `Scene per File`: When importing multiple level files, every level will be put into its own scene.
 - `Optimize`: If enabled, the addon will attempt and remove any duplicate vertices.
+- `Auto normals for color-ony meshes`: If enabled, will ignore the single-directional normals provided by the addon for models that do not have actual normal data, and instead use flat shading.
 - `Adjust clip distance`: Changes the 3D view clip distance to make viewing the geometry easier.
 - `Ensure landentry order`: Will add a four-digit prefix to all land entry names ("0001_", "0002_", etc.).
 
@@ -36,6 +38,7 @@ Parameters found under the "Animation" tab apply to animated geometry. See [Anim
 Import main sa2 event files.
 
 - `Optimize`: If enabled, the addon will attempt and remove any duplicate vertices.
+- `Auto normals for color-ony meshes`: If enabled, will ignore the single-directional normals provided by the addon for models that do not have actual normal data, and instead use flat shading.
 
 ---
 
