@@ -27,7 +27,6 @@ Common parameters between the model exporters:
 - `Force Sort Bones`: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.
 - `Developer Output: Debug Output`: Exports a .json file containing the processable mesh data that would be passed to the external library. **Only for debugging purposes, do not touch unless a developer**
 
-- `Write Specular`: (**SA2 Only**) Include specular colors in material info.
 - `Flip Vertex colors`: (**SA2 Only**) Flips the channel order of vertex colors (BGRA <-> ARGB). Used on chao garden models like trees.
 
 ### Export \*MDL
