@@ -181,15 +181,21 @@
 <h2 id="3d-model-exporters">3D model exporters<a class="headerlink" href="#3d-model-exporters" title="Permanent link">🔗&#xFE0E;</a></h2>
 <p>Common parameters between the model exporters:</p>
 <ul>
-<li><code>Select Mode</code>: Determines which objects to target.<ul>
-<li><code>All</code>: All objects in the current scene will be exported.</li>
-<li><code>Visible</code>: Only the visible object will be exported.</li>
-<li><code>Selected</code>: Only the selected objects will be exported.</li>
+<li><code>Limit to</code>: Filters out objects that don't meet the selected conditions:<ul>
+<li><code>Visible Objects</code>: Invisible objects will be ignored.</li>
+<li><code>Selected Objects</code>: Objects that are not selected will be ignored.</li>
+<li><code>Active Collection</code>: Exports only objects within the active collection.</li>
+<li><code>Active Scene</code>: Exports only objects within the active scene (ignored when using <code>Active Collection</code>).</li>
 </ul>
 </li>
 <li><code>Optimize</code>: Optimize vertex data and get rid of any duplicate.
     <br/><strong>WARNING:</strong> This may alter vertex order! Do not use for things that morph, like chao models or chao trees.</li>
-<li><code>Automatic Node attributes</code>: Automatically determines several node attributes on export. <a href="../../../object/node/">More info here</a>.</li>
+<li><code>Automatic Node attribute mode</code>: Automatically determines several node attributes on export. <a href="../../../object/node/">More info here</a>.<ul>
+<li><code>None</code>: Will not automatically evaluate node attributes</li>
+<li><code>Missing</code>: Will automatically evaluate node attributes and "add" those to the existing ones</li>
+<li><code>Override</code>: Will automatically evaluate node attributes and ignore the previously set ones.</li>
+</ul>
+</li>
 <li><code>Ensure positive euler angles</code>: Ensures that all nodes are exported with positive euler angles; E.g. -90° becomes 270°.</li>
 <li><code>Automatic Root</code>: If the exported objects dont share a common root, a root parent will be created between them.</li>
 <li><code>Force Sort Bones</code>: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.</li>
@@ -197,9 +203,8 @@
 <p><code>Developer Output: Debug Output</code>: Exports a .json file containing the processable mesh data that would be passed to the external library. <strong>Only for debugging purposes, do not touch unless a developer</strong></p>
 </li>
 <li>
-<p><code>Write Specular</code>: (<strong>SA2 Only</strong>) Include specular colors in material info.</p>
+<p><code>Flip Vertex colors</code>: (<strong>SA2 Only</strong>) Flips the channel order of vertex colors (BGRA &lt;-&gt; ARGB). Used on chao garden models like trees.</p>
 </li>
-<li><code>Flip Vertex colors</code>: (<strong>SA2 Only</strong>) Flips the channel order of vertex colors (BGRA &lt;-&gt; ARGB). Used on chao garden models like trees.</li>
 </ul>
 <h3 id="export-mdl">Export *MDL<a class="headerlink" href="#export-mdl" title="Permanent link">🔗&#xFE0E;</a></h3>
 <p>Exports the targeted objects as a model (<em>.</em>mdl) file.</p>

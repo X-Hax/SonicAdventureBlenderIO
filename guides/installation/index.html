@@ -46,13 +46,15 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Installation</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#installing-net-7">Installing .NET 7</a>
+    <li class="toctree-l2"><a class="reference internal" href="#installing-net-8">Installing .NET 8</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#installing-the-sonic-adventure-toolset">Installing the Sonic Adventure Toolset</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#installing-blender">Installing Blender</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#installing-the-addon">Installing the Addon</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#update-the-addon">Update the addon</a>
     </li>
     </ul>
                   </li>
@@ -181,18 +183,18 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="installing-sonic-adventure-io">Installing Sonic Adventure I/O<a class="headerlink" href="#installing-sonic-adventure-io" title="Permanent link">🔗&#xFE0E;</a></h1>
-<p>Installing SAIO is not as straightforward as most other addons. It requires <strong>.NET 7</strong> to be installed, as the addon relies on <strong>C# Libraries</strong> to boost performance and reduce on the amount of code needed to manage. You will have to ensure that you have the <strong>.NET 7 Runtime</strong> installed before being able to use the addon to its fullest.</p>
+<p>Installing SAIO is not as straightforward as most other addons. It requires <strong>.NET 8</strong> to be installed, as the addon relies on <strong>C# Libraries</strong> to boost performance and reduce on the amount of code needed to manage. You will have to ensure that you have the <strong>.NET 8 Runtime</strong> installed before being able to use the addon to its fullest.</p>
 <p>It's also worth installing <strong>SATools</strong> to be able to obtain and make use of the files that the addon supports.</p>
-<h2 id="installing-net-7">Installing .NET 7<a class="headerlink" href="#installing-net-7" title="Permanent link">🔗&#xFE0E;</a></h2>
-<p>If you are unsure of whether your machine already has .NET 7 installed, you can check by opening the console and running <code>dotnet --list-runtimes</code>.
+<h2 id="installing-net-8">Installing .NET 8<a class="headerlink" href="#installing-net-8" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>If you are unsure of whether your machine already has .NET 8 installed, you can check by opening the console and running <code>dotnet --list-runtimes</code>.
 <br/> The output should look similar to this:</p>
-<p><img alt="Screenshot of a windows commandline interface showing the installed dotnet runtimes." src="../../img/installing_dotnet7.png" /></p>
-<p>Notice the line marked in green, <code>Microsoft.NETCore.App 7.X.X</code>. if you find this among your installed runtimes, you have all you need!</p>
+<p><img alt="Screenshot of a windows commandline interface showing the installed dotnet runtimes." src="../../img/installing_dotnet8.png" /></p>
+<p>Notice the line marked in green, <code>Microsoft.NETCore.App 8.X.X</code>. if you find this among your installed runtimes, you have all you need!</p>
 <hr />
 <p>If you don't have the needed runtime installed, head over to <a href="https://dotnet.microsoft.com/en-us/download">the download page</a> and install the runtime.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The website recommends downloading the <strong>SDK</strong> - the <strong>software development kit</strong>. Unless you are a developer, <strong>you may only want the runtime</strong>. You can head over to <a href="https://dotnet.microsoft.com/en-us/download/dotnet/7.0">"All .NET 7.0 downloads"</a> and download the Desktop runtime from further below, saving space on your machines storage.</p>
+<p>The website recommends downloading the <strong>SDK</strong> - the <strong>software development kit</strong>. Unless you are a developer, <strong>you may only want the runtime</strong>. You can head over to <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0">"All .NET 8.0 downloads"</a> and download the Desktop runtime from further below, saving space on your machines storage.</p>
 </div>
 <h2 id="installing-the-sonic-adventure-toolset">Installing the Sonic Adventure Toolset<a class="headerlink" href="#installing-the-sonic-adventure-toolset" title="Permanent link">🔗&#xFE0E;</a></h2>
 <p>The newest release of SATools can always be downloaded here:</p>
@@ -204,19 +206,33 @@
 It can also update itself, so you will not need to re-download it in the future. Just unpack and store it somewhere where you will find it again.</p>
 <p>For more information on the toolset, visit <a href="https://github.com/X-Hax/sa_tools/wiki">the wiki</a>.</p>
 <h2 id="installing-blender">Installing Blender<a class="headerlink" href="#installing-blender" title="Permanent link">🔗&#xFE0E;</a></h2>
-<p>The Addon is only supported on versions of <a href="https://blender.org">Blender</a> 3.6 and above.
+<p>The Addon is only supported on versions of <a href="https://blender.org">Blender</a> 4.2 and above.
 <br/> A recommendation is to get Blender through <a href="https://store.steampowered.com/app/365670"><strong>Steam</strong></a>. This will ensure you're always on the latest release version.</p>
 <h2 id="installing-the-addon">Installing the Addon<a class="headerlink" href="#installing-the-addon" title="Permanent link">🔗&#xFE0E;</a></h2>
+<p>The addon utilizes the blender extension system, yet, due to various reasons, we cannot host the addon on the official blender extension repository.
+That is why we have set up our own repository under <code>https://Justin113D.com/blender/saio/</code>, which will always host the newest release of the addon.</p>
+<p>To set up the repository and download the addon, follow these steps:</p>
 <ol>
-<li>Download the <a href="https://github.com/X-Hax/SonicAdventureBlenderIO/releases/">latest release</a>. Please make sure to download the <code>SonicAdventureBlenderIO.zip</code> asset in the release.</li>
-<li>Run your version of <strong>Blender</strong></li>
-<li>Open the <strong>preferences</strong> and go to the <strong>Add-ons</strong> section</li>
-<li>Press "<strong>Install...</strong>" in the top right</li>
-<li>Navigate to the download folder (or wherever you have stored the downloaded .zip file)</li>
-<li><strong>Select the .zip file</strong> and press enter.</li>
+<li>Open blender</li>
+<li>Open the preferences and open the <code>Get Extensions</code> tab</li>
+<li>Expand <code>Repositories</code> on the top right</li>
+<li>Click the <code>+</code> on the top right and select <code>Add remote Repository</code></li>
+<li>Enter <code>https://justin113d.com/blender/saio/index.json</code> for the URL and check <code>Check for Updates on Startup</code></li>
+<li>Confirm</li>
+<li>Rename the newly added list entry from <code>Justin113D.com</code> to <code>Sonic Adventure I/O</code></li>
+<li>Select the list entry and change the module from <code>justin113d_com</code> to <code>saio</code></li>
+<li>Press the 🔄 button in the top right to refresh the module</li>
+<li>Search for <code>sonic</code> in the search bar and install the addon</li>
 </ol>
 <p>Congratulations! You have successfully installed the add-on!</p>
-<p>The addon features an automatic updater built right into it. If there is an update, the addon will notify you when checking the preferences tab or when hovering over the Addon Info panel in the Viewport panels. The updater code can be found <a href="https://github.com/CGCookie/blender-addon-updater">here</a>. Major thank you to CGCookie for developing this easy to integrate updater under the GPL 3.0 License.</p>
+<h2 id="update-the-addon">Update the addon<a class="headerlink" href="#update-the-addon" title="Permanent link">🔗&#xFE0E;</a></h2>
+<ol>
+<li>Repeat steps 1-3 from installation</li>
+<li>Click  the <code>V</code> button in the top right</li>
+<li>Click the 🔄 button</li>
+<li>Search for the installed addon in your list</li>
+<li>Click its "update" button</li>
+</ol>
               
             </div>
           </div><footer>
