@@ -3,7 +3,7 @@ import bpy
 from . import o_node, o_enum
 from .o_mesh import ModelMesh
 
-from ..dotnet import SAIO_NET
+from ..dotnet import SAIO_NET, System
 
 
 class ModelData:
@@ -71,10 +71,9 @@ class ModelEvaluator:
     _attach_format: str
     _auto_root: bool
     _optimize: bool
-    _write_specular: bool
     _apply_modifs: bool
     _apply_pose: bool
-    _automatic_node_attributes: bool
+    _auto_node_attribute_mode: any
     _force_sort_bones: bool
     _flip_vertex_color_channels: bool
     _node_evaluator: o_node.NodeEvaluator
@@ -87,10 +86,9 @@ class ModelEvaluator:
             attach_format: str,
             auto_root: bool = True,
             optimize: bool = True,
-            write_specular: bool = True,
             apply_modifs: bool = True,
             apply_pose: bool = False,
-            automatic_node_attributes: bool = True,
+            auto_node_attribute_mode: any = 'MISSING',
             force_sort_bones: bool = False,
             flip_vertex_color_channels: bool = False):
 
@@ -98,10 +96,14 @@ class ModelEvaluator:
         self._attach_format = attach_format
         self._auto_root = auto_root
         self._optimize = optimize
-        self._write_specular = write_specular
         self._apply_modifs = apply_modifs
         self._apply_pose = apply_pose
-        self._automatic_node_attributes = automatic_node_attributes
+
+        if isinstance(auto_node_attribute_mode, str):
+            self._auto_node_attribute_mode = o_enum.to_auto_node_attribute_mode(auto_node_attribute_mode)
+        else:
+            self._auto_node_attribute_mode = auto_node_attribute_mode
+
         self._flip_vertex_color_channels = flip_vertex_color_channels
         self._node_evaluator = o_node.NodeEvaluator(
             context, self._auto_root, True, apply_pose, force_sort_bones)
@@ -123,14 +125,20 @@ class ModelEvaluator:
             convert)
 
     def _convert_structures(self):
+        vertex_mapping = System.LIST[System.ARRAY[System.INT32]]()
         self._output.outdata = SAIO_NET.MODEL.ToNodeStructure(
             self._output.node_data.nodes,
             self._output.mesh_structs,
             self._output.attach_format,
             self._optimize,
-            self._write_specular,
-            self._automatic_node_attributes,
-            self._flip_vertex_color_channels)
+            True,
+            self._auto_node_attribute_mode,
+            self._flip_vertex_color_channels,
+            vertex_mapping)
+
+        for map, modelmesh in zip(vertex_mapping, self._output.meshes.values()):
+            if map is not None:
+                modelmesh.vertex_mapping = list(map)
 
     def save_debug(self, filepath: str):
         SAIO_NET.DEBUG_MODEL(
@@ -138,8 +146,8 @@ class ModelEvaluator:
             self._output.mesh_structs,
             self._output.attach_format,
             self._optimize,
-            self._write_specular,
-            self._automatic_node_attributes,
+            True,
+            self._auto_node_attribute_mode,
             self._flip_vertex_color_channels
         ).ToFile(filepath)
 

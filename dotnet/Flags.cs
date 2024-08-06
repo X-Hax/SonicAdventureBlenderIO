@@ -1,5 +1,4 @@
 ﻿using SA3D.SA2Event.Model;
-using SA3D.Modeling.Mesh.Buffer;
 using SA3D.Modeling.ObjectData.Enums;
 using System;
 using System.Collections.Generic;

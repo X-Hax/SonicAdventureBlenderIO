@@ -1,6 +1,7 @@
 ﻿using SA3D.Modeling.JSON;
 using SA3D.Modeling.Mesh;
 using SA3D.Modeling.ObjectData;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -13,17 +14,17 @@ namespace SAIO.NET
         public AttachFormat Format { get; set; }
         public bool Optimize { get; set; }
         public bool WriteSpecular { get; set; }
-        public bool AutoNodeAttributes { get; set; }
+        public AutoNodeAttributeMode AutoNodeAttributeMode { get; set; }
         public bool FlipVertexColorChannels { get; set; }
 
-        public DebugModel(NodeStruct[] nodes, MeshStruct[] weightedAttaches, AttachFormat format, bool optimize, bool writeSpecular, bool autoNodeAttributes, bool flipVertexColorChannels)
+        public DebugModel(NodeStruct[] nodes, MeshStruct[] weightedAttaches, AttachFormat format, bool optimize, bool writeSpecular, AutoNodeAttributeMode autoNodeAttributeMode, bool flipVertexColorChannels)
         {
             Nodes = nodes;
             WeightedAttaches = weightedAttaches;
             Format = format;
             Optimize = optimize;
             WriteSpecular = writeSpecular;
-            AutoNodeAttributes = autoNodeAttributes;
+            AutoNodeAttributeMode = autoNodeAttributeMode;
             FlipVertexColorChannels = flipVertexColorChannels;
         }
 
@@ -43,7 +44,7 @@ namespace SAIO.NET
             return JsonSerializer.Deserialize<DebugModel>(File.ReadAllText(filename), options);
         }
 
-        public Node ToNodeStructure()
+        public Node ToNodeStructure(List<int[]?>? vertexMappingOutput)
         {
             return Model.ToNodeStructure(
                 Nodes,
@@ -51,8 +52,9 @@ namespace SAIO.NET
                 Format,
                 Optimize,
                 WriteSpecular,
-                AutoNodeAttributes,
-                FlipVertexColorChannels);
+                AutoNodeAttributeMode,
+                FlipVertexColorChannels,
+                vertexMappingOutput);
         }
     }
 }

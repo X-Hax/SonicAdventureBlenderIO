@@ -4,6 +4,9 @@ class SAIO_NET:
     FLAGS: any = None
     '''class SAIO.NET.Flags'''
 
+    AUTO_NODE_ATTRIBUTES: any = None
+    '''enum SAIO.NET.AutoNodeAttributeMode'''
+
     CUTSCENE: any = None
     '''class SAIO.NET.Cutscene'''
 
@@ -42,6 +45,7 @@ class SAIO_NET:
 
         from SAIO.NET import (  # pylint: disable=import-error
             Flags,
+            AutoNodeAttributeMode,
             Cutscene,
             LandEntryStruct,
             LandTableWrapper,
@@ -56,6 +60,7 @@ class SAIO_NET:
         )
 
         cls.FLAGS = Flags
+        cls.AUTO_NODE_ATTRIBUTES = AutoNodeAttributeMode
         cls.CUTSCENE = Cutscene
         cls.LAND_ENTRY_STRUCT = LandEntryStruct
         cls.LANDTABLE_WRAPPER = LandTableWrapper
@@ -71,6 +76,7 @@ class SAIO_NET:
     @classmethod
     def unload(cls):
         cls.FLAGS = None
+        cls.AUTO_NODE_ATTRIBUTES = None
         cls.CUTSCENE = None
         cls.LAND_ENTRY_STRUCT = None
         cls.LANDTABLE_WRAPPER = None

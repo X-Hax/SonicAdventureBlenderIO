@@ -21,12 +21,12 @@ namespace SAIO.NET
         public bool Optimize { get; set; }
         public bool WriteSpecular { get; set; }
         public bool FallbackSurfaceAttributes { get; set; }
-        public bool AutomaticNodeAttributes { get; set; }
+        public AutoNodeAttributeMode AutoNodeAttributeMode { get; set; }
         public bool EnsurePositiveEulerAngles { get; set; }
         public string Author { get; set; }
         public string Description { get; set; }
 
-        public DebugLevel(LandEntryStruct[] landentries, MeshStruct[] weightedAttaches, LandEntryMotion[] motions, ModelFormat format, string name, float drawDistance, string texFileName, uint texListPointer, string filepath, bool optimize, bool writeSpecular, bool fallbackSurfaceAttributes, bool automaticNodeAttributes, bool ensurePositiveEulerAngles, string author, string description)
+        public DebugLevel(LandEntryStruct[] landentries, MeshStruct[] weightedAttaches, LandEntryMotion[] motions, ModelFormat format, string name, float drawDistance, string texFileName, uint texListPointer, string filepath, bool optimize, bool writeSpecular, bool fallbackSurfaceAttributes, AutoNodeAttributeMode autoNodeAttributeMode, bool ensurePositiveEulerAngles, string author, string description)
         {
             Landentries = landentries;
             WeightedAttaches = weightedAttaches;
@@ -40,8 +40,8 @@ namespace SAIO.NET
             Optimize = optimize;
             WriteSpecular = writeSpecular;
             FallbackSurfaceAttributes = fallbackSurfaceAttributes;
-            AutomaticNodeAttributes = automaticNodeAttributes;
-            EnsurePositiveEulerAngles = EnsurePositiveEulerAngles;
+            AutoNodeAttributeMode = autoNodeAttributeMode;
+            EnsurePositiveEulerAngles = ensurePositiveEulerAngles;
             Author = author;
             Description = description;
         }
@@ -76,7 +76,7 @@ namespace SAIO.NET
                 Optimize,
                 WriteSpecular,
                 FallbackSurfaceAttributes,
-                AutomaticNodeAttributes,
+                AutoNodeAttributeMode,
                 EnsurePositiveEulerAngles);
         }
     }

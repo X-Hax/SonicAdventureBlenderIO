@@ -79,7 +79,7 @@ class EventExporter:
             context: bpy.types.Context,
             event_type: str,
             optimize: bool,
-            auto_node_attributes: bool,
+            auto_node_attribute_mode: str,
             anim_parameters: AnimParameters):
 
         self.context = context
@@ -110,10 +110,9 @@ class EventExporter:
                 'SA2' if chunk else 'SA2B',
                 False,
                 self.optimize,
-                False,
                 True,
                 False,
-                auto_node_attributes,
+                auto_node_attribute_mode,
                 False,
                 False
             )
@@ -392,10 +391,13 @@ class EventExporter:
                             "Bone name of overlay upgrade"
                             f" {name}-target{sub_index + 1} is empty!")
 
-                    bone = target.pose.bones[bone_name]
-                    targets[sub_index] = self.nodes[bone]
-                else:
-                    targets[sub_index] = self.nodes[target]
+                    target = target.pose.bones[bone_name]
+
+                if target not in self.nodes:
+                    found = False
+                    break
+
+                targets[sub_index] = self.nodes[target]
 
             if found:
                 root1 = target_objects[0]

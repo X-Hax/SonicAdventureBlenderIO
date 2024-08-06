@@ -5,7 +5,7 @@ from bpy.props import (
     EnumProperty,
     FloatProperty
 )
-from bpy.types import Context
+from bpy.types import Context, UILayout
 
 from .base_export_operators import (
     ExportModelOperator,
@@ -17,6 +17,10 @@ from ...dotnet import SA3D_Modeling
 
 
 class ExportMDLOperator(ExportModelOperator):
+
+    filename_ext = ".nj"
+    model_file_extension: str
+    flip_vertex_color_channels: bool = False
 
     apply_posing: BoolProperty(
         name="Apply Armature Posing",
@@ -31,9 +35,6 @@ class ExportMDLOperator(ExportModelOperator):
         description="Export as an NJ file",
         default=False
     )
-
-    filename_ext = ".nj"
-    model_file_extension: str
 
     @classmethod
     def poll(cls, context: Context):
@@ -58,21 +59,41 @@ class ExportMDLOperator(ExportModelOperator):
 
         return False
 
+    def draw_panel_general(self, layout: UILayout):
+        body = super().draw_panel_general(layout)
+
+        if body:
+            body.prop(self, "apply_posing")
+
+        return body
+
+    def draw_other(self, layout: UILayout, is_file_browser: bool):
+        self.draw_panel_encoding(layout)
+
+    def draw_panel_encoding(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_mdl_encoding", default_closed=True)
+        header.label(text="Encoding")
+
+        if body:
+            body.prop(self, "nj_file")
+
+        return body
+
     def export_models(self, context, objects):
         from ...exporting.o_model import ModelEvaluator
         from ...exporting.o_enum import to_model_format
 
         evaluator = ModelEvaluator(
             context,
-            self.format, # pylint: disable=no-member
+            self.format,  # pylint: disable=no-member
             self.auto_root,
             self.optimize,
-            self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.apply_posing,
-            self.auto_node_attributes,
+            self.auto_node_attribute_mode,
             self.force_sort_bones,
-            self.flip_vertex_color_channels) # pylint: disable=no-member
+            self.flip_vertex_color_channels)  # pylint: disable=no-member
 
         data = evaluator.evaluate(objects)
 
@@ -86,7 +107,8 @@ class ExportMDLOperator(ExportModelOperator):
         metadata.Author = context.scene.saio_scene.author
         metadata.Description = context.scene.saio_scene.description
 
-        model_format = to_model_format(self.format) # pylint: disable=no-member
+        model_format = to_model_format(
+            self.format)  # pylint: disable=no-member
 
         SA3D_Modeling.MODEL_FILE.WriteToFile(
             self.filepath,
@@ -94,7 +116,7 @@ class ExportMDLOperator(ExportModelOperator):
             self.nj_file,
             metadata,
             model_format
-            )
+        )
 
         return {'FINISHED'}
 
@@ -105,15 +127,12 @@ class SAIO_OT_Export_SA1MDL(ExportMDLOperator):
     bl_description = "Exports scene or selected items to an sa1mdl file."
 
     model_file_extension = ".sa1mdl"
+    format = "SA1"
 
     filter_glob: StringProperty(
         default="*.sa1mdl;*.nj;",
         options={'HIDDEN'},
     )
-
-    format = "SA1"
-    write_specular = True
-    flip_vertex_color_channels = False
 
 
 class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
@@ -122,18 +141,11 @@ class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
     bl_description = "Exports scene or selected items to an sa2mdl file."
 
     model_file_extension = ".sa2mdl"
+    format = "SA2"
 
     filter_glob: StringProperty(
         default="*.sa2mdl;*.nj;",
         options={'HIDDEN'},
-    )
-
-    format = "SA2"
-
-    write_specular: BoolProperty(
-        name="Write Specular",
-        description="Write specular info to materials",
-        default=False
     )
 
     flip_vertex_color_channels: BoolProperty(
@@ -142,6 +154,14 @@ class SAIO_OT_Export_SA2MDL(ExportMDLOperator):
         default=False
     )
 
+    def draw_panel_encoding(self, layout: UILayout):
+        body = super().draw_panel_encoding(layout)
+
+        if body:
+            body.prop(self, "flip_vertex_color_channels")
+
+        return body
+
 
 class SAIO_OT_Export_SA2BMDL(ExportMDLOperator):
     bl_idname = "saio.export_sa2bmdl"
@@ -149,15 +169,13 @@ class SAIO_OT_Export_SA2BMDL(ExportMDLOperator):
     bl_description = "Exports scene or selected items to an sa2bmdl file."
 
     model_file_extension = ".sa2bmdl"
+    format = "SA2B"
 
     filter_glob: StringProperty(
         default="*.sa2bmdl;*.nj;",
         options={'HIDDEN'},
     )
 
-    format = "SA2B"
-    write_specular = False
-    flip_vertex_color_channels = False
 
 ###############################################
 
@@ -174,17 +192,6 @@ class ExportLVLOperator(ExportModelOperator):
     )
 
     #######################################
-
-    show_animation: BoolProperty(
-        name="Animation",
-        default=False
-    )
-
-    show_advanced: BoolProperty(
-        name="Advanced",
-        default=False
-    )
-
 
     short_rot: BoolProperty(
         name="Use 16 bit rotations",
@@ -279,38 +286,50 @@ class ExportLVLOperator(ExportModelOperator):
 
     multi_export = True
 
-    def draw_insert(self):
-        return
+    def draw_other(self, layout: UILayout, is_file_browser: bool):
+        self.draw_panel_landtable(layout)
+        self.draw_panel_animation(layout)
 
-    def draw(self, context: bpy.types.Context):
-        layout = self.layout
+    def draw_panel_landtable(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_lvl_landtable", default_closed=True)
+        header.label(text="Landtable")
 
-        layout.prop(self, "select_mode")
-        layout.prop(self, "apply_modifs")
-        layout.prop(self, "optimize")
-        layout.prop(self, "auto_node_attributes")
-        layout.prop(self, "ensure_positive_euler_angles")
-        layout.prop(self, "debug_output")
+        if body:
+            body.prop(self, "fallback_surface_attributes")
 
-        layout.separator()
-        layout.prop(self, "fallback_surface_attributes")
-        self.draw_insert()
+        return body
 
-        header, box = layout.panel("saio_ot_lvle_animation", default_closed=True)
+    def draw_panel_animation(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_lvl_animation", default_closed=True)
         header.label(text="Animation")
-        if box:
-            box.prop(self, "auto_root")
-            box.prop(self, "force_sort_bones")
-            box.prop(self, "short_rot")
 
-            header2, box2 = box.panel("saio_ot_lvle_advanced", default_closed=True)
-            header2.label(text="Advanced")
-            if box2:
-                box2.prop(self, "rotation_mode")
-                box2.prop(self, "interpolation_threshold")
-                box2.prop(self, "quaternion_threshold")
-                box2.prop(self, "general_optimization_threshold")
-                box2.prop(self, "quaternion_optimization_threshold")
+        if body:
+            body.prop(self, "auto_root")
+            body.prop(self, "force_sort_bones")
+            body.prop(self, "short_rot")
+
+            self.draw_panel_advanced_animation(body)
+
+        return body
+
+    def draw_panel_advanced_animation(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_lvl_advanced_animation", default_closed=True)
+        header.label(text="Advanced")
+
+        if body:
+            col = body.column(heading = "General Conversion", align = True)
+            col.prop(self, "interpolation_threshold")
+            col.prop(self, "general_optimization_threshold")
+
+            col = body.column(heading = "Rotation Conversion", align = True)
+            col.prop(self, "rotation_mode")
+            col.prop(self, "quaternion_threshold")
+            col.prop(self, "quaternion_optimization_threshold")
+
+        return body
 
     def get_anim_parameters(self):
         return AnimParameters(
@@ -329,12 +348,11 @@ class ExportLVLOperator(ExportModelOperator):
 
         evaluator = o_landtable.LandtableEvaluator(
             context,
-            self.format, # pylint: disable=no-member
+            self.format,  # pylint: disable=no-member
             self.optimize,
-            self.write_specular, # pylint: disable=no-member
             self.apply_modifs,
             self.fallback_surface_attributes,
-            self.auto_node_attributes,
+            self.auto_node_attribute_mode,
             self.auto_root,
             self.force_sort_bones,
             self.get_anim_parameters())
@@ -354,14 +372,12 @@ class SAIO_OT_Export_SA1LVL(ExportLVLOperator):
     bl_description = "Exports scene or selected items to an sa1lvl file."
 
     filename_ext = ".sa1lvl"
+    format = 'SA1'
 
     filter_glob: StringProperty(
         default="*.sa1lvl;*.nj;",
         options={'HIDDEN'},
     )
-
-    format = 'SA1'
-    write_specular = True
 
 
 class SAIO_OT_Export_SA2LVL(ExportLVLOperator):
@@ -370,22 +386,12 @@ class SAIO_OT_Export_SA2LVL(ExportLVLOperator):
     bl_description = "Exports scene or selected items to an sa2lvl file."
 
     filename_ext = ".sa2lvl"
+    format = 'SA2'
 
     filter_glob: StringProperty(
         default="*.sa2lvl;",
         options={'HIDDEN'},
     )
-
-    format = 'SA2'
-
-    write_specular: BoolProperty(
-        name="Write Specular",
-        description="Write specular info to materials",
-        default=False
-    )
-
-    def draw_insert(self):
-        self.layout.prop(self, "write_specular")
 
 
 class SAIO_OT_Export_SA2BLVL(ExportLVLOperator):
@@ -394,14 +400,13 @@ class SAIO_OT_Export_SA2BLVL(ExportLVLOperator):
     bl_description = "Exports scene or selected items to an sa2blvl file."
 
     filename_ext = ".sa2blvl"
+    format = 'SA2B'
 
     filter_glob: StringProperty(
         default="*.sa2blvl;",
         options={'HIDDEN'},
     )
 
-    format = 'SA2B'
-    write_specular = False
 
 ###############################################
 
@@ -412,6 +417,13 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
     bl_description = "Exports the event"
 
     show_bone_localspace = False
+
+    filename_ext = ".prs"
+
+    filter_glob: StringProperty(
+        default="*.prs;",
+        options={'HIDDEN'},
+    )
 
     event_type: EnumProperty(
         name="Event Type",
@@ -432,12 +444,19 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
         default=True,
     )
 
-    auto_node_attributes: BoolProperty(
-        name="Automatic Node Attributes",
+    auto_node_attribute_mode: EnumProperty(
+        name="Automatic Node Attribute Mode",
         description=(
-            "Automaticall determine node attributes for the exported model"
+            "Automatically determine node attributes for the exported model"
         ),
-        default=True
+        items=(
+            ('NONE', "None", "Do no automatically evaluate node attributes"),
+            ('MISSING', "Missing",
+             "Automatically evaluate node attributes as well as keep those enabled in objects"),
+            ('OVERRIDE', "Override",
+             "Automatically evaluate node attributes and override those enabled in objects"),
+        ),
+        default='MISSING'
     )
 
     export_textures: BoolProperty(
@@ -450,20 +469,32 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
         default=True
     )
 
-    filename_ext = ".prs"
+    def draw(self, context: Context):
+        self.draw_panel_general(self.layout)
+        self.draw_panel_extra(self.layout)
+        super().draw(context)
 
-    filter_glob: StringProperty(
-        default="*.prs;",
-        options={'HIDDEN'},
-    )
+    def draw_panel_general(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_event_general", default_closed=True)
+        header.label(text="General")
 
-    def draw(self, context: bpy.types.Context):
-        self.layout.prop(self, "event_type")
-        self.layout.prop(self, "optimize")
-        self.layout.prop(self, "auto_node_attributes")
-        self.layout.prop(self, "export_textures")
+        if body:
+            body.prop(self, "event_type")
+            body.prop(self, "optimize")
+            body.prop(self, "auto_node_attribute_mode")
 
-        return super().draw(context)
+        return body
+
+    def draw_panel_extra(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_event_extra", default_closed=True)
+        header.label(text="Extra")
+
+        if body:
+            body.prop(self, "export_textures")
+
+        return body
 
     def export(self, context: bpy.types.Context):
         from ...exporting import o_event
@@ -475,7 +506,7 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
             context,
             self.event_type,
             self.optimize,
-            self.auto_node_attributes,
+            self.auto_node_attribute_mode,
             anim_parameters)
 
         exporter.process()

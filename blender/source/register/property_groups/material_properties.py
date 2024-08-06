@@ -22,13 +22,10 @@ def _update_material_values(self, context):
     material = bpy.data.materials[material_name]
 
     sceneprops = context.scene.saio_scene
-    blend_method = sceneprops.viewport_alpha_type
-    clip_threshold = sceneprops.viewport_alpha_cutoff
     enable_backface_culling = sceneprops.enable_backface_culling
 
     if material is not None:
-        update_material_values(
-            material, blend_method, clip_threshold, enable_backface_culling)
+        update_material_values(material, enable_backface_culling)
 
 
 class SAIO_Material(bpy.types.PropertyGroup):

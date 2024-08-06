@@ -29,13 +29,6 @@ def load_dotnet():
     if _LOADED:
         return
 
-    try:
-        import pythonnet
-    except ModuleNotFoundError as exc:
-        raise UserException((
-            "Could not install python.net, please try running blender with"
-            " admin rights")) from exc
-
     path = os.path.join(get_path(), "DLL")
     dll_names = [
         "SAIO.NET.dll",

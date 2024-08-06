@@ -2,13 +2,14 @@ import os
 import bpy
 from bpy.props import EnumProperty, StringProperty, BoolProperty
 from bpy.types import Context, Event
+from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from ...exceptions import UserException
 
 
 class SAIOBaseOperator(bpy.types.Operator):
 
-    def _invoke(self, context: Context, event: Event): # pylint: disable=unused-argument
+    def _invoke(self, context: Context, event: Event):  # pylint: disable=unused-argument
         return self._execute(context)
 
     def invoke(self, context: Context, event: Event):
@@ -18,7 +19,7 @@ class SAIOBaseOperator(bpy.types.Operator):
             self.report({'ERROR'}, e.message)
             return {'CANCELLED'}
 
-    def _execute(self, context: bpy.types.Context): # pylint: disable=unused-argument
+    def _execute(self, context: bpy.types.Context):  # pylint: disable=unused-argument
         return {'FINISHED'}
 
     def execute(self, context):
@@ -48,16 +49,20 @@ class SAIOBaseFileLoadOperator(SAIOBaseOperator):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
+    def draw(self, context: Context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
 
 class SAIOBaseFileSaveOperator(SAIOBaseOperator):
-
-    filename_ext = ".abc"
 
     filepath: StringProperty(
         name="File Path",
         description="Filepath used for exporting the file",
         maxlen=1024,
         subtype='FILE_PATH',
+        options={'HIDDEN'},
     )
 
     check_existing: BoolProperty(
@@ -93,16 +98,21 @@ class SAIOBaseFileSaveOperator(SAIOBaseOperator):
     def check(self, context: Context) -> bool:
         return self.correct_filepath(context)
 
+    def draw(self, context: Context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
 
 class ListAdd:
 
-    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+    def list_execute(self, context, target_list):  # pylint: disable=unused-argument
         target_list.new()
 
 
 class ListRemove:
 
-    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+    def list_execute(self, context, target_list):  # pylint: disable=unused-argument
         target_list.remove(target_list.active_index)
 
 
@@ -116,7 +126,7 @@ class ListMove:
         )
     )
 
-    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+    def list_execute(self, context, target_list):  # pylint: disable=unused-argument
         old_index = target_list.active_index
 
         if old_index == -1:
@@ -137,5 +147,5 @@ class ListMove:
 
 
 class ListClear:
-    def list_execute(self, context, target_list): # pylint: disable=unused-argument
+    def list_execute(self, context, target_list):  # pylint: disable=unused-argument
         target_list.clear()

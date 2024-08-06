@@ -3,6 +3,7 @@ from . import (
     anim_export_operators,
     import_operators,
     anim_import_operators,
+	filehandlers,
     material_mass_edit_operators,
     texture_operators,
     texture_name_operators,
@@ -13,7 +14,7 @@ from . import (
     tool_operators,
     path_operators,
     migration_operators,
-    info_operators
+    info_operators,
 )
 
 to_register = [
@@ -37,6 +38,15 @@ to_register = [
     anim_import_operators.SAIO_OT_Import_Node_Animation,
     anim_import_operators.SAIO_OT_Import_Camera_Animation,
     anim_import_operators.SAIO_OT_Import_Shape_Animation,
+
+    filehandlers.SAIO_IN_FH_MDL,
+    filehandlers.SAIO_IN_FH_LVL,
+    filehandlers.SAIO_OUT_FH_SA1MDL,
+    filehandlers.SAIO_OUT_FH_SA2MDL,
+    filehandlers.SAIO_OUT_FH_SA2BMDL,
+    filehandlers.SAIO_OUT_FH_SA1LVL,
+    filehandlers.SAIO_OUT_FH_SA2LVL,
+    filehandlers.SAIO_OUT_FH_SA2BLVL,
 
     texture_operators.SAIO_OT_Textures_Add,
     texture_operators.SAIO_OT_Textures_Remove,

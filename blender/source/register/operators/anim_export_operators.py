@@ -184,17 +184,26 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
         return super()._invoke(context, event)
 
     def draw(self, context: bpy.types.Context):
+        self.draw_panel_info(self.layout)
         super().draw(context)
-        layout = self.layout
-        layout.separator()
-        layout.label(text=f"Action to export: {self.motion_name}")
-        layout.label(text="Using:")
 
-        for action, postfix in zip(
-                self.action_setup.as_list(),
-                camera_utils.ACTION_POSTFIX):
-            found = "Found" if action is not None else "Missing"
-            layout.label(text=f"{self.motion_name}{postfix} [{found}]")
+    def draw_panel_info(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_export_camanim_info", default_closed=False)
+        header.label(text="Info")
+
+        if body:
+            body.label(text=f"Action to export: {self._actions.name}")
+            body.label(text="Using:")
+
+            for action, postfix in zip(
+                    self.action_setup.as_list(),
+                    camera_utils.ACTION_POSTFIX):
+
+                found = "Found" if action is not None else "Missing"
+                body.label(text=f"{self.motion_name}{postfix} [{found}]")
+
+        return body
 
     def export(self, context: bpy.types.Context):
 
@@ -216,8 +225,6 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
     bl_description = "Export the active shape animation"
 
     filename_ext = ".saanim"
-
-    _actions: o_shapemotion.ShapeActionCollection | None
 
     filter_glob: StringProperty(
         default="*.saanim;",
@@ -247,6 +254,33 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
         default=False
     )
 
+    attach_format: EnumProperty(
+        name="Attach format",
+        description=(
+            "Attach format, for which the shape animation is exported"
+            " (needed to correctly map vertex numbers)"),
+        items=(
+            ('SA1', "SA1", "SA1MDL export format"),
+            ('SA2', "SA2", "SA2MDL export format"),
+            ('SA2B', "SA2B", "SA2BMDL export format"),
+        ),
+        default="SA1"
+    )
+
+    optimize: BoolProperty(
+        name="Optimize",
+        description="Optimize the simulated model output",
+        default=False
+    )
+
+    apply_modifs: BoolProperty(
+        name="Apply Modifiers",
+        description="Apply active viewport modifiers",
+        default=True,
+    )
+
+    _actions: o_shapemotion.ShapeActionCollection | None
+
     @classmethod
     def poll(cls, context):
         if context.mode != 'OBJECT' or context.active_object is None:
@@ -275,25 +309,61 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
         return super()._invoke(context, event)
 
     def draw(self, context):
+        super().draw(context)
         layout = self.layout
-        layout.prop(self, "normal_mode")
-        layout.separator()
 
-        layout.label(text=f"Action to export: {self._actions.name}")
-        layout.label(text="Using:")
+        self.draw_panel_info(layout)
+        self.draw_panel_general(layout)
+        self.draw_panel_model(layout)
 
-        for obj, action in self._actions.actions.items():
-            layout.label(text=f"\"{action.name}\" for \"{obj.name}\"")
+    def draw_panel_info(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_export_shapeanim_info", default_closed=False)
+        header.label(text="Info")
+
+        if body:
+            body.label(text=f"Action to export: {self._actions.name}")
+            body.label(text="Using:")
+
+            for obj, action in self._actions.actions.items():
+                body.label(text=f"\"{action.name}\" for \"{obj.name}\"")
+
+        return body
+
+    def draw_panel_general(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_export_shapeanim_general", default_closed=True)
+        header.label(text="General")
+
+        if body:
+            body.prop(self, "normal_mode")
+            body.prop(self, "force_sort_bones")
+
+        return body
+
+    def draw_panel_model(self, layout: bpy.types.UILayout):
+        header, body = layout.panel(
+            "SAIO_export_shapeanim_model", default_closed=True)
+        header.label(text="Model")
+
+        if body:
+            body.prop(self, "attach_format")
+            body.prop(self, "optimize")
+            body.prop(self, "apply_modifs")
+
+        return body
 
     def export(self, context: bpy.types.Context):
-        objects = { context.active_object }
+        objects = {context.active_object}
         objects.update(context.active_object.children_recursive)
 
         model_eval = o_model.ModelEvaluator(
             context,
-            None,
+            self.attach_format,
+            optimize=self.optimize,
+            apply_modifs=self.apply_modifs,
             force_sort_bones=self.force_sort_bones)
-        model_data = model_eval.evaluate(objects, False)
+        model_data = model_eval.evaluate(objects, self.attach_format == 'SA2')
 
         evaluator = o_shapemotion.ShapeMotionEvaluator(
             model_data,

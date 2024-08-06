@@ -3,9 +3,6 @@ import bpy
 MIGRATE_KEY = "saio_migrated"
 ARMATURE_KEY = "saio_armature_migrated"
 
-VIEWPORT_ALPHA_TYPE = [
-    'BLEND', 'HASHED', 'CLIP']
-
 ALPHA_MODE = [
     'ZERO', 'ONE', 'OTHER', 'INV_OTHER',
     'SRC', 'INV_SRC', 'DST', 'INV_DST']
@@ -90,9 +87,6 @@ def migrate_scene(scene: bpy.types.Scene, remigrate: bool):
     out.light_ambient_color = data.gets(
         "LightAmbientColor", (0.3, 0.3, 0.3, 1.0))
     out.display_specular = data.get("DisplaySpecular", True)
-    out.viewport_alpha_type = VIEWPORT_ALPHA_TYPE[data.get(
-        "viewportAlphaType", 0)]
-    out.viewport_alpha_cutoff = data.get("viewportAlphaCutoff", 0.5)
 
     ltbl = out.landtable
     ltbl.name = data.get("landtableName", "")
@@ -118,6 +112,54 @@ def migrate_scene(scene: bpy.types.Scene, remigrate: bool):
     scene[MIGRATE_KEY] = True
 
 
+LANDENTRY_MAPPING = {
+    "sf_visible" : ["sfVisible", "isVisible"],
+    "sf_solid" : ["sfSolid", "solid"],
+    "sf_water" : ["sfWater", "sa1_water", "sa2_water", "water"],
+    "sf_water_no_alpha" : ["sfWater2", "sa2_water2", "water2"],
+    "sf_accelerate" : [("isSA1", "sfAccel"),  "sa1_accelerate"],
+    "sf_low_acceleration" : ["sfLowAccel", "sa1_lowAcceleration"],
+    "sf_no_acceleration" : ["sfNoAccel", "sa1_noAcceleration", "noAcceleration"],
+    "sf_increased_acceleration" : ["sfIncAccel", "sa1_useSkyDrawDistance", "increasedAcceleration"],
+    "sf_tube_acceleration" : [("sfAccel", "isSa2"), "sfSA1U_20000"],
+    "sf_no_friction" : ["sfNoFriction", "sa1_noFriction", "noFriction"],
+    "sf_cannot_land" : ["sfCannotLand", "sa1_cannotLand", "sa2_cannotLand", "cannotLand"],
+    "sf_unclimbable" : ["sfUnclimbable", "sa1_unclimbable", "sa2_unclimbable", "unclimbable"],
+    "sf_stairs" : ["sfStairs", "sa1_stairs", "sa2_stairs", "standOnSlope"],
+    "sf_diggable" : ["sfDiggable", "sa1_diggable", "sa2_diggable", "cannotLand"],
+    "sf_hurt" : ["sfHurt", "sa1_hurt", "sa2_hurt", "hurt"],
+    "sf_dynamic_collision" : ["sfDynCollision", "sa1_dynCollision"],
+    "sf_water_collision" : ["sfWaterCollision", "sa1_colWater"],
+    "sf_gravity" : ["sfGravity", "sa1_rotByGravity"],
+    "sf_footprints" : ["sfFootprints", "sa1_footprints", "sa2_footprints", "footprints"],
+    "sf_no_shadows" : ["sfNoShadows", "sa2_noShadows", "noShadows"],
+    "sf_no_fog" : ["sfNoFog", "sa2_noFog", "noFog"],
+    "sf_low_depth" : ["sfLowDepth", "sa1_lowDepth"],
+    "sf_use_sky_draw_distance" : ["sfUseSkyDrawDistance", "sa1_useSkyDrawDistance"],
+    "sf_easy_draw" : ["sfSA2U_1000000", "sa2_unknown24", "unknown24"],
+    "sf_no_zwrite" : ["sfNoZWrite", "sa1_noZWrite"],
+    "sf_draw_by_mesh" : ["sfDrawByMesh", "sa1_drawByMesh"],
+    "sf_enable_manipulation" : ["sfEnableManipulation", "sa1_enableManipulation"],
+    "sf_waterfall" : ["sfWaterfall", "sa1_waterfall"],
+    "sf_chaos0_land" : ["sfChaos0Land", "sa1_chaos0Land"],
+    "sf_transform_bounds" : ["sfUseRotation", "sa1_useRotation"],
+    "sf_bounds_radius_small" : ["sfSA1U_20000000", "sfSA2U_20000000", "sa2_unknown29", "unknown29"],
+    "sf_bounds_radius_tiny" : ["sfSA1U_40000000", "sfSA2U_40000000", "sa2_unknown30", "unknown30"],
+
+    "sf_sa1_unknown9" : ["sfSA1U_200"],
+    "sf_sa1_unknown11" : ["sfSA1U_800"],
+    "sf_sa1_unknown15" : ["sfSA1U_8000"],
+    "sf_sa1_unknown19" : ["sfSA1U_80000"],
+    "sf_sa2_unknown6" : ["sfSA2U_40"],
+    "sf_sa2_unknown9" : ["sfSA2U_200"],
+    "sf_sa2_unknown14" : ["sfSA2U_4000"],
+    "sf_sa2_unknown16" : ["sfSA2U_10000"],
+    "sf_sa2_unknown17" : ["sfSA2U_20000"],
+    "sf_sa2_unknown18" : ["sfSA2U_40000"],
+    "sf_sa2_unknown25" : ["sfSA2U_2000000"],
+    "sf_sa2_unknown26" : ["sfSA2U_4000000"],
+}
+
 def migrate_landentry(obj: bpy.types.Object, remigrate: bool):
     if ("saSettings" not in obj
         or (MIGRATE_KEY in obj
@@ -129,58 +171,29 @@ def migrate_landentry(obj: bpy.types.Object, remigrate: bool):
 
     out.blockbit = data.get("blockbit", "0")
 
-    out.sf_visible = data.getb("sfVisible")
-    out.sf_solid = data.getb("sfSolid")
-    out.sf_water = data.getb("sfWater")
-    out.sf_water_no_alpha = data.getb("sfWater2")
-    out.sf_accelerate = data.getb("isSA1") and data.getb("sfAccel")
-    out.sf_low_acceleration = data.getb("sfLowAccel")
-    out.sf_no_acceleration = data.getb("sfNoAccel")
-    out.sf_increased_acceleration = data.getb("sfIncAccel")
+    for key, values in LANDENTRY_MAPPING.items():
+        flag = False
 
-    out.sf_tube_acceleration = (
-        (data.getb("sfAccel") and data.getb("isSa2"))
-        or data.getb("sfSA1U_20000"))
+        for value in values:
+            if isinstance(value, str):
+                if value in data.data:
+                    flag = data.data[value]
+                    break
+            else:
+                value_flag = True
+                broke = False
+                for value_value in value:
+                    if value_value not in data.data:
+                        broke = True
+                        break
+                    value_flag &= data.data[value_value]
 
-    out.sf_no_friction = data.getb("sfNoFriction")
-    out.sf_cannot_land = data.getb("sfCannotLand")
-    out.sf_unclimbable = data.getb("sfUnclimbable")
-    out.sf_stairs = data.getb("sfStairs")
-    out.sf_diggable = data.getb("sfDiggable")
-    out.sf_hurt = data.getb("sfHurt")
-    out.sf_dynamic_collision = data.getb("sfDynCollision")
-    out.sf_water_collision = data.getb("sfWaterCollision")
-    out.sf_gravity = data.getb("sfGravity")
-    out.sf_footprints = data.getb("sfFootprints")
-    out.sf_no_shadows = data.getb("sfNoShadows")
-    out.sf_no_fog = data.getb("sfNoFog")
-    out.sf_low_depth = data.getb("sfLowDepth")
-    out.sf_use_sky_draw_distance = data.getb("sfUseSkyDrawDistance")
-    out.sf_easy_draw = data.getb("sfSA2U_1000000")
-    out.sf_no_zwrite = data.getb("sfNoZWrite")
-    out.sf_draw_by_mesh = data.getb("sfDrawByMesh")
-    out.sf_enable_manipulation = data.getb("sfEnableManipulation")
-    out.sf_waterfall = data.getb("sfWaterfall")
-    out.sf_chaos0_land = data.getb("sfChaos0Land")
-    out.sf_transform_bounds = data.getb("sfUseRotation")
+                if not broke:
+                    flag = value_value
+                    break
 
-    out.sf_bounds_radius_small = \
-        data.getb("sfSA1U_20000000") or data.getb("sfSA2U_20000000")
-    out.sf_bounds_radius_tiny = \
-        data.getb("sfSA1U_40000000") or data.getb("sfSA2U_40000000")
 
-    out.sf_sa1_unknown9 = data.getb("sfSA1U_200")
-    out.sf_sa1_unknown11 = data.getb("sfSA1U_800")
-    out.sf_sa1_unknown15 = data.getb("sfSA1U_8000")
-    out.sf_sa1_unknown19 = data.getb("sfSA1U_80000")
-    out.sf_sa2_unknown6 = data.getb("sfSA2U_40")
-    out.sf_sa2_unknown9 = data.getb("sfSA2U_200")
-    out.sf_sa2_unknown14 = data.getb("sfSA2U_4000")
-    out.sf_sa2_unknown16 = data.getb("sfSA2U_10000")
-    out.sf_sa2_unknown17 = data.getb("sfSA2U_20000")
-    out.sf_sa2_unknown18 = data.getb("sfSA2U_40000")
-    out.sf_sa2_unknown25 = data.getb("sfSA2U_2000000")
-    out.sf_sa2_unknown26 = data.getb("sfSA2U_4000000")
+        setattr(out, key, flag)
 
     obj[MIGRATE_KEY] = True
 

@@ -1,0 +1,40 @@
+schema_version = "1.0.0"
+
+id = "sonic_adventure_io_dev"
+version = "2.200.6"
+name = "Sonic Adventure I/O DEV BUILD"
+tagline = "Import/Exporter for Sonic Adventure Model, Animation and more"
+maintainer = "Justin113D, ItsEasyActually, X-Hax"
+type = "add-on"
+
+website = "https://github.com/X-Hax/SonicAdventureBlenderIO"
+tags = ["Import-Export"]
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+wheels = [
+  "./wheels/cffi-1.16.0-cp311-cp311-win_amd64.whl",
+  "./wheels/clr_loader-0.2.6-py3-none-any.whl",
+  "./wheels/pycparser-2.22-py3-none-any.whl",
+  "./wheels/pythonnet-3.0.3-py3-none-any.whl",
+]
+
+[permissions]
+clipboard = "For copying selected vertex indices"
+files = "Importing and exporting files"
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  "/.venv/",
+  "/.vscode/",
+  "/.git/",
+  "*.bat",
+  ".*",
+  "*.blend1",
+  "*.prod.*",
+]

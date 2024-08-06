@@ -31,6 +31,8 @@ class MeshData:
 
 class MeshProcessor:
 
+    _auto_normals: bool
+
     material_lut: dict[any, bpy.types.Material]
 
     weighted_buffer: any
@@ -44,10 +46,16 @@ class MeshProcessor:
     poly_material_lengths: list[int]
     colors: list[tuple[float, float, float, float]]
     uvs: list[tuple[float, float]]
+    import_normals: bool
 
     output: MeshData
 
-    def __init__(self):
+    def __init__(
+            self,
+            auto_normals: bool):
+
+        self._auto_normals = auto_normals
+
         self.material_lut = {}
 
         self.vertices = []
@@ -186,7 +194,6 @@ class MeshProcessor:
     #########################################################
 
     def _setup_mesh_polygons(self):
-
         if len(self.poly_material_lengths) > 1:
 
             poly_mat_index = 0
@@ -198,15 +205,16 @@ class MeshProcessor:
                     poly_mat_index += 1
                     next_material_offset += self.poly_material_lengths[poly_mat_index]
 
-                polygon.use_smooth = True
+                polygon.use_smooth = self.import_normals
                 polygon.material_index = poly_mat_index
 
         else:
             for polygon in self.output.mesh.polygons:
-                polygon.use_smooth = True
+                polygon.use_smooth = self.import_normals
 
     def _setup_mesh_normals(self):
-        self.output.mesh.normals_split_custom_set_from_vertices(self.normals)
+        if self.import_normals:
+            self.output.mesh.normals_split_custom_set_from_vertices(self.normals)
 
     def _setup_mesh_colors(self):
         if self.weighted_buffer.HasColors:
@@ -228,6 +236,8 @@ class MeshProcessor:
 
         for mat in self.materials:
             self.output.mesh.materials.append(mat)
+
+        self.import_normals = self.weighted_buffer.HasNormals or not self._auto_normals
 
         self._setup_mesh_polygons()
         self._setup_mesh_normals()
@@ -288,9 +298,10 @@ class MeshProcessor:
             context: bpy.types.Context,
             weighted_buffers,
             name: str,
-            mat_name: str | None = None):
+            mat_name: str | None = None,
+            auto_normals: bool = True):
 
-        processor = MeshProcessor()
+        processor = MeshProcessor(auto_normals)
         result = processor.process_multiple(weighted_buffers, name, mat_name)
         processor.setup_materials(context)
         return result

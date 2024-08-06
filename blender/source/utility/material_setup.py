@@ -229,31 +229,22 @@ def _material_connect_texture(
 
 def _material_update_blending(
         material: bpy.types.Material,
-        blend_method: str,
-        clip_threshold: float,
         enable_backface_culling: bool):
 
     matprops = material.saio_material
     material.use_backface_culling = (
         not matprops.double_sided and enable_backface_culling
     )
+    material.use_backface_culling_shadow = material.use_backface_culling
 
-    if not matprops.use_alpha:
-        material.blend_method = 'OPAQUE'
-        material.shadow_method = 'OPAQUE'
-    else:
-
-        material.blend_method = blend_method
-        material.alpha_threshold = clip_threshold
-        material.shadow_method = 'NONE'
+    material.surface_render_method = 'DITHERED'
+    material.use_transparent_shadow = False
 
 ###############################################################################
 
 
 def update_material_values(
         material: bpy.types.Material,
-        blend_method: str,
-        clip_threshold: float,
         enable_backface_culling: bool):
 
     material_properties = material.saio_material
@@ -286,7 +277,7 @@ def update_material_values(
 
     _material_connect_texture(material)
     _material_update_blending(
-        material, blend_method, clip_threshold, enable_backface_culling)
+        material, enable_backface_culling)
 
 
 def update_material_outputs(
@@ -393,8 +384,6 @@ def setup_and_update_materials(
 
     sceneprops = context.scene.saio_scene
     use_principled = sceneprops.use_principled
-    blend_method = sceneprops.viewport_alpha_type
-    clip_threshold = sceneprops.viewport_alpha_cutoff
     enable_backface_culling = sceneprops.enable_backface_culling
 
     texlist_manager = texture_manager.TexlistManager()
@@ -426,8 +415,7 @@ def setup_and_update_materials(
                 break
 
         _material_connect_output(material, use_principled)
-        update_material_values(
-            material, blend_method, clip_threshold, enable_backface_culling)
+        update_material_values(material, enable_backface_culling)
 
 
 def assemble_texture_list(

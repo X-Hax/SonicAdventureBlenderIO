@@ -1,19 +1,20 @@
 @echo off
 
+move .\blender\blender_manifest.toml .\blender\blender_manifest.prod.toml
+move .\blender\blender_manifest.dev.toml .\blender\blender_manifest.toml
+move .\blender\__init__.py .\blender\__init__.prod.py
+move .\blender\__init__.dev.py .\blender\__init__.py
+
+
 if exist ".\build" (
-	rmdir "./build" /s /q
+	rmdir ".\build" /s /q
 )
 
-mkdir ".\build"
-mkdir ".\build\SonicAdventureBlenderIO_dev"
-mkdir ".\build\SonicAdventureBlenderIO_dev\DLL"
-mkdir ".\build\SonicAdventureBlenderIO_dev\source"
+mkdir .\build
+blender --command extension build --source-dir .\blender --output-dir .\build
+blender --command extension server-generate --repo-dir=.\build --html
 
-copy ".\blender\__initdev__.py" ".\build\SonicAdventureBlenderIO_dev\__init__.py"
-copy ".\blender\SAIOTemplates.blend" ".\build\SonicAdventureBlenderIO_dev\SAIOTemplates.blend"
-copy ".\blender\DLL" ".\build\SonicAdventureBlenderIO_dev\DLL"
-robocopy ".\blender\source" ".\build\SonicAdventureBlenderIO_dev\source" /s /xd __pycache__
-
-pushd ".\build"
-tar -acf SonicAdventureBlenderIO_dev.zip SonicAdventureBlenderIO_dev
-popd
+move .\blender\blender_manifest.toml .\blender\blender_manifest.dev.toml
+move .\blender\blender_manifest.prod.toml .\blender\blender_manifest.toml
+move .\blender\__init__.py .\blender\__init__.dev.py
+move .\blender\__init__.prod.py .\blender\__init__.py

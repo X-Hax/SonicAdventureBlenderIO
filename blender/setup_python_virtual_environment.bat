@@ -17,7 +17,7 @@ IF EXIST %python% (
 
 	rem now install the packages
 	pip.exe install pythonnet
-	pip.exe install fake-bpy-module-latest
+	pip.exe install fake-bpy-module
 
 	echo set up!
 

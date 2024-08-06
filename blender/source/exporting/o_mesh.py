@@ -19,6 +19,8 @@ class ModelMesh:
     attached_node_name: str | None
     '''Name of the node this model is attached to. None for weighted models'''
 
+    vertex_mapping: list[int] | None
+
     _depending_bones: list[str]
     _root_bone_name: str | None
     _root_bone_index: int
@@ -43,6 +45,8 @@ class ModelMesh:
         self.object = obj
         self.world_matrix = world_matrix
         self.attached_node_name = attached_node_name
+
+        self.vertex_mapping = None
 
         self._depending_bones = None
         self._root_bone_name = None
@@ -98,7 +102,7 @@ class ModelMesh:
         self._triangulate_modifier.quad_method = 'FIXED'
         self._triangulate_modifier.ngon_method = 'CLIP'
         self._triangulate_modifier.min_vertices = 4
-        self._triangulate_modifier.keep_custom_normals = True
+        #TODO: Enable in 4.2.1; self._triangulate_modifier.keep_custom_normals = True
 
     def _collect_depending_bones(self):
         group_indices = set()

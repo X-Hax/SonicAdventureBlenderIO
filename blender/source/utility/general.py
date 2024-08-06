@@ -35,31 +35,9 @@ def load_template_blend(context: bpy.types.Context):
 
     if not found:
         bpy.ops.wm.link(
-            filename="SAIO Material Template",
-            directory=f"{lib_path}{os.path.sep}NodeTree{os.path.sep}"
+            filename="SAIO Templates",
+            directory=f"{lib_path}{os.path.sep}Scene{os.path.sep}"
         )
-
-        bpy.ops.wm.link(
-            filename="SAIO Bone Shape",
-            directory=f"{lib_path}{os.path.sep}Object{os.path.sep}",
-            active_collection=False,
-            instance_collections=False,
-            instance_object_data=False
-        )
-
-        linked_collection = None
-        for col in context.scene.collection.children:
-            if col.name == "Linked Data":
-                linked_collection = col
-                break
-
-        if linked_collection is not None:
-            try:
-                link_scene = bpy.data.scenes["SAIO Links"]
-            except Exception:
-                link_scene = bpy.data.scenes.new("SAIO Links")
-            link_scene.collection.children.link(linked_collection)
-            context.scene.collection.children.unlink(linked_collection)
 
 
 def is_from_template(data):
