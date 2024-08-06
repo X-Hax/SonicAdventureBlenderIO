@@ -11,6 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="SA3D.Modeling" Version="1.2.1" />
 		<PackageReference Include="TextCopy" Version="6.2.1" />
 		<PackageReference Include="SA3D.Modeling.JSON" Version="1.1.0" />
 		<PackageReference Include="SA3D.SA2Event" Version="1.1.0" />
