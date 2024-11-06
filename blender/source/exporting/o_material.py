@@ -72,6 +72,7 @@ def convert_material_to_struct(
     result.MirrorV = props.mirror_v
     result.UseAlpha = props.use_alpha
     result.BackfaceCulling = not props.double_sided
+    result.NoAlphaTest = props.no_alpha_test
     result.AnisotropicFiltering = props.anisotropic_filtering
 
     result.GCShadowStencil = props.shadow_stencil
