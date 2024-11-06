@@ -211,6 +211,13 @@ class SAIO_OT_Textures_Export_Archive(TextureExportOperator):
             self.archive_type,
             self.compress)
 
+    def draw(self, context):
+        super().draw(context)
+
+        self.layout.prop(self, "archive_type")
+        self.layout.prop(self, "compress")
+
+
 
 class SAIO_OT_Textures_Export_Pack(TextureExportOperator):
     bl_idname = "saio.textures_exportpack"
