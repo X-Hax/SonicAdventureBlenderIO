@@ -28,6 +28,48 @@ class SAIO_EventEntry(bpy.types.PropertyGroup):
         type=bpy.types.Object
     )
 
+    has_environment: BoolProperty(
+        name="Has Environment",
+        description="Has environment mapped materials, use Simple variant of draw function.",
+        default=False
+    )
+
+    no_fog_and_easy_draw: BoolProperty(
+        name="No Fog & Easy Draw",
+        description="Draw with fog disabled and use EasyDraw",
+        default=False
+    )
+
+    light1: BoolProperty(
+        name="Light 1",
+        description="Use multi-light 1",
+        default=False
+    )
+
+    light2: BoolProperty(
+        name="Light 2",
+        description="Use multi-light 2",
+        default=False
+    )
+
+    light3: BoolProperty(
+        name="Light 3",
+        description="Use multi-light 3",
+        default=False
+    )
+
+    light4: BoolProperty(
+        name="Light 4",
+        description="Use multi-light 4",
+        default=False
+    )
+
+    modifier_volume: BoolProperty(
+        name="Modifier Volume",
+        description="Is a modifier volume and should use ModDraw.",
+        default=False
+    )
+
     reflection: BoolProperty(
         name="Reflection",
         description="Object gets rendered as part of reflections",
@@ -43,6 +85,12 @@ class SAIO_EventEntry(bpy.types.PropertyGroup):
         default=False
     )
 
+    use_simple: BoolProperty(
+        name="Use Simple",
+        description="Use regular Simple over any Multi or Easy variant",
+        default=False
+    )
+
     layer: IntProperty(
         name="Layer",
         description=(
@@ -50,51 +98,6 @@ class SAIO_EventEntry(bpy.types.PropertyGroup):
             " models"
         ),
         default=0
-    )
-
-    unk0: BoolProperty(
-        name="unknown 0",
-        default=False
-    )
-
-    unk2: BoolProperty(
-        name="unknown 2",
-        default=False
-    )
-
-    unk4: BoolProperty(
-        name="unknown 4",
-        default=False
-    )
-
-    unk5: BoolProperty(
-        name="unknown 5",
-        default=False
-    )
-
-    unk6: BoolProperty(
-        name="unknown 6",
-        default=False
-    )
-
-    unk9: BoolProperty(
-        name="unknown 9",
-        default=False
-    )
-
-    enable_lighting: BoolProperty(
-        name="Enable Lighting",
-        description="Enables lighting (root scene only)",
-        default=True
-    )
-
-    disable_shadow_catching: BoolProperty(
-        name="Disable shadow catching",
-        description=(
-            "Prevents shadows from being drawn on this model"
-            " (root scene, GC models only)"
-        ),
-        default=False
     )
 
     @classmethod

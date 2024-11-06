@@ -9,14 +9,16 @@ from ...utility.draw import prop_advanced
 
 ATTRIBUTE_LIST = [
     "layer",
-    "blare",
+    "has_environment",
+    "no_fog_and_easy_draw",
+    "light1",
+    "light2",
+    "light3",
+    "light4",
+    "modifier_volume",
     "reflection",
-    "unk0",
-    "unk2",
-    "unk4",
-    "unk5",
-    "unk6",
-    "unk9",
+    "blare",
+    "use_simple",
 ]
 
 
@@ -41,11 +43,6 @@ class SAIO_PT_EventEntry(PropertiesPanel):
 
             for attribute in ATTRIBUTE_LIST:
                 layout.prop(event_entry_properties, attribute)
-
-            layout.separator()
-            layout.label(text="Root scene attributes")
-            layout.prop(event_entry_properties, "enable_lighting")
-            layout.prop(event_entry_properties, "disable_shadow_catching")
 
     # === Overridden methods === #
 
