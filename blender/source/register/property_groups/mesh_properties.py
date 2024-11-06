@@ -27,6 +27,16 @@ class SAIO_Mesh(bpy.types.PropertyGroup):
         max=7
     )
 
+    no_bounds: BoolProperty(
+        name="No Bounds",
+        description=(
+            "Disable calculation of mesh bounds on export."
+            " Effectively disables frustrum culling of the mesh ingame"
+            " (does not affect weighted models)"
+        ),
+        default=False
+    )
+
     @classmethod
     def register(cls):
         bpy.types.Mesh.saio_mesh = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
