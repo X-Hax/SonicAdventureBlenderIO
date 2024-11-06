@@ -2,12 +2,27 @@
 using SA3D.Modeling.ObjectData.Enums;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace SAIO.NET
 {
     public static class Flags
     {
-        public static NodeAttributes ComposeNodeAttributes(bool noPosition, bool noRotation, bool noScale, bool skipDraw, bool skipChildren, bool rotateZYX, bool noAnimate, bool noMorph)
+        public static NodeAttributes ComposeNodeAttributes(
+            bool noPosition,
+            bool noRotation,
+            bool noScale,
+            bool skipDraw,
+            bool skipChildren,
+            bool rotateZYX,
+            bool noAnimate,
+            bool noMorph,
+            bool clip,
+            bool modifier,
+            bool useQuaternionRotation,
+            bool cacheRotation,
+            bool applyCachedRotation,
+            bool envelope)
         {
             NodeAttributes result = default;
 
@@ -51,12 +66,42 @@ namespace SAIO.NET
                 result |= NodeAttributes.NoMorph;
             }
 
+            if(clip)
+            {
+                result |= NodeAttributes.Clip;
+            }
+
+            if(modifier)
+            {
+                result |= NodeAttributes.Modifier;
+            }
+
+            if(useQuaternionRotation)
+            {
+                result |= NodeAttributes.UseQuaternionRotation;
+            }
+
+            if(cacheRotation)
+            {
+                result |= NodeAttributes.CacheRotation;
+            }
+
+            if(applyCachedRotation)
+            {
+                result |= NodeAttributes.ApplyCachedRotation;
+            }
+
+            if(envelope)
+            {
+                result |= NodeAttributes.Envelope;
+            }
+
             return result;
         }
 
         public static bool[] DecomposeNodeAttributes(this NodeAttributes attributes)
         {
-            return new[] {
+            return [
                 attributes.HasFlag(NodeAttributes.NoPosition),
                 attributes.HasFlag(NodeAttributes.NoRotation),
                 attributes.HasFlag(NodeAttributes.NoScale),
@@ -64,8 +109,14 @@ namespace SAIO.NET
                 attributes.HasFlag(NodeAttributes.SkipChildren),
                 attributes.HasFlag(NodeAttributes.RotateZYX),
                 attributes.HasFlag(NodeAttributes.NoAnimate),
-                attributes.HasFlag(NodeAttributes.NoMorph)
-            };
+                attributes.HasFlag(NodeAttributes.NoMorph),
+                attributes.HasFlag(NodeAttributes.Clip),
+                attributes.HasFlag(NodeAttributes.Modifier),
+                attributes.HasFlag(NodeAttributes.UseQuaternionRotation),
+                attributes.HasFlag(NodeAttributes.CacheRotation),
+                attributes.HasFlag(NodeAttributes.ApplyCachedRotation),
+                attributes.HasFlag(NodeAttributes.Envelope)
+            ];
         }
 
 
@@ -99,43 +150,53 @@ namespace SAIO.NET
         }
 
 
-        public static EventEntryAttribute ComposeEventEntryAttributes(bool unk0, bool enableLight, bool unk2, bool disableShadow, bool unk4, bool unk5, bool unk6, bool reflection, bool blare, bool unk9)
+        public static EventEntryAttribute ComposeEventEntryAttributes(
+            bool hasEnvironment,
+            bool noFogAndEasyDraw,
+            bool light1,
+            bool light2,
+            bool light3,
+            bool light4,
+            bool modifierVolume,
+            bool reflection,
+            bool blare,
+            bool useSimple)
         {
             EventEntryAttribute result = default;
 
-            if(unk0)
+            if(hasEnvironment)
             {
-                result |= EventEntryAttribute.Unk0;
+                result |= EventEntryAttribute.HasEnvironment;
             }
 
-            if(enableLight)
+            if(noFogAndEasyDraw)
             {
-                result |= EventEntryAttribute.Root_EnableLighting;
+                result |= EventEntryAttribute.NoFogAndEasyDraw;
             }
 
-            if(unk2)
+            if(light1)
             {
-                result |= EventEntryAttribute.Unk2;
+                result |= EventEntryAttribute.Light1;
             }
 
-            if(disableShadow)
+            if(light2)
             {
-                result |= EventEntryAttribute.Root_DisableShadows;
+                result |= EventEntryAttribute.Light2;
             }
 
-            if(unk4)
+            if(light3)
             {
-                result |= EventEntryAttribute.Unk4;
+                result |= EventEntryAttribute.Light3;
             }
 
-            if(unk5)
+            if(light4)
             {
-                result |= EventEntryAttribute.Unk5;
+                result |= EventEntryAttribute.Light4;
             }
 
-            if(unk6)
+            if(modifierVolume)
             {
-                result |= EventEntryAttribute.Unk6;
+                result |= EventEntryAttribute.ModifierVolume;
             }
 
             if(reflection)
@@ -148,9 +209,9 @@ namespace SAIO.NET
                 result |= EventEntryAttribute.Blare;
             }
 
-            if(unk9)
+            if(useSimple)
             {
-                result |= EventEntryAttribute.Unk9;
+                result |= EventEntryAttribute.UseSimple;
             }
 
             return result;
@@ -158,18 +219,18 @@ namespace SAIO.NET
 
         public static bool[] DecomposeEventEntryAttributes(this EventEntryAttribute attributes)
         {
-            return new[] {
-                attributes.HasFlag(EventEntryAttribute.Unk0),
-                attributes.HasFlag(EventEntryAttribute.Root_EnableLighting),
-                attributes.HasFlag(EventEntryAttribute.Unk2),
-                attributes.HasFlag(EventEntryAttribute.Root_DisableShadows),
-                attributes.HasFlag(EventEntryAttribute.Unk4),
-                attributes.HasFlag(EventEntryAttribute.Unk5),
-                attributes.HasFlag(EventEntryAttribute.Unk6),
+            return [
+                attributes.HasFlag(EventEntryAttribute.HasEnvironment),
+                attributes.HasFlag(EventEntryAttribute.NoFogAndEasyDraw),
+                attributes.HasFlag(EventEntryAttribute.Light1),
+                attributes.HasFlag(EventEntryAttribute.Light2),
+                attributes.HasFlag(EventEntryAttribute.Light3),
+                attributes.HasFlag(EventEntryAttribute.Light4),
+                attributes.HasFlag(EventEntryAttribute.ModifierVolume),
                 attributes.HasFlag(EventEntryAttribute.Reflection),
                 attributes.HasFlag(EventEntryAttribute.Blare),
-                attributes.HasFlag(EventEntryAttribute.Unk9),
-            };
+                attributes.HasFlag(EventEntryAttribute.UseSimple),
+            ];
         }
 
     }

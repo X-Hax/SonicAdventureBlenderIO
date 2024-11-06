@@ -13,6 +13,14 @@ ATTRIBUTE_LIST = [
     "no_morph",
 ]
 
+ADVANCED_ATTRIBUTE_LIST = [
+    "clip",
+    "modifier",
+    "use_quaternion_rotation",
+    "cache_rotation",
+    "apply_cached_rotation",
+    "envelope",
+]
 
 class SAIO_PT_Node(PropertiesPanel):
     bl_label = "SAIO Node Properties"
@@ -25,6 +33,14 @@ class SAIO_PT_Node(PropertiesPanel):
 
         for attribute in ATTRIBUTE_LIST:
             layout.prop(node_properties, attribute)
+
+        header, body = layout.panel(
+            "SAIO_node_attributes_advanced", default_closed=True)
+        header.label(text="Advanced")
+
+        if body:
+            for attribute in ADVANCED_ATTRIBUTE_LIST:
+                body.prop(node_properties, attribute)
 
     @classmethod
     def poll(cls, context):

@@ -20,7 +20,13 @@ def from_node_attributes(node_properties, attributes: any):
         node_properties.skip_children, \
         node_properties.rotate_zyx, \
         node_properties.no_animate, \
-        node_properties.no_morph \
+        node_properties.no_morph, \
+        node_properties.clip, \
+        node_properties.modifier, \
+        node_properties.use_quaternion_rotation, \
+        node_properties.cache_rotation, \
+        node_properties.apply_cached_rotation, \
+        node_properties.envelope, \
         = SAIO_NET.FLAGS.DecomposeNodeAttributes(attributes)
 
 
