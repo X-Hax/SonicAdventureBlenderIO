@@ -34,6 +34,12 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         default=True
     )
 
+    out_no_scale_keyframes: BoolProperty(
+        name="No scale keyframes",
+        description="Removes scale keyframes from the exported animation",
+        default=False
+    )
+
     out_short_rot: BoolProperty(
         name="Use 16 bit rotations",
         description="Whether to use 16 bit BAMS for the rotation keyframes",
@@ -167,6 +173,7 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         layout.label(text="Export properties")
 
         layout.prop(self, "out_bone_localspace")
+        layout.prop(self, "out_no_scale_keyframes")
         layout.prop(self, "out_short_rot")
         layout.prop(self, "out_ensure_positive_euler_angles")
 
@@ -203,6 +210,7 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
 
         out_anim_parameters = anim_parameters.AnimParameters(
             self.out_bone_localspace,
+            self.out_no_scale_keyframes,
             self.out_rotation_mode,
             self.out_interpolation_threshold,
             self.out_quaternion_threshold,

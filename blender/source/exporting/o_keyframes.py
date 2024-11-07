@@ -329,22 +329,26 @@ class KeyframeEvaluator:
         self._rotation_matrix_inv = rotation_matrix.inverted()
 
         curves = self._get_node_curves(fcurves, datapath_prefix)
-
-        if self.all_none(curves):
-            return None
+        has_keyframes = False
 
         pos_curves = curves[0:3]
         if not self.all_none(pos_curves):
+            has_keyframes = True
             self._evaluate_location(
                 pos_curves, self._output.Position, base_matrix)
 
         rot_curves = curves[3:7]
         if not self.all_none(rot_curves):
+            has_keyframes = True
             self._evaluate_rotation(rot_curves, base_matrix)
 
         scale_curves = curves[7:]
-        if not self.all_none(scale_curves):
+        if not self.all_none(scale_curves) and not self._anim_parameters.no_scale_keyframes:
+            has_keyframes = True
             self._evaluate_scale(scale_curves, base_matrix)
+
+        if not has_keyframes:
+            return None
 
         self._optimize_keyframes()
 

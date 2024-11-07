@@ -264,6 +264,7 @@ class AnimationExportOperator(ExportOperator):
     def get_anim_parameters(self):
         return AnimParameters(
             True,
+            False,
             "KEEP",
             self.interpolation_threshold,
             0,
@@ -311,6 +312,12 @@ class NodeAnimExportOperator(AnimationExportOperator):
         description=(
             "Blender doesnt sort bones by name, although this may be desired"
             " in certain scenarios. This ensure the bones are sorted by name"),
+        default=False
+    )
+
+    no_scale_keyframes: BoolProperty(
+        name="No scale keyframes",
+        description="Removes scale keyframes from the exported animation",
         default=False
     )
 
@@ -380,6 +387,7 @@ class NodeAnimExportOperator(AnimationExportOperator):
     def get_anim_parameters(self):
         return AnimParameters(
             self.bone_localspace,
+            self.no_scale_keyframes,
             self.rotation_mode,
             self.interpolation_threshold,
             self.quaternion_threshold,
@@ -392,6 +400,7 @@ class NodeAnimExportOperator(AnimationExportOperator):
     def draw_other(self, layout: UILayout):
         self.draw_panel_rotation(layout)
         self.draw_panel_bones(layout)
+        self.draw_panel_other(layout)
 
     def draw_panel_rotation(self, layout: UILayout):
         header, body = layout.panel(
@@ -426,5 +435,15 @@ class NodeAnimExportOperator(AnimationExportOperator):
             col.prop(self, "rotation_mode")
             col.prop(self, "quaternion_threshold")
             col.prop(self, "quaternion_optimization_threshold")
+
+        return body
+
+    def draw_panel_other(self, layout: UILayout):
+        header, body = layout.panel(
+            "SAIO_export_nodeanim_other", default_closed=True)
+        header.label(text="Other")
+
+        if body:
+            body.prop(self, "no_scale_keyframes")
 
         return body
