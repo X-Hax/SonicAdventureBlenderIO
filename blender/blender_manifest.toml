@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "sonic_adventure_io"
-version = "2.2.0"
+version = "2.2.1"
 name = "Sonic Adventure I/O"
 tagline = "Import/Exporter for Sonic Adventure Model, Animation and more"
 maintainer = "Justin113D, ItsEasyActually, X-Hax"
@@ -10,7 +10,7 @@ type = "add-on"
 website = "https://github.com/X-Hax/SonicAdventureBlenderIO"
 tags = ["Import-Export"]
 
-blender_version_min = "4.2.0"
+blender_version_min = "4.2.3"
 
 license = [
   "SPDX:GPL-3.0-or-later",
