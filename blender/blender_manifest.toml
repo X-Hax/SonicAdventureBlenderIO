@@ -17,10 +17,21 @@ license = [
 ]
 
 wheels = [
-  "./wheels/cffi-1.16.0-cp311-cp311-win_amd64.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-macosx_10_9_x86_64.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-macosx_11_0_arm64.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-musllinux_1_1_aarch64.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-musllinux_1_1_i686.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-musllinux_1_1_x86_64.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-win32.whl",
+  "./wheels/cffi-1.17.1-cp311-cp311-win_amd64.whl",
   "./wheels/clr_loader-0.2.6-py3-none-any.whl",
   "./wheels/pycparser-2.22-py3-none-any.whl",
-  "./wheels/pythonnet-3.0.3-py3-none-any.whl",
+  "./wheels/pythonnet-3.0.4-py3-none-any.whl",
 ]
 
 [permissions]
