@@ -508,14 +508,13 @@ class EventExporter:
                     -position.y,
                 ))
 
-            reflection = SA3D_SA2Event.REFLECTION()
-            reflection.Transparency = entry.color[3]
-            reflection.Vertex1 = vertices[0]
-            reflection.Vertex2 = vertices[1]
-            reflection.Vertex3 = vertices[2]
-            reflection.Vertex4 = vertices[3]
-
-            reflections.Reflections.Add(reflection)
+            reflections.Reflections.Add(SA3D_SA2Event.REFLECTION(
+                int(entry.color[3]),
+                vertices[0],
+                vertices[1],
+                vertices[2],
+                vertices[3]
+            ))
 
         self.event_data.Reflections = reflections
 
