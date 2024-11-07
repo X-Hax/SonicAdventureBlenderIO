@@ -298,7 +298,11 @@ class EventImporter:
                 entity.Attributes, entity.Layer, shadow_object)
 
     def _setup_attach_upgrade(self, model, target, index, second):
-        if model is None:
+        if model is None or target is None:
+            return
+
+        target_object = self._get_model(target.Label)
+        if target_object is None:
             return
 
         obj = self._add_model_to_collection(model, self.upgrades_collection)
@@ -309,10 +313,6 @@ class EventImporter:
 
         setattr(upgrade_properties, f"model{(2 if second else 1)}", obj)
 
-        if target is None:
-            return
-
-        target_object = self._get_model(target.Label)
         setattr(
             upgrade_properties,
             f"target{(2 if second else 1)}",
@@ -328,6 +328,10 @@ class EventImporter:
         if model is None:
             return
 
+        target_object = self._get_model(model.Label)
+        if target_object is None:
+            return
+
         upgrade_properties = getattr(
             self.base_scene.saio_scene.event,
             "ou_" + INTEGRATED_UPGRADE_LUT[index].lower())
@@ -338,7 +342,6 @@ class EventImporter:
         elif upgrade_type == 2:
             fieldname = "base"
 
-        target_object = self._get_model(model.Label)
         setattr(
             upgrade_properties,
             fieldname,
