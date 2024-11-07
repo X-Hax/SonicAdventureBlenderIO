@@ -18,3 +18,6 @@ In the old addon, the root node on models was interpreted as the armature object
 
 ## Migrate Path
 Converts an old path setup to a curve that can be exported as a path.
+
+## Migrate Update Data
+Resurrects properties that got renamed/moved between SAIO versions.

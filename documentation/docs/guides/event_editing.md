@@ -55,9 +55,6 @@ Root events also host the upgrades, shadow models and reflections.
 ### Event Entries
 Models in events are called "event entries", and their settings are found under the objects [event entry properties](../ui/object/evententry.md). Only a root object can be an event entry; If an object has a parent, they are not an entry.
 
-#### Lighting
-Model entries won't be properly lit by default. You'll have to mark entries with the correct attributes, which are unfortuntaly not properly researched. For all we know, you only have to mark [`Unk 2`](../ui/object/evententry.md#unknowns) to get lit, as well as [`Enable lighting`](../ui/object/evententry.md#enable-lighting) for root scene entries.
-
 ---
 
 ### Animations

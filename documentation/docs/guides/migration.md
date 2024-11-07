@@ -27,3 +27,6 @@ Armature objects themselves no longer count as the root node, and will instead n
 
 ## Path Migration
 Paths get handled completely different now. To migrate an old path, simply select your old path object and hit "migrate path".
+
+## Update migration
+Occasionally we learn more about how the game and model formats work and change certain properties in objects, meshes or materials. When that happens, those properties don't automatically get migrated upon updating the project, and you will have to run the "Update migration" function

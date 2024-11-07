@@ -36,3 +36,21 @@ When set, this node will be completely ignored during **node animation** evaluat
 
 ### No Morph
 The same as **Not Animated**, but for morph animations.
+
+### Clip
+If the mesh bounds are out of view, skip the children
+
+### Modifier (Unused)
+An unused attribute. May be used in Render Fix in the future.
+
+### Use Quaternion Rotation
+Use quaternion vectors for rotating instead of euler angles. (SA2 only)
+
+### Cache rotation
+Cache the rotational matrix for later use.
+
+### Apply cached rotation
+Use the cached rotational matrix.
+
+### Envelope (Unused)
+Unused attribute

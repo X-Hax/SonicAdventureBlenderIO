@@ -82,6 +82,9 @@ Common Combinations (Source & Destination):
 
 Read more [here](https://www.learnopengles.com/android-lesson-five-an-introduction-to-blending/)
 
+### No Alpha Test
+Disables alpha testing (essentially ignored whether a pixel is fully opaque and does all transparency math involved).
+
 ### Double Sided
 Essentially "Backface Culling" but inverted. The games dont properly support this (unless you use mods that fix it).
 
