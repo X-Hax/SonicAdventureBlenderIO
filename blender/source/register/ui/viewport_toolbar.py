@@ -52,10 +52,11 @@ from ..operators.path_operators import (
 )
 
 from ..operators.migration_operators import (
-    SAIO_OT_MigrateCheck,
-    SAIO_OT_MigrateData,
-    SAIO_OT_MigrateArmature,
-    SAIO_OT_MigratePath
+    SAIO_OT_MigrateOldCheck,
+    SAIO_OT_MigrateOldData,
+    SAIO_OT_MigrateOldArmature,
+    SAIO_OT_MigrateOldPath,
+    SAIO_OT_MigrateUpdateData
 )
 
 from ..operators.info_operators import (
@@ -184,19 +185,22 @@ class SAIO_PT_VTP_Migration(bpy.types.Panel):
     bl_category = "SAIO Tools"
 
     def draw(self, context):
-        from ...migration import migration_checks
+        from ...migration import old_addon_migration_checks
 
         layout = self.layout
         saio = context.scene.saio_scene
 
-        if migration_checks.is_old_addon_enabled(context):
+        layout.operator(SAIO_OT_MigrateUpdateData.bl_idname)
+        layout.separator(factor=2, type="LINE")
+
+        if old_addon_migration_checks.is_old_addon_enabled(context):
             box = layout.box()
             box.label(text="!! WARNING !!")
             box.label(text="You appear to have the old addon enabled!")
             box.label(text="Please make sure that it's disabled!")
             box.label(text="It's best to uninstall altogether.")
 
-        layout.operator(SAIO_OT_MigrateCheck.bl_idname)
+        layout.operator(SAIO_OT_MigrateOldCheck.bl_idname)
         if not saio.checked_for_migrate_data:
             box = layout.box()
             box.label(text="Not yet checked for migrate data!")
@@ -207,9 +211,9 @@ class SAIO_PT_VTP_Migration(bpy.types.Panel):
             box.label(text="Nothing to migrate")
             return
 
-        layout.operator(SAIO_OT_MigrateData.bl_idname)
-        layout.operator(SAIO_OT_MigrateArmature.bl_idname)
-        layout.operator(SAIO_OT_MigratePath.bl_idname)
+        layout.operator(SAIO_OT_MigrateOldData.bl_idname)
+        layout.operator(SAIO_OT_MigrateOldArmature.bl_idname)
+        layout.operator(SAIO_OT_MigrateOldPath.bl_idname)
 
 
 class SAIO_PT_VTP_Info(bpy.types.Panel):

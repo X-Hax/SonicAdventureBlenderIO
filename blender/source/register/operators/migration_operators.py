@@ -5,13 +5,13 @@ from mathutils import Matrix, Vector
 
 from .base import SAIOBaseOperator, SAIOBasePopupOperator
 
-from ...migration import ARMATURE_KEY
+from ...migration.old_addon_migration import ARMATURE_KEY
 from ...utility.math_utils import get_normal_matrix
 from ...exceptions import UserException
 
 
-class SAIO_OT_MigrateCheck(SAIOBaseOperator):
-    bl_idname = "saio.migrate_check"
+class SAIO_OT_MigrateOldCheck(SAIOBaseOperator):
+    bl_idname = "saio.migrate_old_check"
     bl_label = "Check for migrate data"
     bl_description = "Check wether there is data to migrate from the old addon"
 
@@ -20,13 +20,13 @@ class SAIO_OT_MigrateCheck(SAIOBaseOperator):
         return context.mode == 'OBJECT'
 
     def _execute(self, context: bpy.types.Context):
-        from ...migration import migration_checks
-        migration_checks.update_checks()
+        from ...migration import old_addon_migration_checks
+        old_addon_migration_checks.update_checks()
         return {'FINISHED'}
 
 
-class SAIO_OT_MigrateData(SAIOBasePopupOperator):
-    bl_idname = "saio.migrate_data"
+class SAIO_OT_MigrateOldData(SAIOBasePopupOperator):
+    bl_idname = "saio.migrate_old_data"
     bl_label = "Migrate Data"
     bl_description = "Migrate data from the old addon to the new one"
     bl_options = {'PRESET', 'UNDO'}
@@ -51,13 +51,13 @@ class SAIO_OT_MigrateData(SAIOBasePopupOperator):
             self.layout.label(text="Only proceed only if 100% sure!!")
 
     def _execute(self, context: bpy.types.Context):
-        from ... import migration
-        migration.migrate_file(self.remigrate)
+        from ...migration import old_addon_migration
+        old_addon_migration.migrate_file(self.remigrate)
         return {'FINISHED'}
 
 
-class SAIO_OT_MigrateArmature(SAIOBasePopupOperator):
-    bl_idname = "saio.migrate_armature"
+class SAIO_OT_MigrateOldArmature(SAIOBasePopupOperator):
+    bl_idname = "saio.migrate_old_armature"
     bl_label = "Migrate Armature"
     bl_description = (
         "Armatures in the old addon interpreted the Armature object itself as"
@@ -118,8 +118,8 @@ class SAIO_OT_MigrateArmature(SAIOBasePopupOperator):
         return {'FINISHED'}
 
 
-class SAIO_OT_MigratePath(SAIOBaseOperator):
-    bl_idname = "saio.migrate_path"
+class SAIO_OT_MigrateOldPath(SAIOBaseOperator):
+    bl_idname = "saio.migrate_old_path"
     bl_label = "Migrate Path"
     bl_description = "Converts an old path to a new one"
     bl_options = {'UNDO'}
@@ -180,4 +180,15 @@ class SAIO_OT_MigratePath(SAIOBaseOperator):
 
         curve.extrude = 1
 
+        return {'FINISHED'}
+
+class SAIO_OT_MigrateUpdateData(SAIOBaseOperator):
+    bl_idname = "saio.migrate_update_data"
+    bl_label = "Migrate Update Data"
+    bl_description = "Converts variables that have been moved/renamed between updates"
+    bl_options = {'UNDO'}
+
+    def _execute(self, context: bpy.types.Context):
+        from ...migration import update_migration
+        update_migration.update_file()
         return {'FINISHED'}

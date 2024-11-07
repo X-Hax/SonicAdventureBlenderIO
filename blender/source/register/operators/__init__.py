@@ -102,10 +102,11 @@ to_register = [
     path_operators.SAIO_OT_Path_Generate,
     path_operators.SAIO_OT_Export_Path,
 
-    migration_operators.SAIO_OT_MigrateCheck,
-    migration_operators.SAIO_OT_MigrateData,
-    migration_operators.SAIO_OT_MigrateArmature,
-    migration_operators.SAIO_OT_MigratePath,
+    migration_operators.SAIO_OT_MigrateOldCheck,
+    migration_operators.SAIO_OT_MigrateOldData,
+    migration_operators.SAIO_OT_MigrateOldArmature,
+    migration_operators.SAIO_OT_MigrateOldPath,
+	migration_operators.SAIO_OT_MigrateUpdateData,
 
     info_operators.SAIO_OT_Info_Manual,
     info_operators.SAIO_OT_Info_Discord,
