@@ -455,7 +455,7 @@ class ShapeKeyframeEvaluator:
     _depsgraph: bpy.types.Depsgraph
     _duration: int
     _start: int
-    _frames: int
+    _frames: dict[int, str] | None
 
     def __init__(self, modelmesh: ModelMesh, normal_mode: str):
         self._modelmesh = modelmesh
@@ -466,7 +466,7 @@ class ShapeKeyframeEvaluator:
         self._depsgraph = None
         self._duration = 0
         self._start = 0
-        self._frames = 0
+        self._frames = None
 
     def _verify_keyframe(
             self,
@@ -635,7 +635,7 @@ class ShapeKeyframeEvaluator:
         return SA3D_Common.LABELED_ARRAY[System.VECTOR3](
             normal_name, shape_normals)
 
-    def _create_keyframes(self):
+    def _create_keyframes(self, action_name):
 
         keyframes = SA3D_Modeling.KEYFRAMES()
 
@@ -649,6 +649,9 @@ class ShapeKeyframeEvaluator:
             if shape_name not in self._shape_dict:
                 shape_mesh = self._modelmesh.get_shape_model(
                     shape_name, self._depsgraph)
+
+                if shape_mesh is None:
+                    raise UserException(f"Action \"{action_name}\" on object \"{self._modelmesh.object.name}\" tries to animate the non-existent shapekey \"{shape_name}\". Aborting export!")
 
                 vertex_array = self._create_vertex_array(
                     shape_name,
@@ -684,6 +687,6 @@ class ShapeKeyframeEvaluator:
         self._start = start
 
         self._frames = self._evaluate_keyframes(action)
-        keyframes = self._create_keyframes()
+        keyframes = self._create_keyframes(action.name)
 
         return keyframes
