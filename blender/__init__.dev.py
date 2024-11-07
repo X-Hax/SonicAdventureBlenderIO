@@ -10,7 +10,7 @@ bl_info = {
     "name": "Sonic Adventure I/O DEV BUILD",
     "author": "Justin113D, ItsEasyActually, X-Hax",
     "description": "Import/Exporter for Sonic Adventure Model, Animation and other Formats.",
-    "version": (2, 201, 0),
+    "version": (2, 201, 1),
     "blender": (4, 2, 3),
     "location": "",
     "warning": "",
