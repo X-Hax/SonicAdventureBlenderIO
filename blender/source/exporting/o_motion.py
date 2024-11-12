@@ -73,8 +73,8 @@ def get_frame_range(actions: list[bpy.types.Action]):
             start = ac_start
             end = ac_end
         else:
-            start = max(start, ac_start)
-            end = min(end, ac_end)
+            start = min(start, ac_start)
+            end = max(end, ac_end)
 
     return start, end
 
