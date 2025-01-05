@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "sonic_adventure_io_dev"
-version = "2.201.4"
+version = "2.201.5"
 name = "Sonic Adventure I/O DEV BUILD"
 tagline = "Import/Exporter for Sonic Adventure Model, Animation and more"
 maintainer = "Justin113D, ItsEasyActually, X-Hax"
@@ -25,9 +25,9 @@ wheels = [
   "./wheels/cffi-1.17.1-cp311-cp311-musllinux_1_1_x86_64.whl",
   "./wheels/cffi-1.17.1-cp311-cp311-win32.whl",
   "./wheels/cffi-1.17.1-cp311-cp311-win_amd64.whl",
-  "./wheels/clr_loader-0.2.6-py3-none-any.whl",
+  "./wheels/clr_loader-0.2.7.post0-py3-none-any.whl",
   "./wheels/pycparser-2.22-py3-none-any.whl",
-  "./wheels/pythonnet-3.0.4-py3-none-any.whl",
+  "./wheels/pythonnet-3.0.5-py3-none-any.whl",
 ]
 
 [permissions]
