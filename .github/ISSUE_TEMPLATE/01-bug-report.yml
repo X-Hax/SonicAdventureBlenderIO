@@ -1,0 +1,68 @@
+name: Bug Report
+description: Report a bug with the SAIO Addon
+title: "[Bug Report]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a bug report. Please be sure to include as much information regarding the bug and steps to reproduce it as possible.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Report Review
+      options:
+        - label: I have reviewed existing issues on this repository and my issue is not currently reported.
+          required: true
+        - label: I have ensured I am on the latest version of the current build of the addon I am using.
+          required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Which version of the SAIO are you using?
+      multiple: false
+      options:
+        - Release
+        - Developer
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Please provide details regarding the bug you have encountered
+      description: This includes any error messages you may have received inside of Blender.
+    validations:
+      required: true
+  - type: input
+    id: blenderversion
+    attributes:
+      label: Please provide the version of Blender that you are currently using when getting this bug.
+      placeholder: e.g. Blender 4.3.2
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Please select your Operating System.
+      multiple: false
+      options:
+        - Windows
+        - Linux
+        - MacOS
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: Operation System Information
+      description: Please provide the version of your Operating System. 
+    validations:
+      required: true
+  - type: textarea
+    id: info
+    attributes:
+      label: Additional Information
+      description: Please provide any additional information you find necessary here. This can include files or screenshots.
+    validations:
+      required: false

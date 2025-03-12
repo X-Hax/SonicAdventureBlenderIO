@@ -1,0 +1,33 @@
+name: Documentation Issue
+description: Report an issue, correction, or provide feedback on documentation for the SAIO Addon.
+title: "[Documentation]: "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is for reporting issues, corrections, or general feedback regarding the [Blender SAIO Manual](https://x-hax.github.io/SonicAdventureBlenderIO/). Please be sure to have read through it prior to reporting an issue with documentation.
+  - type: dropdown
+    id: type
+    attributes:
+      label: Please select what you are reporting in regards to the documentation.
+      multiple: true
+      options:
+        - Incorrect information
+        - Hard to understand
+        - Enhancement and/or correction
+  - type: textarea
+    id: info
+    attributes:
+      label: Please provide information regarding your issue with the documentation.
+      description: This can include corrections to how the documentation is setup or how some things with the documentation need work to be better understood.
+    validations:
+      required: true
+  - type: textarea
+    id: url
+    attributes:
+      label: Please provide the url to the page the issue is found on. Please separate multiple urls by line.
+      description: If this is an enhancement, please provide the page you think the documentation should be linked from.
+    validations:
+      required: true
+  

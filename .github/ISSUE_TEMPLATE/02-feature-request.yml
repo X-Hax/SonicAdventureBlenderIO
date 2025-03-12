@@ -1,0 +1,12 @@
+name: Feature Request
+description: Request a new feature or an enhancement for the SAIO Addon.
+title: "[Feature Request]: "
+labels: ["feature-request"]
+body:
+  - type: textarea
+    id: request
+    attributes:
+      label: Request Information
+      description: Please provide details of the feature or enhancement you'd like to see here including details on how it would work and how it would benefit the addon.
+    validations:
+      required: true
