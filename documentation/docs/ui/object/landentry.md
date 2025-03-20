@@ -29,7 +29,7 @@ Additionally, all models recognized as `static` will evaluate as their own geome
 ## Static-type properties
 
 ### Surface Attributes
-These define how a model is rendered and collided with. Both SA1 and SA2 have different sets of surface attributes to accomodate for different functionalities between the games, but many are shared.
+These define how a model is rendered and collided with. Both SA1 and SA2 have different sets of surface attributes to modate for different functionalities between the games, but many are shared.
 
 By changing the edit mode (**Universal** by default), you can change which attributes you want to see and edit, making it easier to manage surface attributes for a specific game.
 

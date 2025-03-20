@@ -25,7 +25,7 @@ References the [texture list](../textures.md) of the currently active object.
 References the [texturename list](../texturenames.md) of the currently active object.
 
 ### Mesh
-References the [mesh properties panel](../object/mesh.md) of the currenlty active object.
+References the [mesh properties panel](../object/mesh.md) of the currently active object.
 
 ### Material
-References the [material properties panel](../object/mesh.md) of the currenlty active material on the currently active object, as well as display the objects material lists.
+References the [material properties panel](../object/mesh.md) of the currently active material on the currently active object, as well as display the objects material lists.

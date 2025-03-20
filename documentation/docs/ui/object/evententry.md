@@ -21,13 +21,13 @@ The panel can be found in the **properties** editor, under the **object** tab, c
 ## CHUNK & GC Models
 These two types are exported as actual models in the event. The types export the model corresponding to their name (read more [here](../../assetinfo/model_formats.md)).
 
-Additionaly, these get extra attributes to set, documented below.
+Additionally, these get extra attributes to set, documented below.
 
 ### Shadow Model
-You can set a shadow model to be used for GC shadow casting. **MAKE SURE THE ARMATURE IS SET UP IDENTICALLY**, as the exact same animation will be applied as to the base model!
+You can set a shadow model to be used for GC shadow casting. **MAKE SURE THE ARMATURE IS SET UP IDENTICALLY**, as the exact same animation will be applied to the base model!
 
 ### Layer
-This was added in the ports, and is used to adjust the rendering order for transparent models. Increasing the layer makes the model draw later then those at lower layers.
+This was added in the ports, and is used to adjust the rendering order for transparent models. Increasing the layer makes the model draw later than those at lower layers.
 
 <figure class="align-right" markdown>
 ![How the Blare Effect should've looked like](../../img/ui_blare_effect.gif)
@@ -48,5 +48,5 @@ Enables lighting(?) on root scene event entries.
 Disables rendering shadows on root scene event entries.
 
 ### Unknowns
-These attributes still require extensive research in how they work.
+These attributes still require extensive research on how they work.
 <br/> For all we know, **Unknown 2** on its own enables lighting.

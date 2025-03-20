@@ -6,12 +6,12 @@ To be able to import most game assets, you'll need to extract them with the SA T
 
 1. Make sure you have [SA Tools installed](./installation.md#installing-the-sonic-adventure-toolset).
 2. You'll want to follow the tutorial for the [SA Tools Hub](https://github.com/X-Hax/sa_tools/wiki/SA-Tools-Hub) for setting up projects.
-3. Once you have creatred a project, the below stips will cover importing models and levels from your project into blender.
+3. Once you have created a project, the steps below will cover importing models and levels from your project into blender.
 
 ## Importing a Model or Stage
 **In case you made it here without having the addon installed, please [see here for installation guide](./installation.md).**
 
-The addon supports importing models from 3 different sources
+The addon supports importing models from 3 different sources.
 
 - [\*.\*MDL files](../assetinfo/filetypes.md#models) for **models**
 - [\*.NJ files](../assetinfo/filetypes.md#models) for **models**
@@ -36,7 +36,7 @@ Level imports also come with two types of sub Collections when imported:
 - The Visual contains all level models that are rendered when the level is played.
 - The Collision contains level models are have their attributes set to solid, but are invisible.
 
-In SA1/DX, your main level will be mostly comprised of Visual objects as it used used the level models for both visual and collidable surfaces.
+In SA1/DX, your main level will be mostly comprised of Visual objects as it used the level models for both visual and collidable surfaces.
 
 ---
 
@@ -49,7 +49,7 @@ Now that you have your model or stage imported, you probably want the model to h
 4. Update the material textures <br/> ![](../img/asset_importing_textures_4.png)
 5. View your scene in material view, and you should now be able to see the models with their correct textures* <br/> ![](../img/asset_importing_textures_5.png)
 
-***** Some models, particulary level objects, may need texture name lists to get set up properly.
+***** Some models, particularly level objects, may need texture name lists to get set up properly.
 <br> For a more in-depth guide on how texturing works, [see this guide](./texturing.md).
 
 ---
@@ -58,7 +58,7 @@ Now that you have your model or stage imported, you probably want the model to h
 For model files, this tool also supports loaded in animation files.
 
 ***The following information is extremely important***
-<br/>To import an animation, you will need an object that is setup as an armature. Not all models will import with an armature. Thankfully though, this addon can convert non-armature objects to armatures easily. The following are examples of an armature and non-armature object.
+<br/>To import an animation, you will need an object that is set up as an armature. Not all models will import with an armature. Thankfully though, this addon can convert non-armature objects to armatures easily. The following are examples of an armature and non-armature object.
 
 ### Example of an armature object
 ![](../img/asset_importing_example_armature.png)
@@ -73,7 +73,7 @@ To convert a non-armature, simple select the ***root object*** of your object. I
 
 ![](../img/asset_importing_convert_armature_1.png)
 
-Once selected, go to the tool panel within the SAIO Tools viewport toolbar and select `Arnature from objects`:
+Once selected, go to the tool panel within the SAIO Tools viewport toolbar and select `Armature from objects`:
 
 ![](../img/asset_importing_convert_armature_2.png)
 

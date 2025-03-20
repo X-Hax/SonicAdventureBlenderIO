@@ -16,10 +16,10 @@ To migrate properties of scenes, objects and materials:
 3. Click `Migrate Data`. This should do the job
 
 ### Changes between the addons
-- Texture lists were moved from the scene to a seperate list panel.
+- Texture lists were moved from the scene to a separate list panel.
 - GC texcoord source for materials was combined.
 - Export type for meshes removed; Models now export vertex colors when they have them.
-- Armatures no longer count as a node themselves. Root nodes will be added as seperate bones.
+- Armatures no longer count as a node themselves. Root nodes will be added as separate bones.
 - Paths now consist of only a curve
 
 ## Armature migration

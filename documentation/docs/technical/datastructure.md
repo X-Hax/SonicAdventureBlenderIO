@@ -1,7 +1,7 @@
-# Pyton data structure
+# Python data structure
 This is part of the technical documentation, if anyone is interested in messing with the data via scripting. <br/>
 A handful of property groups have been added, all of which are documented here. <br/>
-The documentation is structured as following:
+The documentation is structured as follows:
 
 ```
 {Parent type path}
@@ -145,7 +145,7 @@ SAIO_Scene
    ├─ expanded_surface_attributes: bool
    ├─ advanced_surface_attributes: bool
    ├─ land_entry_surface_attributes_editmode: enum
-   │  ├> UNIVERAL : Universal
+   │  ├> UNIVERSAL : Universal
    │  ├> SA1 : Adventure 1
    │  └> SA2 : Adventure 2
    │
