@@ -1,6 +1,6 @@
 # Asset Locations
 
-All assets can be found within any project folder created using the [SA Tools Hub](https://github.com/X-Hax/sa_tools/wiki/SA-Tools-Hub) from the [Sonic Adventure Toolset](https://github.com/X-Hax/sa_tools/wiki). Below is quick guide to help with looking for files. Each section will also contain links to where you can find more indepth information.
+All assets can be found within any project folder created using the [SA Tools Hub](https://github.com/X-Hax/sa_tools/wiki/SA-Tools-Hub) from the [Sonic Adventure Toolset](https://github.com/X-Hax/sa_tools/wiki). Below is a quick guide to help with looking for files. Each section will also contain links to where you can find more indepth information.
 
 ---
 
@@ -26,7 +26,7 @@ All assets can be found within any project folder created using the [SA Tools Hu
 - **Textures**
 	- These will be found in your ***game installation*** within the `/system/` folder.
 
-**The below links are to more comprehensive lists for assets.**
+**The links below are to more comprehensive lists for assets.**
 
 - [Character Models List (Incomplete/out of date)](http://info.sonicretro.org/SCHG:Sonic_Adventure_DX:_PC/CHRMODELS.DLL)
 - [Texture Archive List](https://github.com/X-Hax/SADXModdingGuide/wiki/List-of-PVMs)
@@ -49,7 +49,7 @@ All assets can be found within any project folder created using the [SA Tools Hu
 	- Chao models can be found in the `/models` folder.
 	- Chao Garden objects can be found in the `/common` folder.
 
-**The below links are to more comprehensive lists for assets.**
+**The links below are to more comprehensive lists for assets.**
 
 - [Character Models List](http://info.sonicretro.org/SCHG:Sonic_Adventure_2/Model_Files)
 - [Texture Archive List](http://info.sonicretro.org/SCHG:Sonic_Adventure_2/Textures)

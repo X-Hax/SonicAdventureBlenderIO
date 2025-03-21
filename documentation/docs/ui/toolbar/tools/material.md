@@ -52,5 +52,5 @@ Assembles a texture list from applied textures on all materials in the scene or 
 
 - `Mode`:
 	- `Scene`: Assembles the list for the current scene and applies it to the scene.
-	- `Event`: Assembles the list for all scenes involvnig the current event (that the scene belongs to) and applies it to all involved scenes.
+	- `Event`: Assembles the list for all scenes involving the current event (that the scene belongs to) and applies it to all involved scenes.
 - `Global index offset`: The global index at which the textures should start

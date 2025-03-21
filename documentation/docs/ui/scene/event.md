@@ -8,7 +8,7 @@ Event properties, only available on the root event scene.
 ---
 
 ## Event Scenes
-Events are composed of multiple animated scenes, which the addon translates to literal scenes. This list is for specifiying which scenes and in which order they are played and exported.
+Events are composed of multiple animated scenes, which the addon translates to literal scenes. This list is for specifying which scenes and in which order they are played and exported.
 
 ## Drop Shadow Control
 When enabled, shadow models will cast shadows.
@@ -45,7 +45,7 @@ Overlay upgrades take a model and renders them attached to a node. This is used 
 The model that gets overlaid
 
 ### Target 1 & 2
-The node to which respective model should be attached to
+The node to which the respective model should be attached to
 
 <br clear="right"/>
 
@@ -57,7 +57,7 @@ The node to which respective model should be attached to
 Specifies Texture ranges for animations. Then, any material referenced by [Event node UV Animations](../object/event_node_uv_animations.md) that uses a texture in the sequence.
 
 ### Tex
-The start texture indes
+The start texture index
 
 ### Num
 Textures in the sequence

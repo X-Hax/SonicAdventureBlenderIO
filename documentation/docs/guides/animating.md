@@ -24,7 +24,7 @@ Since shapekey animations are distributed across multiple mesh object, you will 
 - The animation for `Head` should be called `ShapeAnim_Head`
 
 ### Limitations
-Shape animations are very limited. Following conditions must be met:
+Shape animations are very limited. The following conditions must be met:
 
 - All keyframes need to be a value of either 0 or 1.
 - No two keyframes of value 1 may share the same frame.

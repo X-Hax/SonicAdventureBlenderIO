@@ -16,7 +16,7 @@ Common parameters between the model exporters:
 	- `Selected Objects`: Objects that are not selected will be ignored.
 	- `Active Collection`: Exports only objects within the active collection.
 	- `Active Scene`: Exports only objects within the active scene (ignored when using `Active Collection`).
-- `Optimize`: Optimize vertex data and get rid of any duplicate.
+- `Optimize`: Optimize vertex data and get rid of any duplicates.
 	<br/>**WARNING:** This may alter vertex order! Do not use for things that morph, like chao models or chao trees.
 - `Automatic Node attribute mode`: Automatically determines several node attributes on export. [More info here](../../object/node.md).
 	- `None`: Will not automatically evaluate node attributes
@@ -44,7 +44,7 @@ Exports the targeted objected as a landtable (*.*lvl) file.
 
 - `Fallback surface attributes`: If an object has no surface attributes, it will receive the `Visible` and `Solid` attributes.
 
-Parameters found under the "Animation" tab apply to animated geometry. See [Animation](#export-animations), and more specifivally [node animation](#export-node-animation) for info on the advanced options.
+Parameters found under the "Animation" tab apply to animated geometry. See [Animation](#export-animations), and more specifically [node animation](#export-node-animation) for info on the advanced options.
 
 ---
 
@@ -114,8 +114,8 @@ Common parameters between the exporters:
 		|---|---|
 		|![](../../../img/animation_conversion_quat_threshold_low.png)|![](../../../img/animation_conversion_quat_threshold_high.png)| </details>
 
-- `Optimiziation deviation threshold`: (**Advanced**) Similar to the Interpolation threshold, but applies to all frames in the animation (including manually placed ones).
-- `Quaternion Optimiziation deviation threshold`: (**Advanced**) The same as the regular optimization, but specifically for quaternion rotations, as those use other value ranges.
+- `Optimization deviation threshold`: (**Advanced**) Similar to the Interpolation threshold, but applies to all frames in the animation (including manually placed ones).
+- `Quaternion Optimization deviation threshold`: (**Advanced**) The same as the regular optimization, but specifically for quaternion rotations, as those use other value ranges.
 
 ### Export Node Animation
 Exports the currently active node animation (either the one currently being edited, or the active action) of the target to an *.saanim file.

@@ -1,7 +1,7 @@
 # Material properties
 ![](../../img/ui_material_properties.png){ align=right }
 
-Every material now has a new menu added with the name `SAIO Materia Properties`, which is used for setting material properties used on export.
+Every material now has a new menu added with the name `SAIO Material Properties`, which is used for setting material properties used on export.
 
 <br clear="right"/>
 

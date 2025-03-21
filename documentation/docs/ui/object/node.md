@@ -19,7 +19,7 @@ The panel can be found in the **properties editor**, under the **object** and **
 ---
 
 ### Ignore Position / Rotation / Scale
-Settings these makes the game ignore the transform channels of the same name.
+Setting these makes the game ignore the transform channels of the same name.
 <br/> These get ignored when animating respective channel.
 
 ### Rotate ZYX

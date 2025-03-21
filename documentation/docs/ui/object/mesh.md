@@ -14,7 +14,7 @@ Forcing vertex colors will export the model with binary weights (each vertex wil
 
 ### Texcoord precision level
 Some export formats allow for increasing the precision of texture coordinates in exchange for reduced range.
-<br/> Increasing the level by one gives you double the precision than the previous level, but reduces the available range by half.
+<br/> Increasing the level by one gives you double the precision of the previous level, but reduces the available range by half.
 
 Each format has a different supported precision level range:
 

@@ -5,7 +5,7 @@ The addon features full texture support, including texture list processing and i
 ## Texture lists
 The Sonic Adventure games primarily access textures (be it on models, as ui sprites other other) using [Textures lists stored in Archives](../assetinfo/filetypes.md#textures). A texture is then referenced by it's index within the list, or by the global texture index. SAIO has full* texturing support that allows for viewing all models with textures.
 
-***** Some object models compile textures from multiple different texture lists. This is has yet to be implemented into the addon, but can already be worked around.
+***** Some object models compile textures from multiple different texture lists. This has yet to be implemented into the addon, but can already be worked around.
 
 ---
 

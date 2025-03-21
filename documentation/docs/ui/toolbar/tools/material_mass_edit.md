@@ -24,4 +24,4 @@ When pressed. Every material checkbox that is marked will be unchecked on the ta
 Regardless of whether non-checkbox materials are marked, all properties will be written as they are to the target materials (essentially copying themselves).
 
 ## Reset Parameters
-Resets all parameters below. (Unckecks all checkboxes and resets non-checkbox parameters to their default value).
+Resets all parameters below. (Unchecks all checkboxes and resets non-checkbox parameters to their default value).
