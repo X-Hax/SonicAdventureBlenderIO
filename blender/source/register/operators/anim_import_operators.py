@@ -191,10 +191,15 @@ class SAIO_OT_Import_Camera_Animation(MotionImportOperator):
                 animFile.Animation,
                 camera_setup)
 
-            def setup_nla(data: bpy.types.ID, action: bpy.types.Action):
-                track = data.animation_data.nla_tracks.new()
+            def setup_nla(data: bpy.types.ID, action_slot: bpy.types.ActionSlot):
+                track: bpy.types.NlaTrack = data.animation_data.nla_tracks.new()
                 track.name = os.path.splitext(file.name)[0]
-                track.strips.new(action.name, 0, action)
+                strip = track.strips.new(
+                    actions.action.name, 
+                    0,
+                    actions.action
+                )
+                strip.action_slot = action_slot
 
             setup_nla(camera_setup.camera, actions.position)
             setup_nla(camera_setup.target, actions.target)

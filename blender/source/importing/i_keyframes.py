@@ -9,11 +9,11 @@ from ..exceptions import SAIOException
 
 class TransformKeyframeProcessor:
 
-    action: bpy.types.Action
-    '''Output action'''
+    action_channelbag: bpy.types.ActionChannelbag
+    '''Output action channelbag'''
 
-    group: str
-    '''FCurve group'''
+    action_group_name: str
+    '''Output action group'''
 
     path_prefix: str
     '''FCurve path prefix'''
@@ -29,15 +29,15 @@ class TransformKeyframeProcessor:
 
     def __init__(
             self,
-            action: bpy.types.Action = None,
-            group: str = "",
+            action_channelbag: bpy.types.ActionChannelbag = None,
+            action_group_name: str = "",
             path_prefix: str = "",
             rotation_mode: str = "KEEP",
             rotate_zyx: bool = False,
             quaternion_conversion_deviation: float = 0.05):
 
-        self.action = action
-        self.group = group
+        self.action_channelbag = action_channelbag
+        self.action_group_name = action_group_name
         self.path_prefix = path_prefix
         self.rotation_mode = rotation_mode
         self.rotate_zyx = rotate_zyx
@@ -50,10 +50,11 @@ class TransformKeyframeProcessor:
         '''Creates a new fcurve on the action and
         returns its keyframe points collection'''
 
-        return self.action.fcurves.new(
+        return self.action_channelbag.fcurves.new(
             self.path_prefix + name,
             index=index,
-            action_group=self.group).keyframe_points
+            group_name=self.action_group_name
+        ).keyframe_points
 
     def process_position_keyframes(
             self,
@@ -415,22 +416,22 @@ class ShapeKeyframeProcessor:
     def _get_curve(
             self,
             shape: bpy.types.ShapeKey,
-            action: bpy.types.Action):
+            action_channelbag: bpy.types.ActionChannelbag):
 
         if shape == self._key.reference_key:
             return None
 
         data_path = f"key_blocks[\"{shape.name}\"].value"
-        curve = action.fcurves.find(data_path)
+        curve = action_channelbag.fcurves.find(data_path)
         if curve is None:
-            curve = action.fcurves.new(data_path)
+            curve = action_channelbag.fcurves.new(data_path)
 
         return curve.keyframe_points
 
     def process(
             self,
             keyframe_set,
-            output_action: bpy.types.Action,
+            action_channelbag: bpy.types.ActionChannelbag,
             last_frame_number: int):
 
         self._verify(keyframe_set)
@@ -442,7 +443,7 @@ class ShapeKeyframeProcessor:
 
         for kf in keyframe_set.Vertex:
             shape_key = self._get_shapekey(kf.Value)
-            curve = self._get_curve(shape_key, output_action)
+            curve = self._get_curve(shape_key, action_channelbag)
 
             if curve is not None:
                 curves.add(curve)

@@ -7,6 +7,8 @@ from .base_export_operators import (
     NodeAnimExportOperator,
 )
 
+from ...exporting.o_motion import ActionSet
+
 from ...exporting import o_motion, o_shapemotion, o_model
 from ...utility import camera_utils
 from ...exceptions import UserException
@@ -26,7 +28,7 @@ class SAIO_OT_Export_Node_Animation(NodeAnimExportOperator):
                 and len(active.children) > 0)):
             return None
 
-        return o_motion.get_action(active, context.scene.frame_current)
+        return ActionSet.from_data(active, context.scene.frame_current)
 
     @classmethod
     def poll(cls, context):
@@ -41,9 +43,7 @@ class SAIO_OT_Export_Node_Animation(NodeAnimExportOperator):
         motion = o_motion.convert_to_node_motion(
             context.active_object,
             self.force_sort_bones,
-            action.fcurves,
-            action.frame_range,
-            action.name,
+            action,
             self.get_anim_parameters()
         )
 
@@ -90,10 +90,9 @@ class SAIO_OT_Export_Node_Animations(NodeAnimExportOperator):
                 motion = o_motion.convert_to_node_motion(
                     active,
                     self.force_sort_bones,
-                    strip.action.fcurves,
-                    (strip.action_frame_start, strip.action_frame_end),
-                    strip.name,
-                    anim_parameters
+                    strip.action,
+                    anim_parameters,
+                    frame_range=(strip.action_frame_start, strip.action_frame_end)
                 )
 
                 SA3D_Modeling.ANIMATION_FILE.WriteToFile(outpath, motion)
@@ -109,8 +108,7 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
     filename_ext = ".saanim"
 
     camera_setup: camera_utils.CameraSetup
-    action_setup: camera_utils.CameraActionSet | None
-    motion_name: str
+    camera_action: camera_utils.CameraAction | None
 
     @staticmethod
     def _get_action_setup(camera_setup: camera_utils.CameraSetup, frame: int):
@@ -121,38 +119,33 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
         id_data = (
             camera_setup.camera,
             camera_setup.target,
-            camera_setup.camera_data)
+            camera_setup.camera_data
+        )
 
-        action = None
-        postfix = None
-        for idd, postfix in zip(id_data, camera_utils.ACTION_POSTFIX):
-            action = o_motion.get_action(idd, frame)
-            if action is not None:
-                break
+        actions = [ActionSet.from_data(idd, frame) for idd in id_data]
 
-        if action is None:
+        base_action = None
+        for action in actions:
+            if action is None:
+                continue
+
+            if base_action is None:
+                base_action = action
+            elif action != base_action:
+                raise UserException(
+                    "The active camera setup uses more than 1 action!\n",
+                    "Please ensure that the camera object, target object and"
+                    " camera data all use slots on the same action"
+                )
+
+        if base_action is None:
             return None
 
-        if not action.name.endswith(postfix):
-            raise UserException(
-                f"Action \"{action.name}\" is a {postfix[1:]} action and it's"
-                f" name has to end with \"{postfix}\" to be recognized as"
-                " such, otherwise the other actions cannot be found!")
-
-        name = action.name[:-len(postfix)]
-
-        actions = []
-        for postfix in camera_utils.ACTION_POSTFIX:
-            index = bpy.data.actions.find(name + postfix)
-            if index == -1:
-                actions.append(None)
-            else:
-                actions.append(bpy.data.actions[index])
-
-        return camera_utils.CameraActionSet(
-            actions[0],
-            actions[1],
-            actions[2],
+        return camera_utils.CameraAction(
+            base_action,
+            actions[0].slot if actions[0] is not None else None,
+            actions[1].slot if actions[1] is not None else None,
+            actions[2].slot if actions[2] is not None else None,
         )
 
     @classmethod
@@ -160,8 +153,8 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
         if context.mode != 'OBJECT':
             return False
 
-        camera_setup = camera_utils.CameraSetup.get_setup(
-            context.active_object)
+        camera_setup = camera_utils.CameraSetup.get_setup(context.active_object)
+
         try:
             return cls._get_action_setup(
                 camera_setup, context.scene.frame_current) is not None
@@ -170,16 +163,13 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
 
     def _invoke(self, context, event):
         self.camera_setup = camera_utils.CameraSetup.get_setup(
-            context.active_object)
-        self.action_setup = self._get_action_setup(
-            self.camera_setup, context.scene.frame_current)
-
-        for action, postfix in zip(
-                self.action_setup.as_list(),
-                camera_utils.ACTION_POSTFIX):
-            if action is not None:
-                self.motion_name = action.name[:-len(postfix)]
-                break
+            context.active_object
+        )
+        
+        self.camera_action = self._get_action_setup(
+            self.camera_setup, 
+            context.scene.frame_current
+        )
 
         return super()._invoke(context, event)
 
@@ -193,15 +183,7 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
         header.label(text="Info")
 
         if body:
-            body.label(text=f"Action to export: {self._actions.name}")
-            body.label(text="Using:")
-
-            for action, postfix in zip(
-                    self.action_setup.as_list(),
-                    camera_utils.ACTION_POSTFIX):
-
-                found = "Found" if action is not None else "Missing"
-                body.label(text=f"{self.motion_name}{postfix} [{found}]")
+            body.label(text=f"Action to export: {self.camera_action.action.name}")
 
         return body
 
@@ -209,8 +191,8 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
 
         motion = o_motion.convert_to_camera_motion(
             self.camera_setup,
-            self.action_setup,
-            self.motion_name,
+            self.camera_action,
+            self.camera_action.action.name,
             self.get_anim_parameters(),
         )
 
@@ -303,7 +285,7 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
             return {'CANCELLED'}
 
         for obj, action in self._actions.actions.items():
-            self._actions.name = action.name[:-(1 + len(obj.name))]
+            self._actions.motion_name = action.name[:-(1 + len(obj.name))]
             break
 
         return super()._invoke(context, event)
@@ -322,7 +304,7 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
         header.label(text="Info")
 
         if body:
-            body.label(text=f"Action to export: {self._actions.name}")
+            body.label(text=f"Action to export: {self._actions.motion_name}")
             body.label(text="Using:")
 
             for obj, action in self._actions.actions.items():

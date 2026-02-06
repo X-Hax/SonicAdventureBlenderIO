@@ -2,6 +2,7 @@ import bpy
 from bpy.types import Object as BObject, Action
 
 from . import o_motion
+from .o_motion import ActionSet
 from .o_model import ModelData
 from .o_keyframes import ShapeKeyframeEvaluator
 
@@ -11,7 +12,7 @@ from ..exceptions import UserException, SAIOException
 
 class ShapeActionCollection:
 
-    actions: dict[BObject, Action]
+    actions: dict[BObject, ActionSet]
     motion_name: str
 
     def __init__(self):
@@ -39,7 +40,7 @@ class ShapeActionCollector:
     target: BObject
     frame: int
 
-    starter_action: Action
+    starter_action: tuple[Action, bpy.types.ActionSlot]
 
     result: ShapeActionCollection
 
@@ -68,14 +69,15 @@ class ShapeActionCollector:
             or get_armature_modifier(obj) is not None
         )
 
-    def _find_starter_action(self, model: BObject):
+    def _find_starter_action(self, model: BObject) -> ActionSet | None:
         if self._should_be_skipped(model):
             return None
 
-        action = o_motion.get_action(
+        action = ActionSet.from_data(
             model.data.shape_keys,
             self.frame,
-            ignore_selected=False)
+            ignore_selected=False
+        )
 
         if action is None:
             return None
@@ -116,7 +118,7 @@ class ShapeActionCollector:
 
             self.result.actions[child] = action
 
-    def _collet_object(self):
+    def _collect_object(self):
         action = self._find_starter_action(self.target)
         if action is not None:
             self.result.actions[self.target] = action
@@ -128,7 +130,7 @@ class ShapeActionCollector:
         if self.target.type == 'ARMATURE':
             self._collect_armature()
         else:
-            self._collet_object()
+            self._collect_object()
 
         if len(self.result.actions) == 0:
             return None
@@ -194,7 +196,7 @@ class ShapeMotionEvaluator:
         self._output.NodeCount = node_count
         self._output.Label = name
 
-    def _convert_action(self, action: Action, obj: BObject, index: int):
+    def _convert_action(self, action: ActionSet, obj: BObject, index: int):
         if obj not in self._shape_evaluators:
             modelmesh = self._model_data.meshes[obj]
             evaluator = ShapeKeyframeEvaluator(modelmesh, self._normal_mode)
@@ -203,10 +205,12 @@ class ShapeMotionEvaluator:
             evaluator = self._shape_evaluators[obj]
 
         keyframes = evaluator.evaluate(
-            action,
+            action.name,
+            action.channelbag,
             self._depsgraph,
             self._start,
-            self._duration)
+            self._duration
+        )
         self._output.Keyframes.Add(index, keyframes)
 
     def _evaluate_for_armature(self):

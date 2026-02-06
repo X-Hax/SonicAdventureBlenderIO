@@ -1,6 +1,6 @@
 import math
 import bpy
-from bpy.types import FCurve, Action
+from bpy.types import FCurve, ActionChannelbag
 from mathutils import Vector, Matrix, Quaternion, Euler
 
 from . import o_matrix
@@ -287,7 +287,7 @@ class KeyframeEvaluator:
 
     def _get_node_curves(
             self,
-            fcurves: bpy.types.ActionFCurves,
+            fcurves: bpy.types.ActionChannelbagFCurves,
             datapath_prefix: str):
 
         location_datapath = datapath_prefix + "location"
@@ -312,7 +312,7 @@ class KeyframeEvaluator:
 
     def evaluate_node_keyframe_set(
             self,
-            fcurves: bpy.types.ActionFCurves,
+            channelbag: ActionChannelbag,
             datapath_prefix: str,
             base_matrix: Matrix,
             obj_rotation_mode: str,
@@ -328,7 +328,7 @@ class KeyframeEvaluator:
         self._rotation_matrix = rotation_matrix
         self._rotation_matrix_inv = rotation_matrix.inverted()
 
-        curves = self._get_node_curves(fcurves, datapath_prefix)
+        curves = self._get_node_curves(channelbag.fcurves, datapath_prefix)
         has_keyframes = False
 
         pos_curves = curves[0:3]
@@ -358,37 +358,38 @@ class KeyframeEvaluator:
 
         return self._output
 
-    def _get_camera_curves(self, camera_actions: camera_utils.CameraActionSet):
-        search = [
-            (camera_actions.position, "location", 0),
-            (camera_actions.position, "location", 1),
-            (camera_actions.position, "location", 2),
-            (camera_actions.target, "location", 0),
-            (camera_actions.target, "location", 1),
-            (camera_actions.target, "location", 2),
-            (camera_actions.target, "rotation_euler", 2),
-            (camera_actions.fov, "lens", None)
+    def _get_camera_curves(self, camera_action: camera_utils.CameraAction):
+        search: list[tuple[ActionChannelbag, str, int]] = [
+            (camera_action.position_channelbag, "location", 0),
+            (camera_action.position_channelbag, "location", 1),
+            (camera_action.position_channelbag, "location", 2),
+            (camera_action.target_channelbag, "location", 0),
+            (camera_action.target_channelbag, "location", 1),
+            (camera_action.target_channelbag, "location", 2),
+            (camera_action.target_channelbag, "rotation_euler", 2),
+            (camera_action.fov_channelbag, "lens", None)
         ]
 
+
         result = []
-        for action, name, index in search:
-            if action is None:
+        for channelbag, name, index in search:
+            if channelbag is None:
                 result.append(None)
             elif index is None:
-                result.append(action.fcurves.find(name))
+                result.append(channelbag.fcurves.find(name))
             else:
-                result.append(action.fcurves.find(name, index=index))
+                result.append(channelbag.fcurves.find(name, index=index))
 
         return result
 
     def evaluate_camera_keyframe_set(
             self,
             camera_setup: camera_utils.CameraSetup,
-            camera_actions: camera_utils.CameraActionSet):
+            camera_action: camera_utils.CameraAction):
 
         self._setup()
         base_matrix = camera_setup.container.matrix_world
-        curves = self._get_camera_curves(camera_actions)
+        curves = self._get_camera_curves(camera_action)
 
         if self.all_none(curves):
             return None
@@ -489,12 +490,12 @@ class ShapeKeyframeEvaluator:
                 f"One or more keys in shape animation {shape_name}"
                 f" (action {action_name}) are NOT 0.0 or 1.0"))
 
-    def _evaluate_curves(self, action: Action):
+    def _evaluate_curves(self, name: str, channelbag: ActionChannelbag):
 
         last_frame = None
 
         curves: list[tuple[FCurve, str]] = []
-        for fcurve in action.fcurves:
+        for fcurve in channelbag.fcurves:
             if not (fcurve.data_path.startswith("key_blocks[\"")
                     and fcurve.data_path.endswith("\"].value")):
                 continue
@@ -515,7 +516,7 @@ class ShapeKeyframeEvaluator:
         def mark_frame(mark_frame):
             if frame_map[mark_frame]:
                 raise UserException(
-                    f"One or more shapes in action {action.name}"
+                    f"One or more shapes in action {name}"
                     f" overlap at frame {mark_frame}")
             frame_map[mark_frame] = True
 
@@ -524,7 +525,7 @@ class ShapeKeyframeEvaluator:
             previous_state = None
 
             for point in fcurve.keyframe_points:
-                self._verify_keyframe(point, action.name, shape_name)
+                self._verify_keyframe(point, name, shape_name)
 
                 frame = int(point.co[0]) - self._start
                 state = point.co[1] == 1.0
@@ -562,9 +563,9 @@ class ShapeKeyframeEvaluator:
 
         return frames
 
-    def _evaluate_keyframes(self, action: Action):
+    def _evaluate_keyframes(self, name: str, channelbag: ActionChannelbag):
 
-        frames = self._evaluate_curves(action)
+        frames = self._evaluate_curves(name, channelbag)
 
         if len(frames) == 0 or all(v is None for v in frames.values()):
             return None
@@ -681,7 +682,8 @@ class ShapeKeyframeEvaluator:
 
     def evaluate(
             self,
-            action: Action,
+            name: str,
+            channelbag: ActionChannelbag,
             depsgraph: bpy.types.Depsgraph,
             start: int,
             duration: int):
@@ -690,7 +692,7 @@ class ShapeKeyframeEvaluator:
         self._duration = duration
         self._start = start
 
-        self._frames = self._evaluate_keyframes(action)
-        keyframes = self._create_keyframes(action.name)
+        self._frames = self._evaluate_keyframes(name, channelbag)
+        keyframes = self._create_keyframes(name)
 
         return keyframes

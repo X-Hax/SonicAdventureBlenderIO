@@ -11,52 +11,74 @@ from ..utility.anim_parameters import AnimParameters
 from ..dotnet import load_dotnet, SA3D_Modeling
 
 
-def get_action(
-        id_data: bpy.types.ID,
-        frame: int,
-        ignore_selected: bool = False):
+class ActionSet:
 
-    animation_data: bpy.types.AnimData = id_data.animation_data
-    if animation_data is None:
-        return None
+    action: bpy.types.Action
+    slot: bpy.types.ActionSlot
 
-    if animation_data.action is not None and not ignore_selected:
-        return animation_data.action
+    @property
+    def name(self):
+        return self.action.name
 
-    if len(animation_data.nla_tracks) == 0:
-        return None
+    @property
+    def channelbag(self):
+        strip: bpy.types.ActionKeyframeStrip = self.action.layers[0].strips[0]
+        return strip.channelbag(self.slot)
 
-    track: bpy.types.NlaTrack = None
-    if animation_data.nla_tracks.active is not None:
-        track = animation_data.nla_tracks.active
-    else:
-        for nla_track in animation_data.nla_tracks:
-            if nla_track.is_solo:
-                track = nla_track
-                break
-        if track is None:
-            track = animation_data.nla_tracks[0]
+    def __init__(
+        self, 
+        action: bpy.types.Action,
+        slot: bpy.types.ActionSlot):
 
-    if not ignore_selected:
+        self.action = action
+        self.slot = slot
 
-        # check if one is active
+    def from_data(
+            id_data: bpy.types.ID,
+            frame: int,
+            ignore_selected: bool = False):
+
+        animation_data: bpy.types.AnimData = id_data.animation_data
+        if animation_data is None:
+            return None
+
+        if animation_data.action is not None and not ignore_selected:
+            return ActionSet(animation_data.action, animation_data.action_slot)
+
+        if len(animation_data.nla_tracks) == 0:
+            return None
+
+        track: bpy.types.NlaTrack = None
+        if animation_data.nla_tracks.active is not None:
+            track = animation_data.nla_tracks.active
+        else:
+            for nla_track in animation_data.nla_tracks:
+                if nla_track.is_solo:
+                    track = nla_track
+                    break
+            if track is None:
+                track = animation_data.nla_tracks[0]
+
+        if not ignore_selected:
+
+            # check if one is active
+            for strip in track.strips:
+                if strip.type == 'CLIP' and strip.active:
+                    return ActionSet(strip.action, strip.action_slot)
+
+            # check if one is selected
+            for strip in track.strips:
+                if strip.type == 'CLIP' and strip.select:
+                    return ActionSet(strip.action, strip.action_slot)
+
+        # get the one on display right now
         for strip in track.strips:
-            if strip.type == 'CLIP' and strip.active:
-                return strip.action
+            if (strip.type == 'CLIP'
+                    and strip.frame_start <= frame
+                    and strip.frame_end > frame):
+                return ActionSet(strip.action, strip.action_slot)
 
-        # check if one is selected
-        for strip in track.strips:
-            if strip.type == 'CLIP' and strip.select:
-                return strip.action
-
-    # get the one on display right now
-    for strip in track.strips:
-        if (strip.type == 'CLIP'
-                and strip.frame_start <= frame
-                and strip.frame_end > frame):
-            return strip.action
-
-    return None
+        return None
 
 
 def get_frame_range(actions: list[bpy.types.Action]):
@@ -82,18 +104,22 @@ def get_frame_range(actions: list[bpy.types.Action]):
 def convert_to_node_motion(
         obj: BObject,
         force_sort_bones: bool,
-        fcurves: bpy.types.ActionFCurves,
-        frame_range: tuple[float, float],
-        name: str,
-        anim_parameters: AnimParameters):
+        action: ActionSet,
+        anim_parameters: AnimParameters,
+        frame_range: tuple[float, float] | None = None):
 
     load_dotnet()
+
+    if frame_range is None:
+        frame_range = action.frame_range
 
     start = math.floor(frame_range[0])
     end = math.ceil(frame_range[1])
 
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)
+
+    channelbag = action.channelbag
 
     if obj.type == "ARMATURE":
 
@@ -114,7 +140,7 @@ def convert_to_node_motion(
                 = bone_utils.get_bone_transforms(bone)
 
             keyframes = evaluator.evaluate_node_keyframe_set(
-                fcurves,
+                channelbag,
                 bone_data_prefix,
                 base_matrix,
                 bone.rotation_mode,
@@ -131,7 +157,7 @@ def convert_to_node_motion(
         motion.NodeCount = 1
 
         keyframes = evaluator.evaluate_node_keyframe_set(
-            fcurves,
+            channelbag,
             "",
             Matrix.Identity(4),
             obj.rotation_mode,
@@ -142,7 +168,7 @@ def convert_to_node_motion(
 
         motion.Keyframes.Add(0, keyframes)
 
-    motion.Label = name
+    motion.Label = action.name
     motion.ShortRot = anim_parameters.short_rot
 
     return motion
@@ -150,13 +176,13 @@ def convert_to_node_motion(
 
 def convert_to_camera_motion(
         camera_setup: camera_utils.CameraSetup,
-        camera_actions: camera_utils.CameraActionSet,
+        camera_action: camera_utils.CameraAction,
         name: str,
         anim_parameters: AnimParameters):
 
     load_dotnet()
 
-    start, end = get_frame_range(camera_actions.as_list())
+    start, end = get_frame_range([camera_action.action])
 
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)
@@ -165,7 +191,7 @@ def convert_to_camera_motion(
     motion.NodeCount = 1
 
     keyframes = evaluator.evaluate_camera_keyframe_set(
-        camera_setup, camera_actions)
+        camera_setup, camera_action)
 
     if keyframes is None:
         return None

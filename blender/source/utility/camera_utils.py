@@ -1,6 +1,10 @@
 import bpy
 
-ACTION_POSTFIX = ["_position", "_target", "_fov"]
+SLOT_DEF = {
+    "Position" : "OBJECT", 
+    "Target" : "OBJECT", 
+    "Fov" : "CAMERA"
+}
 
 
 class CameraSetup:
@@ -46,7 +50,7 @@ class CameraSetup:
         return CameraSetup(obj, camera, target)
 
     @staticmethod
-    def get_setup(obj: bpy.types.Object) -> 'CameraSetup':
+    def get_setup(obj: bpy.types.Object):
         if obj is not None:
             if obj.parent is None:
                 return CameraSetup._get_setup(obj)
@@ -110,30 +114,64 @@ class CameraSetup:
         return self.camera.data
 
 
-class CameraActionSet:
+class CameraAction:
 
-    position: bpy.types.Action | None
-    target: bpy.types.Action | None
-    fov: bpy.types.Action | None
+    action: bpy.types.Action
+    position: bpy.types.ActionSlot | None
+    target: bpy.types.ActionSlot | None
+    fov: bpy.types.ActionSlot | None
+
+    @property
+    def position_channelbag(self):
+        return self._get_channelbag(self.position)
+
+    @property
+    def target_channelbag(self):
+        return self._get_channelbag(self.target)
+    
+    @property
+    def fov_channelbag(self):
+        return self._get_channelbag(self.fov)
 
     def __init__(
             self,
-            position: bpy.types.Action | None,
-            target: bpy.types.Action | None,
-            fov: bpy.types.Action | None):
+            action: bpy.types.Action,
+            position: bpy.types.ActionSlot | None,
+            target: bpy.types.ActionSlot | None,
+            fov: bpy.types.ActionSlot | None):
 
+        self.action = action
         self.position = position
         self.target = target
         self.fov = fov
+
+    def _get_channelbag(self, slot: bpy.types.ActionSlot | None):
+        if slot is None:
+            return None
+        
+        layer = self.action.layers[0]
+        strip: bpy.types.ActionKeyframeStrip = layer.strips[0]
+        return strip.channelbag(slot)
 
     def as_list(self):
         return [self.position, self.target, self.fov]
 
     @staticmethod
     def create_set(name: str):
-        position = bpy.data.actions.new(name + ACTION_POSTFIX[0])
-        target = bpy.data.actions.new(name + ACTION_POSTFIX[1])
-        fov = bpy.data.actions.new(name + ACTION_POSTFIX[2])
-        fov.id_root = "CAMERA"
 
-        return CameraActionSet(position, target, fov)
+        action = bpy.data.actions.new(name)
+        slot_names = list(SLOT_DEF.keys())
+        slot_types = list(SLOT_DEF.values())
+
+        position = action.slots.new(slot_types[0], slot_names[0])
+        target = action.slots.new(slot_types[1], slot_names[1])
+        fov = action.slots.new(slot_types[2], slot_names[2])
+
+        layer = action.layers.new("Layer")
+        strip: bpy.types.ActionKeyframeStrip = layer.strips.new(type="KEYFRAME")
+
+        strip.channelbags.new(position)
+        strip.channelbags.new(target)
+        strip.channelbags.new(fov)
+
+        return CameraAction(action, position, target, fov)

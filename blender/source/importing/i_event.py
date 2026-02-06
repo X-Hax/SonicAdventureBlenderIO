@@ -448,18 +448,22 @@ class EventImporter:
             if camera_animation.Animation is None:
                 continue
 
-            camera_actions = CameraMotionProcessor.process_motion(
+            camera_action = CameraMotionProcessor.process_motion(
                 camera_animation.Animation,
                 self.camera_setup)
 
-            def setup_action(index, action):
+            def setup_action(index: int, slot: bpy.types.ActionSlot):
                 strip = self.camera_nlas[index].strips.new(
-                    action.name, frame, action)
+                    camera_action.action.name, 
+                    frame, 
+                    camera_action.action
+                )
+                strip.action_slot = slot
                 strip.extrapolation = 'NOTHING'
 
-            setup_action(0, camera_actions.position)
-            setup_action(1, camera_actions.target)
-            setup_action(2, camera_actions.fov)
+            setup_action(0, camera_action.position)
+            setup_action(1, camera_action.target)
+            setup_action(2, camera_action.fov)
 
             break
 

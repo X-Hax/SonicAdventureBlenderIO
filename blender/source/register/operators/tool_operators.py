@@ -204,7 +204,7 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
 
         armature_object = context.active_object
 
-        out_action = o_motion.get_action(
+        out_action = o_motion.ActionSet.from_data(
             armature_object,
             context.scene.frame_current)
 
@@ -223,9 +223,7 @@ class SAIO_OT_TestBakeAnimation(SAIOBaseOperator):
         out = o_motion.convert_to_node_motion(
             context.active_object,
             False,
-            out_action.fcurves,
-            out_action.frame_range,
-            out_action.name,
+            out_action,
             out_anim_parameters
         )
 

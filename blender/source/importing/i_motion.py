@@ -6,7 +6,7 @@ from .i_keyframes import (
     ShapeKeyframeProcessor
 )
 from . import i_matrix
-from ..utility.camera_utils import CameraActionSet, CameraSetup
+from ..utility.camera_utils import CameraAction, CameraSetup
 from ..exceptions import UserException, SAIOException
 
 
@@ -88,20 +88,22 @@ class NodeMotionProcessor(ObjectMotionProcessor):
 
     def _create_action(self):
         self._action = bpy.data.actions.new(self._motion.Label)
-        self._kf_processor.action = self._action
+        slot = self._action.slots.new("OBJECT", "Armature")
+        layer = self._action.layers.new("Layer")
+        strip: bpy.types.ActionKeyframeStrip = layer.strips.new(type="KEYFRAME")
+        self._kf_processor.action_channelbag = strip.channelbags.new(slot)
 
     def _process_armature_motion(self):
 
         for node_keyframes in self._motion.Keyframes:
             bone_name = self._bonemap[node_keyframes.Key]
-            bone = self._bobject.pose.bones[bone_name]
+            bone: bpy.types.PoseBone = self._bobject.pose.bones[bone_name]
 
-            local_position, rotation_matrix = i_matrix.get_bone_transforms(
-                bone)
+            local_position, rotation_matrix = i_matrix.get_bone_transforms(bone)
             rotation_matrix.invert()
 
+            self._kf_processor.action_group_name = bone.name
             self._kf_processor.rotate_zyx = bone.bone.saio_node.rotate_zyx
-            self._kf_processor.group = bone.name
             self._kf_processor.path_prefix = f"pose.bones[\"{bone.name}\"]."
 
             bone.rotation_mode = \
@@ -113,7 +115,7 @@ class NodeMotionProcessor(ObjectMotionProcessor):
 
     def _process_object_motion(self):
 
-        self._kf_processor.group = "Object Transforms"
+        self._kf_processor.action_group_name = "Object Transforms"
         self._kf_processor.path_prefix = ""
         self._kf_processor.rotate_zyx = self._bobject.saio_node.rotate_zyx
 
@@ -177,9 +179,11 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
             obj: bpy.types.Object,
             last_frame_number: int):
 
-        action = bpy.data.actions.new(
-            f"{self._motion.Label}_{obj.data.name}")
-        action.id_root = "KEY"
+        action = bpy.data.actions.new(f"{self._motion.Label}_{obj.data.name}")
+        slot = action.slots.new("KEY", "Key")
+        layer = action.layers.new("Layer")
+        strip: bpy.types.ActionKeyframeStrip = layer.strips.new(type="KEYFRAME")
+        action_channelbag = strip.channelbags.new(slot)
 
         if obj in self._processors:
             processor = self._processors[obj]
@@ -187,7 +191,7 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
             processor = ShapeKeyframeProcessor(obj, self._optimize)
             self._processors[obj] = processor
 
-        processor.process(keyframes, action, last_frame_number)
+        processor.process(keyframes, action_channelbag, last_frame_number)
         self._actions[obj] = action
 
     def _verify_keyframes(self, keyframe_set):
@@ -267,14 +271,14 @@ class CameraMotionProcessor:
     camera_setup: CameraSetup
     '''Camera setup to be used for FOV reference'''
 
-    _action_set: CameraActionSet
+    _camera_action: CameraAction
     '''Resulting action set'''
 
     def __init__(self, camera_setup: CameraSetup):
         self.camera_setup = camera_setup
         self._motion = None
         self._keyframes = None
-        self._action_set = None
+        self._camera_action = None
 
     def _verify(self):
         '''Verifies that the motion can be properly imported'''
@@ -289,16 +293,16 @@ class CameraMotionProcessor:
 
         self._keyframes = keyframes[0]
 
-    def _create_actions(self):
+    def _create_action(self):
         '''Creates the camera action set'''
 
-        self._action_set = CameraActionSet.create_set(self._motion.Label)
+        self._camera_action = CameraAction.create_set(self._motion.Label)
 
     def _process_position(self):
         '''Processes the position keyframes'''
 
         TransformKeyframeProcessor(
-            self._action_set.position,
+            self._camera_action.position_channelbag,
             "Object Transforms"
         ).process_position_keyframes(
             self._keyframes.Position
@@ -308,7 +312,7 @@ class CameraMotionProcessor:
         '''Processes the target keyframes'''
 
         TransformKeyframeProcessor(
-            self._action_set.target,
+            self._camera_action.target_channelbag,
             "Object Transforms"
         ).process_position_keyframes(
             self._keyframes.Target
@@ -317,10 +321,10 @@ class CameraMotionProcessor:
     def _process_roll(self):
         '''Processes the roll keyframes'''
 
-        roll = self._action_set.target.fcurves.new(
+        roll = self._camera_action.target_channelbag.fcurves.new(
             "rotation_euler",
             index=2,
-            action_group="Object Transforms").keyframe_points
+            group_name="Object Transforms").keyframe_points
 
         for kf_roll in self._keyframes.Roll:
             roll.insert(kf_roll.Key, -kf_roll.Value).interpolation = 'LINEAR'
@@ -337,8 +341,8 @@ class CameraMotionProcessor:
 
         lens_size = self.camera_setup.camera_data.sensor_width
 
-        fov = self._action_set.fov.fcurves.new(
-            "lens", action_group="Camera").keyframe_points
+        fov = self._camera_action.fov_channelbag.fcurves.new(
+            "lens", group_name="Camera").keyframe_points
 
         for kf_angle in self._keyframes.Angle:
             focal_length = 0.5 * (lens_size / math.tan(kf_angle.Value * 0.5))
@@ -348,19 +352,19 @@ class CameraMotionProcessor:
         '''Create actions off the input motion'''
         self._motion = motion
         self._verify()
-        self._create_actions()
+        self._create_action()
 
         self._process_position()
         self._process_target()
         self._process_roll()
         self._process_fov()
 
-        return self._action_set
+        return self._camera_action
 
     @staticmethod
     def process_motion(
             motion: any,
             camera_setup: CameraSetup
-    ) -> CameraActionSet:
+    ) -> CameraAction:
         processor = CameraMotionProcessor(camera_setup)
         return processor.process(motion)
