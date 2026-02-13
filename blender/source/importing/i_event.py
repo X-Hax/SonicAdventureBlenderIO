@@ -460,6 +460,7 @@ class EventImporter:
                 )
                 strip.action_slot = slot
                 strip.extrapolation = 'NOTHING'
+                strip.action_frame_end = camera_action.action.frame_range[1]
 
             setup_action(0, camera_action.position)
             setup_action(1, camera_action.target)
@@ -492,12 +493,18 @@ class EventImporter:
 
                 scale_action = bpy.data.actions.new(
                     obj.name + "_scales")
+                
+                slot = scale_action.slots.new("OBJECT", "Armature")
+                layer = scale_action.layers.new("Layer")
+                strip: bpy.types.ActionKeyframeStrip = layer.strips.new(type='KEYFRAME')
+                channelbag = strip.channelbags.new(slot)
+
                 for b in obj.pose.bones:
                     if b.bone.saio_node.ignore_scale:
                         continue
 
                     scales = [
-                        scale_action.fcurves.new(
+                        channelbag.fcurves.new(
                             f"pose.bones[\"{b.name}\"].scale",
                             index=i,
                             action_group=b.name).keyframe_points

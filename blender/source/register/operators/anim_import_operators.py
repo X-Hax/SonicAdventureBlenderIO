@@ -187,7 +187,7 @@ class SAIO_OT_Import_Camera_Animation(MotionImportOperator):
                 print(f"An error occured while importing {file.name}")
                 raise error
 
-            actions = i_motion.CameraMotionProcessor.process_motion(
+            camera_action = i_motion.CameraMotionProcessor.process_motion(
                 animFile.Animation,
                 camera_setup)
 
@@ -195,15 +195,16 @@ class SAIO_OT_Import_Camera_Animation(MotionImportOperator):
                 track: bpy.types.NlaTrack = data.animation_data.nla_tracks.new()
                 track.name = os.path.splitext(file.name)[0]
                 strip = track.strips.new(
-                    actions.action.name, 
+                    camera_action.action.name, 
                     0,
-                    actions.action
+                    camera_action.action
                 )
                 strip.action_slot = action_slot
+                strip.action_frame_end = camera_action.action.frame_range[1]
 
-            setup_nla(camera_setup.camera, actions.position)
-            setup_nla(camera_setup.target, actions.target)
-            setup_nla(camera_setup.camera_data, actions.fov)
+            setup_nla(camera_setup.camera, camera_action.position)
+            setup_nla(camera_setup.target, camera_action.target)
+            setup_nla(camera_setup.camera_data, camera_action.fov)
 
         return {'FINISHED'}
 

@@ -410,6 +410,8 @@ class ShapeKeyframeProcessor:
             for vert, svert in zip(verts, shape_key.data):
                 svert.co = vert
 
+            shape_key.value = 0
+
         self.shape_mapping[vectors] = shape_key
         return shape_key
 
