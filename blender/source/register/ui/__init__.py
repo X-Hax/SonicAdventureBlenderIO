@@ -29,9 +29,11 @@ to_register = [
     landtable_panel.SAIO_PT_Landtable,
 
     texture_panel.SAIO_UL_TextureList,
-    texture_panel.SAIO_MT_TextureContextMenu,
+    texture_panel.SAIO_MT_TextureContextMenuScene,
+    texture_panel.SAIO_MT_TextureContextMenuObject,
     texturename_panel.SAIO_UL_TextureNameList,
-    texturename_panel.SAIO_MT_TextureNameContextMenu,
+    texturename_panel.SAIO_MT_TextureNameContextMenuScene,
+    texturename_panel.SAIO_MT_TextureNameContextMenuObject,
 
     texture_panel.SAIO_PT_ObjectTextures,
     texture_panel.SAIO_PT_SceneTextures,

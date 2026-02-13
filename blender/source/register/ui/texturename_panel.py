@@ -52,15 +52,26 @@ class SAIO_UL_TextureNameList(bpy.types.UIList):
             emboss=False)
 
 
-class SAIO_MT_TextureNameContextMenu(bpy.types.Menu):
+class BaseTextureNameContextMenu(bpy.types.Menu):
     bl_label = "Texture list operations"
 
     def draw(self, context):
         layout = self.layout
-        layout.operator(texnamop.SAIO_OT_TextureNames_Clear.bl_idname)
+
+        def mode_op(bl_idname: str):
+            op = layout.operator(bl_idname)
+            op.mode = self.texture_mode
+
+        mode_op(texnamop.SAIO_OT_TextureNames_Clear.bl_idname)
         layout.separator()
-        layout.operator(texnamop.SAIO_OT_TextureNames_Import.bl_idname)
-        layout.operator(texnamop.SAIO_OT_TextureNames_Export.bl_idname)
+        mode_op(texnamop.SAIO_OT_TextureNames_Import.bl_idname)
+        mode_op(texnamop.SAIO_OT_TextureNames_Export.bl_idname)
+
+class SAIO_MT_TextureNameContextMenuScene(BaseTextureNameContextMenu):
+    texture_mode = 'SCENE'
+
+class SAIO_MT_TextureNameContextMenuObject(BaseTextureNameContextMenu):
+    texture_mode = 'OBJECT'
 
 
 @staticmethod
@@ -85,7 +96,7 @@ def draw_texture_name_list_panel(
     draw_list(
         layout,
         SAIO_UL_TextureNameList,
-        SAIO_MT_TextureNameContextMenu,
+        SAIO_MT_TextureNameContextMenuObject if is_object else SAIO_MT_TextureNameContextMenuScene,
         texturename_list,
         TEXTURENAMELIST_TOOLS,
         set_op
