@@ -107,6 +107,7 @@ to_register = [
     migration_operators.SAIO_OT_MigrateOldArmature,
     migration_operators.SAIO_OT_MigrateOldPath,
 	migration_operators.SAIO_OT_MigrateUpdateData,
+    migration_operators.SAIO_OT_MigrateOldCameraAnimation,
 
     info_operators.SAIO_OT_Info_Manual,
     info_operators.SAIO_OT_Info_Discord,

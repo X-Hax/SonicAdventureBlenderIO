@@ -56,7 +56,8 @@ from ..operators.migration_operators import (
     SAIO_OT_MigrateOldData,
     SAIO_OT_MigrateOldArmature,
     SAIO_OT_MigrateOldPath,
-    SAIO_OT_MigrateUpdateData
+    SAIO_OT_MigrateUpdateData,
+    SAIO_OT_MigrateOldCameraAnimation
 )
 
 from ..operators.info_operators import (
@@ -191,6 +192,7 @@ class SAIO_PT_VTP_Migration(bpy.types.Panel):
         saio = context.scene.saio_scene
 
         layout.operator(SAIO_OT_MigrateUpdateData.bl_idname)
+        layout.operator(SAIO_OT_MigrateOldCameraAnimation.bl_idname)
         layout.separator(factor=2, type="LINE")
 
         if old_addon_migration_checks.is_old_addon_enabled(context):

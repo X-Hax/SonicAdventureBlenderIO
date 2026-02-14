@@ -5,9 +5,11 @@ from mathutils import Matrix, Vector
 
 from .base import SAIOBaseOperator, SAIOBasePopupOperator
 
+from ...migration import update_migration
 from ...migration.old_addon_migration import ARMATURE_KEY
 from ...utility.math_utils import get_normal_matrix
 from ...exceptions import UserException
+from ...utility import camera_utils
 
 
 class SAIO_OT_MigrateOldCheck(SAIOBaseOperator):
@@ -182,6 +184,7 @@ class SAIO_OT_MigrateOldPath(SAIOBaseOperator):
 
         return {'FINISHED'}
 
+
 class SAIO_OT_MigrateUpdateData(SAIOBaseOperator):
     bl_idname = "saio.migrate_update_data"
     bl_label = "Migrate Update Data"
@@ -189,6 +192,35 @@ class SAIO_OT_MigrateUpdateData(SAIOBaseOperator):
     bl_options = {'UNDO'}
 
     def _execute(self, context: bpy.types.Context):
-        from ...migration import update_migration
         update_migration.update_file()
         return {'FINISHED'}
+    
+
+class SAIO_OT_MigrateOldCameraAnimation(SAIOBaseOperator):
+    bl_idname = "saio.migrate_camera_animation"
+    bl_label = "Migrate Old Camera animation"
+    bl_description = "Merges old split camera actions into one action"
+    bl_options = {'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        if context.mode != 'OBJECT':
+            return False
+
+        camera_setup = camera_utils.CameraSetup.get_setup(
+            context.active_object)
+        try:
+            return update_migration.get_old_camera_action_setup(
+                camera_setup, context.scene.frame_current) is not None
+        except UserException:
+            return True
+
+    def _execute(self, context):
+        camera_setup = camera_utils.CameraSetup.get_setup(
+            context.active_object)
+        action_setup = update_migration.get_old_camera_action_setup(
+            camera_setup, context.scene.frame_current)
+        
+        update_migration.merge_old_camera_actions(camera_setup, action_setup)
+        return {'FINISHED'}
+        
