@@ -534,10 +534,10 @@ class EventImporter:
             frame: int,
             frame_num: int):
 
-        actions = self.shape_motion_processor.process(
+        action, slots = self.shape_motion_processor.process(
             motion, obj, frame_num)
 
-        for obj, action in actions.items():
+        for obj, slot in slots.items():
             shape_keys: bpy.types.Key = obj.data.shape_keys
             if shape_keys.animation_data is None:
                 shape_keys.animation_data_create()
@@ -546,7 +546,9 @@ class EventImporter:
                 nla = shape_keys.animation_data.nla_tracks[0]
 
             strip = nla.strips.new(action.name, frame, action)
+            strip.action_slot = slot
             strip.extrapolation = 'NOTHING'
+            strip.action_frame_end = action.frame_range[1]
 
     def _setup_entity_animation(
             self,

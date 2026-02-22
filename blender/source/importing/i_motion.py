@@ -154,8 +154,9 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
 
     _processors: dict[bpy.types.Object, ShapeKeyframeProcessor]
 
-    _actions: dict[bpy.types.Object, bpy.types.Action]
-    '''Output'''
+    _action: bpy.types.Action
+    _strip: bpy.types.ActionKeyframeStrip
+    _slots: dict[bpy.types.Object, bpy.types.ActionSlot]
 
     _optimize: bool
 
@@ -163,7 +164,9 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
         super().__init__()
 
         self._processors = {}
-        self._actions = None
+        self._action = None
+        self._strip = None
+        self._slots = None
         self._shape_motion = True
         self._optimize = optimize
 
@@ -173,17 +176,22 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
         if not self._motion.IsShapeMotion:
             raise SAIOException("Motion is not a shape motion")
 
+    def _setup_output(self):
+        self._action = bpy.data.actions.new(self._motion.Label)
+        layer = self._action.layers.new("Layer")
+        self._strip = layer.strips.new(type="KEYFRAME")
+        self._slots = {}
+
     def _convert(
             self,
             keyframes,
             obj: bpy.types.Object,
             last_frame_number: int):
 
-        action = bpy.data.actions.new(f"{self._motion.Label}_{obj.data.name}")
-        slot = action.slots.new("KEY", "Key")
-        layer = action.layers.new("Layer")
-        strip: bpy.types.ActionKeyframeStrip = layer.strips.new(type="KEYFRAME")
-        action_channelbag = strip.channelbags.new(slot)
+        slot = self._action.slots.new("KEY", obj.name)
+        self._slots[obj] = slot
+
+        action_channelbag = self._strip.channelbags.new(slot)
 
         if obj in self._processors:
             processor = self._processors[obj]
@@ -192,7 +200,6 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
             self._processors[obj] = processor
 
         processor.process(keyframes, action_channelbag, last_frame_number)
-        self._actions[obj] = action
 
     def _verify_keyframes(self, keyframe_set):
         if keyframe_set.Vertex.Count == 0:
@@ -226,7 +233,7 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
             min_frame_count: int = 0):
 
         super().process(motion, obj)
-        self._actions = {}
+        self._setup_output()
 
         if min_frame_count > 0:
             min_frame_count -= 1
@@ -256,7 +263,7 @@ class ShapeMotionProcessor(ObjectMotionProcessor):
 
                 self._convert(node_keyframes.Value, child, min_frame_count)
 
-        return self._actions
+        return self._action, self._slots
 
 
 class CameraMotionProcessor:

@@ -224,3 +224,28 @@ class SAIO_OT_MigrateOldCameraAnimation(SAIOBaseOperator):
         update_migration.merge_old_camera_actions(camera_setup, action_setup)
         return {'FINISHED'}
         
+
+class SAIO_OT_MigrateOldShapeAnimation(SAIOBaseOperator):
+    bl_idname = "saio.migrate_shape_animation"
+    bl_label = "Migrate Old Shape animation"
+    bl_description = "Merges old split shape actions into one action"
+    bl_options = {'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        if context.mode != 'OBJECT' or context.active_object is None:
+            return False
+        try:
+            return update_migration.OldShapeActionCollector.collect_shape_actions(
+                context.active_object, context.scene.frame_current) is not None
+        except UserException:
+            # returning true on error so that the user can click and get the
+            # exception on invoke to know what is wrong
+            return True
+    
+    def _execute(self, context):
+        actions = update_migration.OldShapeActionCollector.collect_shape_actions(
+            context.active_object, context.scene.frame_current)
+        
+        update_migration.merge_old_shape_actions(actions)
+        return {'FINISHED'}

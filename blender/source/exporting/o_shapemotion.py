@@ -12,11 +12,13 @@ from ..exceptions import UserException, SAIOException
 
 class ShapeActionCollection:
 
-    actions: dict[BObject, ActionSet]
+    action: Action
+    slots: dict[BObject, bpy.types.ActionSlot]
     motion_name: str
 
     def __init__(self):
-        self.actions = {}
+        self.action = None
+        self.slots = {}
         self.motion_name = ""
 
 
@@ -39,9 +41,6 @@ class ShapeActionCollector:
 
     target: BObject
     frame: int
-
-    starter_action: tuple[Action, bpy.types.ActionSlot]
-
     result: ShapeActionCollection
 
     def __init__(
@@ -51,27 +50,26 @@ class ShapeActionCollector:
 
         self.target = target
         self.frame = frame
-        self.starter_action = None
         self.result = None
 
         if target.type == 'ARMATURE':
             check_is_shape_motion_viable(target)
 
     def _setup(self):
-        self.starter_action = None
         self.result = ShapeActionCollection()
 
     def _should_be_skipped(self, obj: BObject):
         from ..utility.general import get_armature_modifier
         return (
             obj.type != 'MESH'
-            or obj.data.shape_keys is None
+            or getattr(obj.data, "shape_keys", None) is None
             or get_armature_modifier(obj) is not None
         )
 
-    def _find_starter_action(self, model: BObject) -> ActionSet | None:
+    def _find_action(self, model: BObject) -> ActionSet | None:
         if self._should_be_skipped(model):
             return None
+
 
         action = ActionSet.from_data(
             model.data.shape_keys,
@@ -79,62 +77,57 @@ class ShapeActionCollector:
             ignore_selected=False
         )
 
-        if action is None:
+        if action is not None:
+            self.result.action = action.action
+            self.result.slots[model] = action.slot
+            return True
+        
+        return False
+
+    def _find_slot(self, obj: bpy.types.Object):
+        shape_keys: bpy.types.Key = getattr(obj.data, "shape_keys", None)
+        if shape_keys is None:
             return None
-
-        elif not action.name.endswith("_" + model.name):
-            raise UserException(
-                f"Target Action \"{action.name}\" of object"
-                f" \"{model.name}\" does not match naming!\n"
-                "Has to end with objectname\n"
-                f"(e.g. \"ExampleActionName_{model.name}\")")
-
-        return action
-
-    def _find_armature_starter_action(self):
-        for child in self.target.children:
-            action = self._find_starter_action(child)
-
-            if action is not None:
-                self.starter_action = action
-                self.result.motion_name = action.name[:-(1 + len(child.name))]
-                return
+        
+        if shape_keys.animation_data.action == self.result.action:
+            return shape_keys.animation_data.action_slot
+        
+        for track in shape_keys.animation_data.nla_tracks:
+            for strip in track.strips:
+                if strip.action == self.result.action:
+                    return strip.action_slot
+            
+        # If none is assigned anywhere, try to get one with the name of the object
+        return self.result.action.slots.get(f"KE{obj.name}")
 
     def _collect_armature(self):
-        self._find_armature_starter_action()
+        for child in self.target.children:
+            if child.parent_type == 'BONE' and self._find_action(child):
+                break
 
-        if self.starter_action is None:
+        if self.result.action is None:
             return
 
         for child in self.target.children:
-            if child.parent_type != 'BONE' or self._should_be_skipped(child):
+            if child.parent_type != 'BONE' or self._should_be_skipped(child) or child in self.result.slots:
                 continue
 
-            try:
-                action = bpy.data.actions[
-                    f"{self.result.motion_name}_{child.name}"]
-            except KeyError:
-                continue
-
-            self.result.actions[child] = action
-
-    def _collect_object(self):
-        action = self._find_starter_action(self.target)
-        if action is not None:
-            self.result.actions[self.target] = action
-            self.result.motion_name = action.name
+            slot = self._find_slot(child)
+            if slot is not None:
+                self.result.slots[child] = slot
 
     def collect(self):
         self._setup()
 
         if self.target.type == 'ARMATURE':
             self._collect_armature()
-        else:
-            self._collect_object()
+        elif not self._should_be_skipped(self.target):
+            self._find_action(self.target)
 
-        if len(self.result.actions) == 0:
+        if self.result.action is None:
             return None
 
+        self.result.motion_name = self.result.action.name
         return self.result
 
     @staticmethod
@@ -151,7 +144,8 @@ class ShapeMotionEvaluator:
     _context: bpy.types.Context
     _normal_mode: str
 
-    _actions: dict[BObject, Action]
+    _action: bpy.types.Action
+    _slots: dict[BObject, bpy.types.ActionSlots]
     _depsgraph: bpy.types.Depsgraph
 
     _start: int
@@ -169,6 +163,8 @@ class ShapeMotionEvaluator:
         self._shape_evaluators = {}
         self._context = context
         self._normal_mode = normal_mode
+        self._action = None
+        self._slots = None
 
         if self._model_data.node_data.armature_object is not None:
             self._node_map = {}
@@ -177,8 +173,11 @@ class ShapeMotionEvaluator:
             self._node_map = None
 
     def _evaluate_time(self):
-        self._start, self._end = o_motion.get_frame_range(
-            self._actions.values())
+        self._start, self._end = o_motion.get_frame_range([
+            ActionSet(self._action, slot) 
+            for slot in self._slots.values()
+        ])
+        
         self._duration = self._end - self._start
 
     def _setup_node_map(self):
@@ -196,7 +195,11 @@ class ShapeMotionEvaluator:
         self._output.NodeCount = node_count
         self._output.Label = name
 
-    def _convert_action(self, action: ActionSet, obj: BObject, index: int):
+    def _convert_slot(self, slot: bpy.types.ActionSlot, obj: BObject, index: int):
+        channelbag = self._action.layers[0].strips[0].channelbag(slot)
+        if channelbag is None:
+            return
+
         if obj not in self._shape_evaluators:
             modelmesh = self._model_data.meshes[obj]
             evaluator = ShapeKeyframeEvaluator(modelmesh, self._normal_mode)
@@ -204,9 +207,10 @@ class ShapeMotionEvaluator:
         else:
             evaluator = self._shape_evaluators[obj]
 
+
         keyframes = evaluator.evaluate(
-            action.name,
-            action.channelbag,
+            self._action.name,
+            channelbag,
             self._depsgraph,
             self._start,
             self._duration
@@ -222,20 +226,21 @@ class ShapeMotionEvaluator:
 
             obj, _ = objects[0]
             if (obj.parent_bone not in self._node_map
-                    or obj not in self._actions):
+                    or obj not in self._slots):
                 continue
 
-            self._convert_action(
-                self._actions[obj],
+            self._convert_slot(
+                self._slots[obj],
                 obj,
                 self._node_map[obj.parent_bone])
 
-    def evaluate(self, actions: ShapeActionCollection):
+    def evaluate(self, slot: ShapeActionCollection):
 
         self._depsgraph = self._context.evaluated_depsgraph_get()
-        self._actions = actions.actions
+        self._action = slot.action
+        self._slots = slot.slots
         self._evaluate_time()
-        self._setup_output(actions.motion_name)
+        self._setup_output(slot.motion_name)
 
         if self._normal_mode == 'TYPED':
             self._output.ManualKeyframeTypes = SA3D_Modeling.KEYFRAME_ATTRIBUTES.Normal
@@ -243,10 +248,10 @@ class ShapeMotionEvaluator:
         if self._node_map is not None:
             self._evaluate_for_armature()
         else:
-            if len(self._actions) > 1:
+            if len(self._slots) > 1:
                 raise SAIOException("More than one action to convert")
 
-            for obj, action in self._actions.items():
-                self._convert_action(action, obj, 0)
+            for obj, slot in self._slots.items():
+                self._convert_slot(slot, obj, 0)
 
         return self._output

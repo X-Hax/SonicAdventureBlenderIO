@@ -287,17 +287,27 @@ class CutInfo:
                     continue
                 action = self._get_shape_action(child)
                 if action is not None:
-                    shape_actions.actions[child] = action
+                    if shape_actions.action is None:
+                        shape_actions.action = action.action
+                    elif shape_actions.action != action.action:
+                        raise UserException(
+                            "All shape animation strips for an object in a scene"
+                            f" have to use the same action! Object {entry.name}"
+                            f" does not comply!"
+                        )
+                    
+                    shape_actions.slots[child] = action.slot
 
-            if len(shape_actions.actions) > 0:
+            if len(shape_actions.slots) > 0:
                 check_is_shape_motion_viable(entry)
 
         else:
             action = self._get_shape_action(entry)
             if action is not None:
-                shape_actions.actions[entry] = action
+                shape_actions.action = action.action
+                shape_actions.slots[entry] = action.slot
 
-        if len(shape_actions.actions) > 0:
+        if len(shape_actions.slots) > 0:
             shape_actions.motion_name = f"Event{self.index}_{entry.name}_Shape"
             self.output_shape_actions[entry] = shape_actions
 

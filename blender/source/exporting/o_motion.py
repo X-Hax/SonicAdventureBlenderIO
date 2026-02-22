@@ -81,15 +81,15 @@ class ActionSet:
         return None
 
 
-def get_frame_range(actions: list[bpy.types.Action]):
+def get_frame_range(actions: list[ActionSet]):
     start = None
     end = None
     for action in actions:
         if action is None:
             continue
 
-        ac_start = math.floor(action.frame_range[0])
-        ac_end = math.ceil(action.frame_range[1])
+        ac_start = math.floor(action.action.frame_range[0])
+        ac_end = math.ceil(action.action.frame_range[1])
 
         if start is None:
             start = ac_start

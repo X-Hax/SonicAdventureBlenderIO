@@ -261,7 +261,7 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
         default=True,
     )
 
-    _actions: o_shapemotion.ShapeActionCollection | None
+    _action: o_shapemotion.ShapeActionCollection | None
 
     @classmethod
     def poll(cls, context):
@@ -276,17 +276,12 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
             return True
 
     def _invoke(self, context: bpy.types.Context, event):
-        sac = o_shapemotion.ShapeActionCollector
         try:
-            self._actions = sac.collect_shape_actions(
+            self._action = o_shapemotion.ShapeActionCollector.collect_shape_actions(
                 context.active_object, context.scene.frame_current)
         except UserException as e:
             self.report({'ERROR'}, e.message)
             return {'CANCELLED'}
-
-        for obj, action in self._actions.actions.items():
-            self._actions.motion_name = action.name[:-(1 + len(obj.name))]
-            break
 
         return super()._invoke(context, event)
 
@@ -304,11 +299,11 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
         header.label(text="Info")
 
         if body:
-            body.label(text=f"Action to export: {self._actions.motion_name}")
-            body.label(text="Using:")
+            body.label(text=f"Action to export: {self._action.action.name}")
+            body.label(text="Using slots:")
 
-            for obj, action in self._actions.actions.items():
-                body.label(text=f"\"{action.name}\" for \"{obj.name}\"")
+            for obj, slot in self._action.slots.items():
+                body.label(text=f"\"{slot.name_display}\" for \"{obj.name}\"")
 
         return body
 
@@ -352,6 +347,6 @@ class SAIO_OT_Export_Shape_Animation(ExportOperator):
             context,
             self.normal_mode)
 
-        motion = evaluator.evaluate(self._actions)
+        motion = evaluator.evaluate(self._action)
         SA3D_Modeling.ANIMATION_FILE.WriteToFile(self.filepath, motion)
         return {'FINISHED'}

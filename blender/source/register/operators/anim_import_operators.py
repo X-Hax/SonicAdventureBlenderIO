@@ -266,13 +266,15 @@ class SAIO_OT_Import_Shape_Animation(MotionImportOperator):
                 raise error
 
             processor = i_motion.ShapeMotionProcessor(self.optimize)
-            actions = processor.process(animFile.Animation, context.active_object)
+            action, slots = processor.process(animFile.Animation, context.active_object)
 
-            for target, action in actions.items():
+            for target, slot in slots.items():
                 shape_keys: bpy.types.Key = target.data.shape_keys
                 if shape_keys.animation_data is None:
                     shape_keys.animation_data_create()
                 nla = shape_keys.animation_data.nla_tracks.new()
-                nla.strips.new(action.name, 0, action)
+                strip = nla.strips.new(action.name, 0, action)
+                strip.action_slot = slot
+                strip.action_frame_end = action.frame_range[1]
 
         return {'FINISHED'}
