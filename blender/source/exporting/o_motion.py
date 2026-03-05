@@ -111,7 +111,7 @@ def convert_to_node_motion(
     load_dotnet()
 
     if frame_range is None:
-        frame_range = action.frame_range
+        frame_range = action.action.frame_range
 
     start = math.floor(frame_range[0])
     end = math.ceil(frame_range[1])
