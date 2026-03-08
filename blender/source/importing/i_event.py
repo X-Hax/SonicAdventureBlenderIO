@@ -507,7 +507,7 @@ class EventImporter:
                         channelbag.fcurves.new(
                             f"pose.bones[\"{b.name}\"].scale",
                             index=i,
-                            action_group=b.name).keyframe_points
+                            group_name=b.name).keyframe_points
                         for i in range(3)
                     ]
 
