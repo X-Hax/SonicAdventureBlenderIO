@@ -42,7 +42,7 @@ class ActionSet:
         if animation_data is None:
             return None
 
-        if animation_data.action is not None and not ignore_selected:
+        if animation_data.action is not None and animation_data.action_slot is not None and not ignore_selected:
             return ActionSet(animation_data.action, animation_data.action_slot)
 
         if len(animation_data.nla_tracks) == 0:
