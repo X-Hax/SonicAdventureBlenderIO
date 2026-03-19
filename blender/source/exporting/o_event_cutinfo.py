@@ -165,7 +165,7 @@ class CutInfo:
                     curve = channelbag.fcurves.new(
                         f"pose.bones[\"{bone.name}\"].{field}",
                         index=i,
-                        action_group=bone.name)
+                        group_name=bone.name)
                     self.action_setup_dict[curve] = (bone, field, i)
 
             create_curve("location", 3)
@@ -187,7 +187,7 @@ class CutInfo:
                 curve = channelbag.fcurves.new(
                     field,
                     index=i,
-                    action_group="transforms")
+                    group_name="transforms")
                 self.action_setup_dict[curve] = (obj, field, i)
 
         create_curve("location", 3)
@@ -206,7 +206,7 @@ class CutInfo:
             curve = channelbag.fcurves.new(
                 field,
                 index=index,
-                action_group="transforms")
+                group_name="transforms")
             self.action_setup_dict[curve] = (obj, field, index)
 
         for i in range(3):
@@ -216,7 +216,7 @@ class CutInfo:
     def _setup_temp_fov_action(self, channelbag: bpy.types.ActionChannelbag, obj):
         curve = channelbag.fcurves.new(
             "lens",
-            action_group="camera")
+            group_name="camera")
         self.action_setup_dict[curve] = (obj, "lens", None)
 
     ######################################################################
