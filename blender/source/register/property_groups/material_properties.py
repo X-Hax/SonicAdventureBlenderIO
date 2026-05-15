@@ -153,6 +153,13 @@ class SAIO_Material(bpy.types.PropertyGroup):
         default='INV_SRC'
     )
 
+    no_alpha_test: BoolProperty(
+        name="No Alpha Test",
+        description="No alpha testing (opaque pixels get handled as transparent as well)",
+        update=_update_material_values,
+        default=False
+    )
+
     # ===== Texture properties =====
 
     texture_id: IntProperty(

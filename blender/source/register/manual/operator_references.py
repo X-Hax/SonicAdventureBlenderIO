@@ -60,10 +60,10 @@ raw_mapping = [
     (material_mass_edit_operators.SAIO_OT_MaterialMassEdit_Set, MME),
     (material_mass_edit_operators.SAIO_OT_MaterialMassEdit_Reset, f"{MME}#reset-parameters"),
 
-    (migration_operators.SAIO_OT_MigrateCheck, f"{MIGRATION}#check-for-migrate-data"),
-    (migration_operators.SAIO_OT_MigrateArmature, f"{MIGRATION}#migrate-armature"),
-    (migration_operators.SAIO_OT_MigrateData, f"{MIGRATION}#migrate-data"),
-    (migration_operators.SAIO_OT_MigratePath, f"{MIGRATION}#migrate-path"),
+    (migration_operators.SAIO_OT_MigrateOldCheck, f"{MIGRATION}#check-for-migrate-data"),
+    (migration_operators.SAIO_OT_MigrateOldArmature, f"{MIGRATION}#migrate-armature"),
+    (migration_operators.SAIO_OT_MigrateOldData, f"{MIGRATION}#migrate-data"),
+    (migration_operators.SAIO_OT_MigrateOldPath, f"{MIGRATION}#migrate-path"),
 
     (texture_operators.SAIO_OT_Textures_Autoname, f"{TEXTURES}#autoname-entries"),
     (texture_operators.SAIO_OT_Textures_Clear, f"{TEXTURES}#clear-list"),

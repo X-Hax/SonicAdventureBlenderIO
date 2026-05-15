@@ -121,6 +121,7 @@ Common parameters between the exporters:
 Exports the currently active node animation (either the one currently being edited, or the active action) of the target to an *.saanim file.
 <br/> Only works for objects with no children and armatures
 
+- `No Scale Keyframes`: Removes all scale keyframes of the output. Useful for creating animations where scale keyframes break stuff.
 - `Bone Localspace`: Export the animations relative to the armature. Unchecked, the animation will be exported relative to the world center.
 - `Force Sort Bones`: Blender orders bones by the order in which they were parented. Sometimes its needed to ensure bones get exported in alphabetical order, which this parameter ensures.
 

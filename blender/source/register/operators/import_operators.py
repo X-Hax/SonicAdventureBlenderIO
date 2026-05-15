@@ -100,6 +100,7 @@ class ModelImportOperator(SAIOBaseFileLoadOperator):
 class SAIO_OT_Import_Model(ModelImportOperator):
     bl_idname = "saio.import_mdl"
     bl_label = "Sonic Adv. model (.*mdl)"
+    bl_description = "Loads a Sonic Adv. model file."
 
     filter_glob: StringProperty(
         default="*.sa1mdl;*.sadxmdl;*.sa2mdl;*.sa2bmdl;*.nj;",
@@ -191,6 +192,7 @@ class SAIO_OT_Import_Model(ModelImportOperator):
 class SAIO_OT_Import_Landtable(ModelImportOperator):
     bl_idname = "saio.import_lvl"
     bl_label = "Sonic Adv. Landtable (.*lvl)"
+    bl_description = "Loads a Sonic Adv. level file."
 
     filter_glob: StringProperty(
         default="*.sa1lvl;*.sadxlvl;*.sa2lvl;*.sa2blvl;",

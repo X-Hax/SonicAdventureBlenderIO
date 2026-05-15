@@ -92,6 +92,7 @@ class MeshProcessor:
         props.anisotropic_filtering = material.AnisotropicFiltering
         props.use_alpha = material.UseAlpha
         props.double_sided = not material.BackfaceCulling
+        props.no_alpha_test = material.NoAlphaTest
         props.flat_shading = material.Flat
         props.ignore_ambient = material.NoAmbient
         props.ignore_diffuse = material.NoLighting

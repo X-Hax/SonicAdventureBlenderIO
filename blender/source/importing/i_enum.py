@@ -20,21 +20,27 @@ def from_node_attributes(node_properties, attributes: any):
         node_properties.skip_children, \
         node_properties.rotate_zyx, \
         node_properties.no_animate, \
-        node_properties.no_morph \
+        node_properties.no_morph, \
+        node_properties.clip, \
+        node_properties.modifier, \
+        node_properties.use_quaternion_rotation, \
+        node_properties.cache_rotation, \
+        node_properties.apply_cached_rotation, \
+        node_properties.envelope, \
         = SAIO_NET.FLAGS.DecomposeNodeAttributes(attributes)
 
 
 def from_evententry_attributes(evententry_properties, attributes: any):
-    evententry_properties.unk0, \
-        evententry_properties.enable_lighting, \
-        evententry_properties.unk2, \
-        evententry_properties.disable_shadow_catching, \
-        evententry_properties.unk4, \
-        evententry_properties.unk5, \
-        evententry_properties.unk6, \
+    evententry_properties.has_environment, \
+        evententry_properties.no_fog_and_easy_draw, \
+        evententry_properties.light1, \
+        evententry_properties.light2, \
+        evententry_properties.light3, \
+        evententry_properties.light4, \
+        evententry_properties.modifier_volume, \
         evententry_properties.reflection, \
         evententry_properties.blare, \
-        evententry_properties.unk9 \
+        evententry_properties.use_simple \
         = SAIO_NET.FLAGS.DecomposeEventEntryAttributes(attributes)
 
 

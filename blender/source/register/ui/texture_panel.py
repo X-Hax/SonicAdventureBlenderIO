@@ -59,23 +59,33 @@ class SAIO_UL_TextureList(bpy.types.UIList):
             emboss=False)
 
 
-class SAIO_MT_TextureContextMenu(bpy.types.Menu):
+class BaseTextureContextMenu(bpy.types.Menu):
     bl_label = "Texture list operations"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator(texop.SAIO_OT_Textures_Autoname.bl_idname)
-        layout.operator(texop.SAIO_OT_Textures_Clear.bl_idname)
-        layout.separator()
-        layout.operator(texop.SAIO_OT_Textures_Import_Archive.bl_idname)
-        layout.operator(texop.SAIO_OT_Textures_Import_Pack.bl_idname)
-        layout.separator()
-        layout.operator(texop.SAIO_OT_Textures_Export_Archive.bl_idname)
-        layout.operator(texop.SAIO_OT_Textures_Export_Pack.bl_idname)
-        layout.separator()
-        layout.operator(texop.SAIO_OT_Texture_ToAssetLibrary.bl_idname)
+        def mode_op(bl_idname: str):
+            op = layout.operator(bl_idname)
+            op.mode = self.texture_mode
 
+        mode_op(texop.SAIO_OT_Textures_Autoname.bl_idname)
+        mode_op(texop.SAIO_OT_Textures_Clear.bl_idname)
+        layout.separator()
+        mode_op(texop.SAIO_OT_Textures_Import_Archive.bl_idname)
+        mode_op(texop.SAIO_OT_Textures_Import_Pack.bl_idname)
+        layout.separator()
+        mode_op(texop.SAIO_OT_Textures_Export_Archive.bl_idname)
+        mode_op(texop.SAIO_OT_Textures_Export_Pack.bl_idname)
+        layout.separator()
+        mode_op(texop.SAIO_OT_Texture_ToAssetLibrary.bl_idname)
+
+
+class SAIO_MT_TextureContextMenuScene(BaseTextureContextMenu):
+    texture_mode = 'SCENE'
+
+class SAIO_MT_TextureContextMenuObject(BaseTextureContextMenu):
+    texture_mode = 'OBJECT'
 
 def draw_texture_list_panel(
         layout: bpy.types.UILayout,
@@ -98,7 +108,7 @@ def draw_texture_list_panel(
     draw_list(
         layout,
         SAIO_UL_TextureList,
-        SAIO_MT_TextureContextMenu,
+        SAIO_MT_TextureContextMenuObject if is_object else SAIO_MT_TextureContextMenuScene,
         texture_list,
         TEXTURELIST_TOOLS,
         set_op

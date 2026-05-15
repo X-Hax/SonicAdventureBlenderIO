@@ -101,6 +101,15 @@ class SAIO_MaterialMassEdit(bpy.types.PropertyGroup):
         default=False
     )
 
+    apply_no_alpha_test: BoolProperty(
+        name="Apply no alpha test",
+        description=(
+            "Sets the no alpha test property of all selected"
+            " materials when pressing 'Set'"
+        ),
+        default=False
+    )
+
     apply_shadow_stencil: BoolProperty(
         name="Apply shadow stencil",
         description=(

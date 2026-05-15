@@ -102,7 +102,7 @@ class ModelMesh:
         self._triangulate_modifier.quad_method = 'FIXED'
         self._triangulate_modifier.ngon_method = 'CLIP'
         self._triangulate_modifier.min_vertices = 4
-        #TODO: Enable in 4.2.1; self._triangulate_modifier.keep_custom_normals = True
+        self._triangulate_modifier.keep_custom_normals = True
 
     def _collect_depending_bones(self):
         group_indices = set()
@@ -409,7 +409,8 @@ class ModelMesh:
             root_index,
             len(self._evaluated_mesh.color_attributes) > 0,
             self.object.data.saio_mesh.force_vertex_colors,
-            self.object.data.saio_mesh.texcoord_precision_level
+            self.object.data.saio_mesh.texcoord_precision_level,
+            self.object.data.saio_mesh.no_bounds
         )
 
     @staticmethod

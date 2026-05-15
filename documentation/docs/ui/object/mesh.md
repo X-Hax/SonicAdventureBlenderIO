@@ -25,3 +25,6 @@ Each format has a different supported precision level range:
 | SA2B 	| GC     	| 0 through 7                 	|
 
 On import, the precision level is currently only maintained for SA2B/GC.
+
+### No Bounds
+When enabled, exported model will have no mesh bounds and will get not be frustrum culled.

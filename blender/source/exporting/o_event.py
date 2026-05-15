@@ -50,6 +50,7 @@ class EventExporter:
     event_type: str
     optimize: bool
     anim_parameters: AnimParameters
+    tails_tails_no_scale_keyframes: bool
 
     base_scene: bpy.types.Scene
     shared_entries: list[BObject]
@@ -80,12 +81,14 @@ class EventExporter:
             event_type: str,
             optimize: bool,
             auto_node_attribute_mode: str,
-            anim_parameters: AnimParameters):
+            anim_parameters: AnimParameters,
+            tails_tails_no_scale_keyframes: bool):
 
         self.context = context
         self.event_type = event_type
         self.optimize = optimize
         self.anim_parameters = anim_parameters
+        self.tails_tails_no_scale_keyframes = tails_tails_no_scale_keyframes
 
         self.base_scene = None
         self.shared_entries = []
@@ -508,14 +511,13 @@ class EventExporter:
                     -position.y,
                 ))
 
-            reflection = SA3D_SA2Event.REFLECTION()
-            reflection.Transparency = entry.color[3]
-            reflection.Vertex1 = vertices[0]
-            reflection.Vertex2 = vertices[1]
-            reflection.Vertex3 = vertices[2]
-            reflection.Vertex4 = vertices[3]
-
-            reflections.Reflections.Add(reflection)
+            reflections.Reflections.Add(SA3D_SA2Event.REFLECTION(
+                int(entry.color[3]),
+                vertices[0],
+                vertices[1],
+                vertices[2],
+                vertices[3]
+            ))
 
         self.event_data.Reflections = reflections
 
@@ -532,6 +534,25 @@ class EventExporter:
             tt_target = tt_target.pose.bones[bone]
 
         self.event_data.TailsTails = self.nodes[tt_target]
+
+        if not self.tails_tails_no_scale_keyframes:
+            return
+
+        from ..utility import bone_utils
+        bone_map = bone_utils.get_bone_map(event_properties.tails_tails, False, False)
+        tail_index = bone_map.index(tt_target.name) + 1
+        tail_index_range = range(tail_index, tail_index + min(2, len(tt_target.children)))
+
+        for cut in self.cut_scenes:
+            if event_properties.tails_tails not in cut.motions:
+                continue
+
+            motion = cut.motions[event_properties.tails_tails]
+
+            for i in tail_index_range:
+                if i in motion.Keyframes:
+                    motion.Keyframes[i].Scale.Clear()
+
 
     def _setup_uv_animations(self):
         uvanim_data = SA3D_SA2Event.SURFACE_ANIMATION_DATA()
@@ -624,7 +645,6 @@ class EventExporter:
             if obj in cutinfo.shape_motions:
                 entry.ShapeAnimation = cutinfo.shape_motions[obj]
 
-            entry.AutoAnimationAttributes()
             result.Entries.Add(entry)
 
         for obj in cutinfo.particles:

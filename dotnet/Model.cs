@@ -62,7 +62,6 @@ namespace SAIO.NET
                 }
 
                 Matrix4x4.Decompose(localMatrix, out Vector3 scale, out Quaternion rotation, out Vector3 position);
-                Vector3 euler = rotation.QuaternionToEuler(node.Attributes.HasFlag(NodeAttributes.RotateZYX));
 
                 Node? parent = node.ParentIndex >= 0 ? objNodes[node.ParentIndex] : null;
 
@@ -72,7 +71,16 @@ namespace SAIO.NET
                 };
 
                 objNode.SetAllNodeAttributes(node.Attributes, RotationUpdateMode.Keep);
-                objNode.UpdateTransforms(position, euler, scale);
+
+                if(objNode.UseQuaternionRotation)
+                {
+                    objNode.UpdateTransforms(position, rotation, scale);
+                }
+                else
+                {
+                    Vector3 euler = rotation.QuaternionToEuler(objNode.RotateZYX);
+                    objNode.UpdateTransforms(position, euler, scale);
+                }
 
                 if(parent != null)
                 {

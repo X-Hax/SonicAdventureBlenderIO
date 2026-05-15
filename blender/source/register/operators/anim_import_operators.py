@@ -187,18 +187,24 @@ class SAIO_OT_Import_Camera_Animation(MotionImportOperator):
                 print(f"An error occured while importing {file.name}")
                 raise error
 
-            actions = i_motion.CameraMotionProcessor.process_motion(
+            camera_action = i_motion.CameraMotionProcessor.process_motion(
                 animFile.Animation,
                 camera_setup)
 
-            def setup_nla(data: bpy.types.ID, action: bpy.types.Action):
-                track = data.animation_data.nla_tracks.new()
+            def setup_nla(data: bpy.types.ID, action_slot: bpy.types.ActionSlot):
+                track: bpy.types.NlaTrack = data.animation_data.nla_tracks.new()
                 track.name = os.path.splitext(file.name)[0]
-                track.strips.new(action.name, 0, action)
+                strip = track.strips.new(
+                    camera_action.action.name, 
+                    0,
+                    camera_action.action
+                )
+                strip.action_slot = action_slot
+                strip.action_frame_end = camera_action.action.frame_range[1]
 
-            setup_nla(camera_setup.camera, actions.position)
-            setup_nla(camera_setup.target, actions.target)
-            setup_nla(camera_setup.camera_data, actions.fov)
+            setup_nla(camera_setup.camera, camera_action.position)
+            setup_nla(camera_setup.target, camera_action.target)
+            setup_nla(camera_setup.camera_data, camera_action.fov)
 
         return {'FINISHED'}
 
@@ -260,13 +266,15 @@ class SAIO_OT_Import_Shape_Animation(MotionImportOperator):
                 raise error
 
             processor = i_motion.ShapeMotionProcessor(self.optimize)
-            actions = processor.process(animFile.Animation, context.active_object)
+            action, slots = processor.process(animFile.Animation, context.active_object)
 
-            for target, action in actions.items():
+            for target, slot in slots.items():
                 shape_keys: bpy.types.Key = target.data.shape_keys
                 if shape_keys.animation_data is None:
                     shape_keys.animation_data_create()
                 nla = shape_keys.animation_data.nla_tracks.new()
-                nla.strips.new(action.name, 0, action)
+                strip = nla.strips.new(action.name, 0, action)
+                strip.action_slot = slot
+                strip.action_frame_end = action.frame_range[1]
 
         return {'FINISHED'}

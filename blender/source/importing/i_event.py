@@ -298,7 +298,11 @@ class EventImporter:
                 entity.Attributes, entity.Layer, shadow_object)
 
     def _setup_attach_upgrade(self, model, target, index, second):
-        if model is None:
+        if model is None or target is None:
+            return
+
+        target_object = self._get_model(target.Label)
+        if target_object is None:
             return
 
         obj = self._add_model_to_collection(model, self.upgrades_collection)
@@ -309,10 +313,6 @@ class EventImporter:
 
         setattr(upgrade_properties, f"model{(2 if second else 1)}", obj)
 
-        if target is None:
-            return
-
-        target_object = self._get_model(target.Label)
         setattr(
             upgrade_properties,
             f"target{(2 if second else 1)}",
@@ -328,6 +328,10 @@ class EventImporter:
         if model is None:
             return
 
+        target_object = self._get_model(model.Label)
+        if target_object is None:
+            return
+
         upgrade_properties = getattr(
             self.base_scene.saio_scene.event,
             "ou_" + INTEGRATED_UPGRADE_LUT[index].lower())
@@ -338,7 +342,6 @@ class EventImporter:
         elif upgrade_type == 2:
             fieldname = "base"
 
-        target_object = self._get_model(model.Label)
         setattr(
             upgrade_properties,
             fieldname,
@@ -445,18 +448,23 @@ class EventImporter:
             if camera_animation.Animation is None:
                 continue
 
-            camera_actions = CameraMotionProcessor.process_motion(
+            camera_action = CameraMotionProcessor.process_motion(
                 camera_animation.Animation,
                 self.camera_setup)
 
-            def setup_action(index, action):
+            def setup_action(index: int, slot: bpy.types.ActionSlot):
                 strip = self.camera_nlas[index].strips.new(
-                    action.name, frame, action)
+                    camera_action.action.name, 
+                    frame, 
+                    camera_action.action
+                )
+                strip.action_slot = slot
                 strip.extrapolation = 'NOTHING'
+                strip.action_frame_end = camera_action.action.frame_range[1]
 
-            setup_action(0, camera_actions.position)
-            setup_action(1, camera_actions.target)
-            setup_action(2, camera_actions.fov)
+            setup_action(0, camera_action.position)
+            setup_action(1, camera_action.target)
+            setup_action(2, camera_action.fov)
 
             break
 
@@ -485,15 +493,21 @@ class EventImporter:
 
                 scale_action = bpy.data.actions.new(
                     obj.name + "_scales")
+                
+                slot = scale_action.slots.new("OBJECT", "Armature")
+                layer = scale_action.layers.new("Layer")
+                strip: bpy.types.ActionKeyframeStrip = layer.strips.new(type='KEYFRAME')
+                channelbag = strip.channelbags.new(slot)
+
                 for b in obj.pose.bones:
                     if b.bone.saio_node.ignore_scale:
                         continue
 
                     scales = [
-                        scale_action.fcurves.new(
+                        channelbag.fcurves.new(
                             f"pose.bones[\"{b.name}\"].scale",
                             index=i,
-                            action_group=b.name).keyframe_points
+                            group_name=b.name).keyframe_points
                         for i in range(3)
                     ]
 
@@ -520,10 +534,10 @@ class EventImporter:
             frame: int,
             frame_num: int):
 
-        actions = self.shape_motion_processor.process(
+        action, slots = self.shape_motion_processor.process(
             motion, obj, frame_num)
 
-        for obj, action in actions.items():
+        for obj, slot in slots.items():
             shape_keys: bpy.types.Key = obj.data.shape_keys
             if shape_keys.animation_data is None:
                 shape_keys.animation_data_create()
@@ -532,7 +546,9 @@ class EventImporter:
                 nla = shape_keys.animation_data.nla_tracks[0]
 
             strip = nla.strips.new(action.name, frame, action)
+            strip.action_slot = slot
             strip.extrapolation = 'NOTHING'
+            strip.action_frame_end = action.frame_range[1]
 
     def _setup_entity_animation(
             self,

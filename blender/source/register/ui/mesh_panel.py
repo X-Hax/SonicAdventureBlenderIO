@@ -12,10 +12,11 @@ class SAIO_PT_Mesh(PropertiesPanel):
     @staticmethod
     def draw_mesh_properties(
             layout: bpy.types.UILayout,
-            mesh_properites: SAIO_Mesh):
+            mesh_properties: SAIO_Mesh):
 
-        layout.prop(mesh_properites, "force_vertex_colors")
-        layout.prop(mesh_properites, "texcoord_precision_level")
+        layout.prop(mesh_properties, "force_vertex_colors")
+        layout.prop(mesh_properties, "texcoord_precision_level")
+        layout.prop(mesh_properties, "no_bounds")
 
     @classmethod
     def poll(cls, context):

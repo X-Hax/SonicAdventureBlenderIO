@@ -16,27 +16,6 @@ The documentation is structured as following:
 ```
 ---
 
-## Preferences
-Addon preferences
-
-<details>
-<summary>View</summary>
-
-```
-SAIO_AddonPreferences*
-├─ auto_check_update : bool
-├─ updater_interval_months : int
-├─ updater_interval_days  : int
-├─ updater_interval_hours  : int
-├─ updater_interval_minutes  : int
-├─ print_debug : bool
-├─ use_project_path : bool
-├─ default_path : str
-└─ tools_path: str
-```
-</details>
----
-
 ## Scene
 Stores per-scene related info and settings
 
@@ -55,11 +34,14 @@ bpy.types.Scene
    │  └> EVC : Event cut/sub scene
    │
    ├─ use_principled : bool
+   ├─ checked_for_migrate_data : bool
+   ├─ found_migrate_data : bool
+   │
    ├─ light_dir : vector, tuple[float, float, float]
    ├─ light_color : RGBA, tuple[float, float, float, float]
    ├─ light_ambient : RGBA, tuple[float, float, float, float]
    ├─ display_specular : bool
-   ├─ viewport_alpha_cutoff : bool
+   ├─ enable_backface_culling : bool
    │
    ├─ landtable : SAIO_LandTable*
    ├─ event : SAIO_Event*
@@ -67,7 +49,7 @@ bpy.types.Scene
    ├─ texturename_world : bpy.types.World
    ├─ panels : SAIO_PanelSettings*
    ├─ viewport_panels : SAIO_PanelSettings*
-   └─ quick_edit : SAIO_QuickEdit*
+   └─ material_mass_edit : SAIO_MaterialMassEdit*
 
 ```
 </details>
@@ -82,40 +64,24 @@ All properties related to the quick edit functionality
 ```
 SAIO_Scene*
 └─ quick_edit: SAIO_QuickEdit*
-    ├─ panels : SAIO_PanelSettings*
-	│
-    ├─ material_properties : SAIO_Material*
-    ├─ use_material_edit : bool
-    ├─ apply_diffuse : bool
-    ├─ apply_specular : bool
-    ├─ apply_ambient : bool
-    ├─ apply_specularity : bool
-    ├─ apply_texture_id : bool
-    ├─ apply_filter : bool
-    ├─ apply_mipmap_distance_multiplier : bool
-    ├─ apply_source_alpha : bool
-    ├─ apply_destination_alpha : bool
-    ├─ apply_shadow_stencil : bool
-    ├─ apply_texgen_coord_id : bool
-    ├─ apply_texgen_type : bool
-    ├─ apply_texgen_matrix_id : bool
-    ├─ apply_texgen_source : bool
-	│
-    ├─ land_entry_properties : SAIO_LandEntry*
-    ├─ use_land_entry_edit : bool
-    ├─ apply_blockbit : bool
-	│
-    ├─ use_node_edit : bool
-    ├─ node_properties : SAIO_Node*
-	│
-    ├─ use_event_entry_edit : bool
-    ├─ apply_entry_type : bool
-    ├─ apply_layer : bool
-    ├─ event_entry_properties : SAIO_EventEntry*
-	│
-    ├─ use_mesh_edit : bool
-    └─ mesh_properties : SAIO_Mesh*
-
+   ├─ panels : SAIO_PanelSettings*
+   │
+   ├─ material_properties : SAIO_Material*
+   ├─ use_material_edit : bool
+   ├─ apply_diffuse : bool
+   ├─ apply_specular : bool
+   ├─ apply_ambient : bool
+   ├─ apply_specularity : bool
+   ├─ apply_texture_id : bool
+   ├─ apply_filter : bool
+   ├─ apply_mipmap_distance_multiplier : bool
+   ├─ apply_source_alpha : bool
+   ├─ apply_destination_alpha : bool
+   ├─ apply_shadow_stencil : bool
+   ├─ apply_texgen_coord_id : bool
+   ├─ apply_texgen_type : bool
+   ├─ apply_texgen_matrix_id : bool
+   └─ apply_texgen_source : bool
 
 ```
 </details>
@@ -131,26 +97,13 @@ Meta properties that are only used for the UI
 SAIO_Scene
 ├─ panels: SAIO_PanelSettings*
 └─ viewport_panels: SAIO_PanelSettings*
-   ├─ expanded_material_quick_edit: bool
-   ├─ expanded_node_quick_edit: bool
-   ├─ expanded_event_entry_quick_edit: bool
-   ├─ expanded_land_entry_quick_edit: bool
-   ├─ expanded_mesh_quick_edit: bool
-   │
-   ├─ expanded_texture_properties: bool
-   ├─ expanded_rendering_properties: bool
-   ├─ expanded_gc_properties: bool
-   ├─ expanded_gc_texgen: bool
-   │
-   ├─ expanded_surface_attributes: bool
-   ├─ advanced_surface_attributes: bool
-   ├─ land_entry_surface_attributes_editmode: enum
+   ├─ advanced_surface_attributes : bool
+   ├─ land_entry_surface_attributes_editmode : enum
    │  ├> UNIVERAL : Universal
    │  ├> SA1 : Adventure 1
    │  └> SA2 : Adventure 2
    │
-   ├─ expanded_override_upgrade_menu: bool
-   ├─ override_upgrade_menu: enum
+   ├─ override_upgrade_menu : enum
    │  ├> SONLS : Sonic Light Shoes
    │  ├> SONAL : Sonic Ancient Light
    │  ├> SONMG : Sonic Magic Gloves
@@ -181,32 +134,25 @@ SAIO_Scene
    │  ├> ROUIB : Rouge Iron Boots
    │  └> ROUMM : Rouge MysticMelody
    │
-   ├─ expanded_attach_upgrade_menu: bool
-   ├─ attach_upgrade_menu: enum
-   │  ├> SONLS : Sonic Light Shoes
-   │  ├> SONFR : Sonic Flame Ring
-   │  ├> SONBB : Sonic Bounce Bracelet
-   │  ├> SONMG : Sonic Magic Gloves
-   │  ├> SHAAS : Shadow Air Shoes
-   │  ├> SHAFR : Shadow Flame Ring
-   │  ├> KNUS1 : Knuckles Shovel Claws 1
-   │  ├> KNUS2 : Knuckles Shovel Claws 2
-   │  ├> KNUH1 : Knuckles Hammer Gloves 1
-   │  ├> KNUH2 : Knuckles Hammer Gloves 2
-   │  ├> KNUSG : Knuckles Sunglasses
-   │  ├> KNUAN : Knuckles Air Necklace
-   │  ├> ROUPN : Rouge Pick Nails
-   │  ├> ROUTS : Rouge Treasure Scope
-   │  ├> ROUIB : Rouge Iron Boots
-   │  ├> ROUSP : Rouge Shoe Plates (Transparency)
-   │  ├> TAIWS : Tails Windshield (Transparency)
-   │  └> EGGWS : Eggman Windshield (Transparency)
-   │
-   ├─ expanded_uv_animations_menu: bool
-   │
-   ├─ expanded_landtable_panel : bool
-   ├─ expanded_texture_panel : bool
-   └─ expanded_lighting_panel : bool
+   └─ attach_upgrade_menu : enum
+      ├> SONLS : Sonic Light Shoes
+      ├> SONFR : Sonic Flame Ring
+      ├> SONBB : Sonic Bounce Bracelet
+      ├> SONMG : Sonic Magic Gloves
+      ├> SHAAS : Shadow Air Shoes
+      ├> SHAFR : Shadow Flame Ring
+      ├> KNUS1 : Knuckles Shovel Claws 1
+      ├> KNUS2 : Knuckles Shovel Claws 2
+      ├> KNUH1 : Knuckles Hammer Gloves 1
+      ├> KNUH2 : Knuckles Hammer Gloves 2
+      ├> KNUSG : Knuckles Sunglasses
+      ├> KNUAN : Knuckles Air Necklace
+      ├> ROUPN : Rouge Pick Nails
+      ├> ROUTS : Rouge Treasure Scope
+      ├> ROUIB : Rouge Iron Boots
+      ├> ROUSP : Rouge Shoe Plates (Transparency)
+      ├> TAIWS : Tails Windshield (Transparency)
+      └> EGGWS : Eggman Windshield (Transparency)
 ```
 </details>
 ---
@@ -330,16 +276,16 @@ bpy.types.World
    ├─ active_index : int
    └─ [] : SAIO_Texture*
       ├─ image : bpy.types.Image
-	  ├─ name : str
-	  ├─ global_index : int
-	  ├─ override_width : int
-	  ├─ override_width : int
-	  ├─ texture_type : enum
-	  │  ├> RGBA : Colored
-	  │  ├> ID4 : Index4
-	  │  └> ID8 : Index8
-	  │
-	  └─ index : @int
+      ├─ name : str
+      ├─ global_index : int
+      ├─ override_width : int
+      ├─ override_width : int
+      ├─ texture_type : enum
+      │  ├> RGBA : Colored
+      │  ├> ID4 : Index4
+      │  └> ID8 : Index8
+      │
+      └─ index : @int
 ```
 
 Specifically referenced via:
@@ -364,7 +310,7 @@ bpy.types.World
 └─ saio_texturename_list
    ├─ active_index : int
    └─ [] : SAIO_TextureName
-	  └─ name : str
+     └─ name : str
 ```
 
 Specifically referenced via:
@@ -389,14 +335,20 @@ bpy.types.Object
 bpy.types.EditBone
 bpy.types.Bone
 └─ saio_node : SAIO_Node*
-	├─ ignore_position : bool
-	├─ ignore_rotation : bool
-	├─ ignore_scale : bool
-	├─ rotate_zyx : bool
-	├─ skip_draw : bool
-	├─ skip_children : bool
-	├─ no_animate : bool
-	└─ no_morph : bool
+   ├─ ignore_position : bool
+   ├─ ignore_rotation : bool
+   ├─ ignore_scale : bool
+   ├─ rotate_zyx : bool
+   ├─ skip_draw : bool
+   ├─ skip_children : bool
+   ├─ no_animate : bool
+   ├─ no_morph : bool
+   ├─ clip : bool
+   ├─ modifier : bool
+   ├─ use_quaternion_rotation : bool
+   ├─ cache_rotation : bool
+   ├─ apply_cached_rotation : bool
+   └─ envelope : bool
 ```
 </details>
 ---
@@ -410,7 +362,14 @@ Stores surface attributes for level geometry and their blockbit
 ```
 bpy.types.Object
 └─ saio_land_entry : SAIO_LandEntry*
+   ├─ geometry_type : enum
+   │  ├> STATIC
+   │  └> ANIMATED
+   │
    ├─ blockbit : str
+   ├─ anim_start_frame : float
+   ├─ anim_speed : float
+   ├─ tex_list_pointer : str
    │
    ├─ sf_visible : bool
    ├─ sf_solid : bool
@@ -482,15 +441,17 @@ bpy.types.Object
    │  └> REFLECTION : Reflection Plane
    │
    ├─ shadow_model : bpy.types.Object
+   ├─ has_environment : bool
+   ├─ no_fog_and_easy_draw : bool
+   ├─ light1 : bool
+   ├─ light2 : bool
+   ├─ light3 : bool
+   ├─ light4 : bool
+   ├─ modifier_volume : bool
    ├─ reflection : bool
    ├─ blare : bool
-   ├─ layer : int
-   ├─ unk0 : bool
-   ├─ unk2 : bool
-   ├─ unk4 : bool
-   ├─ unk5 : bool
-   ├─ unk6 : bool
-   └─ unk9 : bool
+   ├─ use_simple : bool
+   └─ layer : int
 ```
 </details>
 ---
@@ -520,7 +481,9 @@ Stores mesh specific info
 ```
 bpy.types.Mesh
 └─ saio_mesh : SAIO_Mesh*
-   └─ force_vertex_colors: bool
+   ├─ force_vertex_colors: bool
+   ├─ texcoord_precision_level: int
+   └─ no_bounds : bool
 ```
 </details>
 ---
@@ -543,7 +506,7 @@ bpy.types.Material
    ├─ ignore_diffuse : bool
    ├─ ignore_specular : bool
    ├─ use_alpha : bool
-   ├─ culling : bool
+   ├─ double_sided : bool
    │
    ├─ source_alpha : enum
    ├─ destination_alpha : enum
@@ -555,6 +518,8 @@ bpy.types.Material
    │  ├> INV_SRC : Inverted source
    │  ├> DST : Destination
    │  └> INV_DST : Inverted destination
+   │
+   ├─ use_alpha : bool
    │
    ├─ texture_id : int
    ├─ use_texture : bool

@@ -193,6 +193,13 @@ class ExportLVLOperator(ExportModelOperator):
 
     #######################################
 
+    no_scale_keyframes: BoolProperty(
+        name="No scale keyframes",
+        description="Removes scale keyframes from the exported animation",
+        default=False
+    )
+
+
     short_rot: BoolProperty(
         name="Use 16 bit rotations",
         description="Whether to use 16 bit BAMS for the rotation keyframes",
@@ -308,6 +315,7 @@ class ExportLVLOperator(ExportModelOperator):
         if body:
             body.prop(self, "auto_root")
             body.prop(self, "force_sort_bones")
+            body.prop(self, "no_scale_keyframes")
             body.prop(self, "short_rot")
 
             self.draw_panel_advanced_animation(body)
@@ -335,6 +343,7 @@ class ExportLVLOperator(ExportModelOperator):
         return AnimParameters(
             True,
             self.rotation_mode,
+            self.no_scale_keyframes,
             self.interpolation_threshold,
             self.quaternion_threshold,
             self.general_optimization_threshold,
@@ -459,6 +468,15 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
         default='MISSING'
     )
 
+    tails_tails_no_scale_keyframes: BoolProperty(
+        name="Tails Tails: No scale keyframes",
+        description=(
+            "Removes scale keyframes from the exported animation specifically for"
+            " tails tails to ensure that the procedural swaying animation works"
+        ),
+        default=True
+    )
+
     export_textures: BoolProperty(
         name="Export texture file",
         description=(
@@ -483,6 +501,8 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
             body.prop(self, "event_type")
             body.prop(self, "optimize")
             body.prop(self, "auto_node_attribute_mode")
+            body.separator()
+            body.prop(self, "tails_tails_no_scale_keyframes")
 
         return body
 
@@ -507,7 +527,8 @@ class SAIO_OT_Export_Event(NodeAnimExportOperator):
             self.event_type,
             self.optimize,
             self.auto_node_attribute_mode,
-            anim_parameters)
+            anim_parameters,
+            self.tails_tails_no_scale_keyframes)
 
         exporter.process()
         exporter.export(self.filepath, self.export_textures)

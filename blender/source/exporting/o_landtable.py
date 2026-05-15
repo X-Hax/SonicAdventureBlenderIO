@@ -206,9 +206,7 @@ class LandtableEvaluator:
             motion = o_motion.convert_to_node_motion(
                 root,
                 self._force_sort_bones,
-                action.fcurves,
-                action.frame_range,
-                action.name,
+                action,
                 self._anim_parameters
             )
 

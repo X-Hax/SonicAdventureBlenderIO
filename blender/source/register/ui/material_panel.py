@@ -134,6 +134,14 @@ class SAIO_PT_Material(PropertiesPanel):
             mass_edit_properties,
             "apply_destination_alpha")
 
+        prop_advanced(
+            alpha_column,
+            "No Alpha Test:",
+            material_properties,
+            "no_alpha_test",
+            mass_edit_properties,
+            "apply_no_alpha_test")
+
         rendering_menu.separator(factor=2)
 
         rendering_prop("Double Sided:", "double_sided")

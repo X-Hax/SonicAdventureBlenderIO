@@ -2,6 +2,7 @@
 class AnimParameters:
 
     bone_localspace: bool
+    no_scale_keyframes: bool
     rotation_mode: str
     interpolation_threshold: float
     quaternion_threshold: float
@@ -13,6 +14,7 @@ class AnimParameters:
     def __init__(
             self,
             bone_localspace: bool,
+            no_scale_keyframes: bool,
             rotation_mode: str,
             interpolation_threshold: float,
             quaternion_threshold: float,
@@ -22,6 +24,7 @@ class AnimParameters:
             ensure_positive_euler_angles: bool = True):
 
         self.bone_localspace = bone_localspace
+        self.no_scale_keyframes = no_scale_keyframes
         self.rotation_mode = rotation_mode
         self.interpolation_threshold = interpolation_threshold
         self.quaternion_threshold = quaternion_threshold

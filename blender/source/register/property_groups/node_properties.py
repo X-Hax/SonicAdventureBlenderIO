@@ -58,6 +58,43 @@ class SAIO_Node(bpy.types.PropertyGroup):
         default=False
     )
 
+    clip: BoolProperty(
+        name="Clip",
+        description="If the mesh bounds are out of view, skip children (for drawing)",
+        default=False
+    )
+
+    modifier: BoolProperty(
+        name="Modifier (Unused)",
+        description="Defined but unused",
+        default=False
+    )
+
+    use_quaternion_rotation: BoolProperty(
+        name="Use Quaternion Rotation",
+        description="Use a quaternion instead of euler angle for rotation information. (Not supported by every game)",
+        default=False
+    )
+
+    cache_rotation: BoolProperty(
+        name="Cache rotation",
+        description="Cache rotation data before the object is processed. (Not supported by every game)",
+        default=False
+    )
+
+    apply_cached_rotation: BoolProperty(
+        name="Apply Cached Rotation",
+        description="Use cached rotation data. (Not supported by every game)",
+        default=False
+    )
+
+    envelope: BoolProperty(
+        name="Envelope (Unused)",
+        description="Unused",
+        default=False
+    )
+
+
     @classmethod
     def register(cls):
         bpy.types.Object.saio_node = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return

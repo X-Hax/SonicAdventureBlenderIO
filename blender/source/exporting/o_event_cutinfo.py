@@ -1,6 +1,7 @@
 import bpy
 from bpy.types import Object as BObject
 
+from .o_motion import ActionSet
 from .o_shapemotion import (
     check_is_shape_motion_viable,
     ShapeActionCollection,
@@ -25,13 +26,13 @@ class CutInfo:
     entries: list[BObject]
     duration: int
 
-    temp_actions: list[bpy.types.Action]
-    output_actions: dict[BObject, bpy.types.Action]
+    temp_actions: list[ActionSet]
+    output_actions: dict[BObject, ActionSet]
     output_shape_actions: dict[BObject, ShapeActionCollection]
     action_setup_dict: dict[bpy.types.FCurve, any]
 
     camera_setup: camera_utils.CameraSetup
-    camera_actions: camera_utils.CameraActionSet
+    camera_action: camera_utils.CameraAction
 
     motions: dict[BObject, any]
     shape_motions: dict[BObject, any]
@@ -69,7 +70,7 @@ class CutInfo:
             raise UserException(
                 f"Camera setup in scene {self.scene.name} is invalid!")
 
-        self.camera_actions = None
+        self.camera_action = None
 
         self.motions = {}
         self.shape_motions = {}
@@ -87,7 +88,7 @@ class CutInfo:
 
     ######################################################################
 
-    def _is_animated(self, animdata):
+    def _is_animated(self, animdata: bpy.types.AnimData):
         if animdata is None:
             return False
 
@@ -121,40 +122,50 @@ class CutInfo:
         if (frame_length == self.duration
                 and len(matching_strip.modifiers) == 0
                 and matching_strip.scale == 1):
-            return matching_strip.action
+            return ActionSet(matching_strip.action, matching_strip.action_slot)
 
         return None
 
-    def _setup_action(self, animdata, name, on_create, ensure_action=False):
-        if not self._is_animated(animdata) and not ensure_action:
+    def _setup_action(self, id_data: bpy.types.ID, name, on_create, ensure_action=False):
+        animation_data = id_data.animation_data
+        if animation_data is None:
+            return None
+        
+        if not self._is_animated(animation_data) and not ensure_action:
             return None
 
-        action = self._get_matching_action(animdata)
+        result = self._get_matching_action(animation_data)
 
-        if action is None:
-            action = bpy.data.actions.new(
-                f"SAIO_{self.scene.name}_{name}")
-            self.temp_actions.append(action)
+        if result is None:
+            action = bpy.data.actions.new(f"SAIO_{self.scene.name}_{name}")
+            
+            slot = action.slots.new(id_data.id_type, "Slot")
+            layer = action.layers.new("Layer")
+            strip: bpy.types.ActionKeyframeStrip = layer.strips.new(type="KEYFRAME")
+            channelbag = strip.channelbags.new(slot)
 
-            on_create(action)
+            on_create(channelbag, id_data)
 
-        return action
+            result = ActionSet(action, slot)
+            self.temp_actions.append(result)
+
+        return result
 
     ######################################################################
 
     def _setup_temp_armature_action(
             self,
-            action: bpy.types.Action,
+            channelbag: bpy.types.ActionChannelbag,
             obj: BObject):
 
         for bone in obj.pose.bones:
 
             def create_curve(field, length):
                 for i in range(length):
-                    curve = action.fcurves.new(
+                    curve = channelbag.fcurves.new(
                         f"pose.bones[\"{bone.name}\"].{field}",
                         index=i,
-                        action_group=bone.name)
+                        group_name=bone.name)
                     self.action_setup_dict[curve] = (bone, field, i)
 
             create_curve("location", 3)
@@ -167,16 +178,16 @@ class CutInfo:
 
     def _setup_temp_object_action(
             self,
-            action: bpy.types.Action,
+            channelbag: bpy.types.ActionChannelbag,
             obj: BObject,
             no_scale: bool = False):
 
         def create_curve(field, length):
             for i in range(length):
-                curve = action.fcurves.new(
+                curve = channelbag.fcurves.new(
                     field,
                     index=i,
-                    action_group="transforms")
+                    group_name="transforms")
                 self.action_setup_dict[curve] = (obj, field, i)
 
         create_curve("location", 3)
@@ -189,25 +200,23 @@ class CutInfo:
         if not no_scale:
             create_curve("scale", 3)
 
-
-    def _setup_temp_target_action(self, action: bpy.types.Action, obj):
+    def _setup_temp_target_action(self, channelbag: bpy.types.ActionChannelbag, obj):
 
         def create_curve(field, index):
-            curve = action.fcurves.new(
+            curve = channelbag.fcurves.new(
                 field,
                 index=index,
-                action_group="transforms")
+                group_name="transforms")
             self.action_setup_dict[curve] = (obj, field, index)
 
         for i in range(3):
             create_curve("location", i)
         create_curve("rotation_euler", 2)
 
-    def _setup_temp_fov_action(self, action: bpy.types.Action, obj):
-        action.id_root = 'CAMERA'
-        curve = action.fcurves.new(
+    def _setup_temp_fov_action(self, channelbag: bpy.types.ActionChannelbag, obj):
+        curve = channelbag.fcurves.new(
             "lens",
-            action_group="camera")
+            group_name="camera")
         self.action_setup_dict[curve] = (obj, "lens", None)
 
     ######################################################################
@@ -267,7 +276,7 @@ class CutInfo:
                 f" on object {obj.name} does not match with its strip"
                 " or is not \"vanilla\"!")
 
-        return target_strip.action
+        return ActionSet(target_strip.action, target_strip.action_slot)
 
     def _collect_shape_actions(self, entry: BObject):
         shape_actions = ShapeActionCollection()
@@ -278,18 +287,28 @@ class CutInfo:
                     continue
                 action = self._get_shape_action(child)
                 if action is not None:
-                    shape_actions.actions[child] = action
+                    if shape_actions.action is None:
+                        shape_actions.action = action.action
+                    elif shape_actions.action != action.action:
+                        raise UserException(
+                            "All shape animation strips for an object in a scene"
+                            f" have to use the same action! Object {entry.name}"
+                            f" does not comply!"
+                        )
+                    
+                    shape_actions.slots[child] = action.slot
 
-            if len(shape_actions.actions) > 0:
+            if len(shape_actions.slots) > 0:
                 check_is_shape_motion_viable(entry)
 
         else:
             action = self._get_shape_action(entry)
             if action is not None:
-                shape_actions.actions[entry] = action
+                shape_actions.action = action.action
+                shape_actions.slots[entry] = action.slot
 
-        if len(shape_actions.actions) > 0:
-            shape_actions.name = f"Event{self.index}_{entry.name}_Shape"
+        if len(shape_actions.slots) > 0:
+            shape_actions.motion_name = f"Event{self.index}_{entry.name}_Shape"
             self.output_shape_actions[entry] = shape_actions
 
     def _prepare_entry_actions(self):
@@ -300,16 +319,17 @@ class CutInfo:
 
             # Node animation
 
-            def create(x):
+            def create(x, id_data):
                 if entry.type == 'ARMATURE':
-                    self._setup_temp_armature_action(x, entry)
+                    self._setup_temp_armature_action(x, id_data)
                 else:
-                    self._setup_temp_object_action(x, entry)
+                    self._setup_temp_object_action(x, id_data)
 
             action = self._setup_action(
-                entry.animation_data,
+                entry,
                 f"Scene{self.index:02}_{entry.name}",
-                create)
+                create
+            )
 
             if action is not None:
                 self.output_actions[entry] = action
@@ -321,9 +341,9 @@ class CutInfo:
         for particle in self.particles:
 
             action = self._setup_action(
-                particle.animation_data,
+                particle,
                 particle.name,
-                lambda x: self._setup_temp_object_action(x, particle))
+                self._setup_temp_object_action)
 
             if action is not None:
                 self.output_actions[particle] = action
@@ -331,27 +351,27 @@ class CutInfo:
     def _prepare_camera_actions(self):
 
         camera_action = self._setup_action(
-            self.camera_setup.camera.animation_data,
+            self.camera_setup.camera,
             "camera",
-            lambda x: self._setup_temp_object_action(
-                x, self.camera_setup.camera, True),
-            True)
+            lambda x, y: self._setup_temp_object_action(x, y, True),
+            True
+        )
 
         target_action = self._setup_action(
-            self.camera_setup.target.animation_data,
+            self.camera_setup.target,
             "target",
-            lambda x: self._setup_temp_target_action(
-                x, self.camera_setup.target),
-            True)
+            self._setup_temp_target_action,
+            True
+        )
 
         fov_action = self._setup_action(
-            self.camera_setup.camera_data.animation_data,
+            self.camera_setup.camera_data,
             "fov",
-            lambda x: self._setup_temp_fov_action(
-                x, self.camera_setup.camera_data),
-            True)
+            self._setup_temp_fov_action,
+            True
+        )
 
-        self.camera_actions = camera_utils.CameraActionSet(
+        self.camera_action = camera_utils.CameraAction(
             camera_action,
             target_action,
             fov_action)
@@ -378,7 +398,7 @@ class CutInfo:
 
         self.camera_motion = convert_to_camera_motion(
             self.camera_setup,
-            self.camera_actions,
+            self.camera_action,
             f"Scene{self.index:02}_Camera",
             self.anim_parameters
         )
@@ -387,9 +407,7 @@ class CutInfo:
             self.motions[obj] = convert_to_node_motion(
                 obj,
                 False,
-                action.fcurves,
-                action.frame_range,
-                action.name,
+                action,
                 self.anim_parameters
             )
 
@@ -409,7 +427,7 @@ class CutInfo:
 
     def _cleanup(self):
         for action in self.temp_actions:
-            bpy.data.actions.remove(action)
+            bpy.data.actions.remove(action.action)
 
     def evaluate_motions(self):
         self._setup_motion_scene()

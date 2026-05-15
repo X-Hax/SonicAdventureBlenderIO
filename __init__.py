@@ -3,7 +3,7 @@ bl_info = {
     "author": "Justin113D, ItsEasyActually, X-Hax",
     "description": "INCORRECTLY INSTALLED THE ADDON! Make sure to download from the github repositories release section!",
     "version": (0, 0, 0),
-    "blender": (4, 0, 0),
+    "blender": (4, 2, 3),
     "location": "",
     "warning": "",
     "doc_url": "https://x-hax.github.io/SonicAdventureBlenderIODocs/",
