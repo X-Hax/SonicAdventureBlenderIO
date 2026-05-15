@@ -11,7 +11,7 @@ bl_info = {
     "author": "Justin113D, ItsEasyActually, X-Hax",
     "description": "Import/Exporter for Sonic Adventure Model, Animation and other Formats.",
     "version": (2, 2, 1),
-    "blender": (4, 2, 3),
+    "blender": (5, 1, 0),
     "location": "",
     "warning": "",
     "doc_url": "https://x-hax.github.io/SonicAdventureBlenderIO/",
