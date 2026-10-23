@@ -81,26 +81,6 @@ class ActionSet:
         return None
 
 
-def get_frame_range(actions: list[ActionSet]):
-    start = None
-    end = None
-    for action in actions:
-        if action is None:
-            continue
-
-        ac_start = math.floor(action.action.frame_range[0])
-        ac_end = math.ceil(action.action.frame_range[1])
-
-        if start is None:
-            start = ac_start
-            end = ac_end
-        else:
-            start = min(start, ac_start)
-            end = max(end, ac_end)
-
-    return start, end
-
-
 def convert_to_node_motion(
         obj: BObject,
         force_sort_bones: bool,
@@ -182,7 +162,8 @@ def convert_to_camera_motion(
 
     load_dotnet()
 
-    start, end = get_frame_range([camera_action.action])
+    start = math.floor(camera_action.action.frame_range[0])
+    end = math.ceil(camera_action.action.frame_range[1])
 
     evaluator = o_keyframes.KeyframeEvaluator(
         start, end, anim_parameters)

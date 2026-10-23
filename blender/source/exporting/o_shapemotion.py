@@ -1,5 +1,6 @@
 import bpy
 from bpy.types import Object as BObject, Action
+import math
 
 from . import o_motion
 from .o_motion import ActionSet
@@ -173,10 +174,8 @@ class ShapeMotionEvaluator:
             self._node_map = None
 
     def _evaluate_time(self):
-        self._start, self._end = o_motion.get_frame_range([
-            ActionSet(self._action, slot) 
-            for slot in self._slots.values()
-        ])
+        self._start = math.floor(self._action.frame_range[0])
+        self._end = math.ceil(self._action.frame_range[1])
         
         self._duration = self._end - self._start
 

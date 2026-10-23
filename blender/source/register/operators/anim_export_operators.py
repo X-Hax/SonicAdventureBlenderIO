@@ -131,7 +131,7 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
 
             if base_action is None:
                 base_action = action
-            elif action != base_action:
+            elif action.action != base_action.action:
                 raise UserException(
                     "The active camera setup uses more than 1 action!\n",
                     "Please ensure that the camera object, target object and"
@@ -142,7 +142,7 @@ class SAIO_OT_Export_Camera_Animation(AnimationExportOperator):
             return None
 
         return camera_utils.CameraAction(
-            base_action,
+            base_action.action,
             actions[0].slot if actions[0] is not None else None,
             actions[1].slot if actions[1] is not None else None,
             actions[2].slot if actions[2] is not None else None,
