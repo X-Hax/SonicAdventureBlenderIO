@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="../../SA3D.Modeling.Convert/src/SA3D.Modeling.Convert/SA3D.Modeling.Convert.csproj" />
+  <Project Path="SAIO.NET.Util/SAIO.NET.Util.csproj" Id="da7effc4-3f72-4e44-9653-b2328c34360b" />
+  <Project Path="SAIO.NET/SAIO.NET.csproj" />
+</Solution>

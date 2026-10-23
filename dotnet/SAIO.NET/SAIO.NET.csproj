@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<RootNamespace>SAIO.NET</RootNamespace>
+		<AssemblyName>SAIO.NET</AssemblyName>
+		<Platforms>AnyCPU</Platforms>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<PublishAot>true</PublishAot>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\SA3D.Modeling.Convert\src\SA3D.Modeling.Convert\SA3D.Modeling.Convert.csproj" />
+	</ItemGroup>
+
+</Project>
