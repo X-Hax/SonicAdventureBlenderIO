@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,6 +12,12 @@ namespace SAIO.NET.External
 
 	internal static unsafe class Util
 	{
+		public static O ToInternal<I, O>(this I input) where I : unmanaged, IConvertInternal<O>
+		{
+			return input.ToInternal();
+		}
+
+
 		public static T[]? ToArray<T>(T* values, int valuesSize) where T : unmanaged
 		{
 			if (values == null)
@@ -28,6 +33,11 @@ namespace SAIO.NET.External
 		public static O[]? ToArray<I, O>(I* values, int valuesSize) where I : unmanaged, IConvertInternal<O>
 		{
 			return ToArray(values, valuesSize)?.Select(x => x.ToInternal()).ToArray();
+		}
+
+		public static O[]? ToArray<I, O>(I* values, int valuesSize, Func<I, O> convert) where I : unmanaged
+		{
+			return ToArray(values, valuesSize)?.Select(x => convert(x)).ToArray();
 		}
 
 		public static O[]? PointersToArray<I, O>(I** values, int valuesSize) where I : unmanaged, IConvertInternal<O>
@@ -51,6 +61,58 @@ namespace SAIO.NET.External
 
 			return result;
 		}
+
+		public static T[][]? To2DArray<T>(T** values, int valuesSize, int* innerValuesSizes) where T : unmanaged
+		{
+			if (values == null)
+			{
+				return null;
+			}
+
+			T[][] result = new T[valuesSize][];
+
+			for (int i = 0; i < result.Length; i++)
+			{
+				result[i] = ToArray(values[i], innerValuesSizes[i])!;
+			}
+
+			return result;
+		}
+
+		public static O[][]? To2DArray<I, O>(I** values, int valuesSize, int innerValuesSize) where I : unmanaged, IConvertInternal<O>
+		{
+			if (values == null)
+			{
+				return null;
+			}
+
+			O[][] result = new O[valuesSize][];
+
+			for (int i = 0; i < result.Length; i++)
+			{
+				result[i] = ToArray<I, O>(values[i], innerValuesSize)!;
+			}
+
+			return result;
+		}
+
+		public static O[][]? To2DArray<I, O>(I** values, int valuesSize, int* innerValuesSizes) where I : unmanaged, IConvertInternal<O>
+		{
+			if (values == null)
+			{
+				return null;
+			}
+
+			O[][] result = new O[valuesSize][];
+
+			for (int i = 0; i < result.Length; i++)
+			{
+				result[i] = ToArray<I, O>(values[i], innerValuesSizes[i])!;
+			}
+
+			return result;
+		}
+
 
 
 		public static string? ToString(char* pointer)

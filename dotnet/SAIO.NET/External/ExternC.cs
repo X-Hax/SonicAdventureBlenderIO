@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SAIO.NET.External.Structs;
+using SAIO.NET.Internal;
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace SAIO.NET.External
 {
@@ -179,6 +179,34 @@ namespace SAIO.NET.External
 			try
 			{
 				return Quaternion.CreateFromRotationMatrix(matrix);
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
+				return default;
+			}
+		}
+
+		#endregion
+
+		#region Model
+
+		[UnmanagedCallersOnly(EntryPoint = "model_read_files")]
+		public static CArray ModelReadFiles(char** filepaths, int filepathsSize, CModelImportSettings* importSettings)
+		{
+			try
+			{
+				string[] filepathsArray = Util.ToStringArray(filepaths, filepathsSize)!;
+				ModelImportSettings internalImportSettings = importSettings->ToInternal<CModelImportSettings, ModelImportSettings>();
+
+				Model[] models = Model.ReadFiles(filepathsArray, internalImportSettings);
+
+				CModel* result = Allocate.AllocFromArray(models, CModel.FromInternal);
+
+				return new(
+					result,
+					models.Length
+				);
 			}
 			catch (Exception exception)
 			{

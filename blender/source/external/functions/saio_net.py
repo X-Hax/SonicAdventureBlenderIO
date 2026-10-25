@@ -79,4 +79,12 @@ FUNCTIONS = {
         ),
         nettypes.CQuaternion,
     ),
+    "model_read_files": (
+        (
+            ctypes.POINTER(ctypes.c_wchar_p),
+            ctypes.c_int,
+            ctypes.POINTER(structs.CModelImportSettings),
+        ),
+        structs.CArray,
+    ),
 }

@@ -147,6 +147,36 @@ namespace SAIO.NET.External
 			}
 		}
 
+		public static void AllocFrom2DArray<I, O>(IList<IList<I>> values, Func<I, O> convert, out O** outValues, out int* outSizes) where O : unmanaged
+		{
+			AllocFrom2DArray(values, convert, out outValues);
+
+			outSizes = outValues != null
+				? AllocFromArray(values.Select(x => x.Count).ToArray())
+				: null;
+		}
+
+		public static void AllocFrom2DArray<I, O>(IList<IList<I>> values, Func<I, O> convert, out O** outValues) where O : unmanaged
+		{
+			if (values.Count == 0)
+			{
+				outValues = null;
+				return;
+			}
+
+			I[] allValues = values.SelectMany(x => x).ToArray();
+			O* outAllValues = AllocFromArray(allValues, convert);
+
+			outValues = (O**)Alloc<nint>(values.Count);
+
+			O* currentValues = outAllValues;
+			for (int i = 0; i < values.Count; i++)
+			{
+				outValues[i] = currentValues;
+				currentValues += values[i].Count;
+			}
+		}
+
 		public static void AllocFrom2DArray<T>(IList<IList<T>> values, out T** outValues, out int* outSizes) where T : unmanaged
 		{
 			AllocFrom2DArray(values, out outValues);

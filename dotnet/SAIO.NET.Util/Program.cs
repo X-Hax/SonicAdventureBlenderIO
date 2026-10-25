@@ -131,6 +131,12 @@ namespace SAIO.NET.Util
 
             foreach (Type type in _saioStructTypes)
             {
+                // not including nested types
+                if(type.FullName?.Contains('+') == true)
+                {
+                    continue;
+                }
+
                 StringBuilder builder = new();
                 builder.AppendLine("# !!! GENERATED USING SAIO.NET.Utils !!!");
                 builder.AppendLine("# Please do not touch manually!");

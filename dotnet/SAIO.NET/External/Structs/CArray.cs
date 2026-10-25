@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SAIO.NET.External.Structs
+﻿namespace SAIO.NET.External.Structs
 {
 	public unsafe struct CArray
 	{
