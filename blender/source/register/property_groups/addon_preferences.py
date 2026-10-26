@@ -5,6 +5,12 @@ from ...utility.draw import col_prop
 class SAIO_AddonPreferences(bpy.types.AddonPreferences):
     bl_idname = '.'.join(__package__.split('.')[:3])
 
+    use_ninja_vertex_type_names: BoolProperty(
+        name="User NINJA vertex type names",
+        description="Use original NINJA vertex type names (e.g. \"VN_D8\" instead of \"Normals, Diffuse (8888)\")",
+        default=False
+    )
+
     enable_ginja: BoolProperty(
         name="Enable Ginja features",
         description="Enables importing and exporting the ginja format",
@@ -44,6 +50,7 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
         layout.use_property_split = True
         layout.separator(factor=0.5)
 
+        col_prop(layout, self, "use_ninja_vertex_type_names")
         col_prop(layout, self, "enable_ginja")
         layout.separator(type="LINE")
 

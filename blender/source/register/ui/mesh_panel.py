@@ -20,10 +20,6 @@ class SAIO_PT_Mesh(PropertiesPanel):
         if file_format == 'CHUNK':
             layout.prop(mesh_properties, "vertex_chunk_type")
 
-            weight_layout = layout.column()
-            weight_layout.active = mesh_properties.vertex_chunk_type == 'AUTO' or mesh_properties.vertex_chunk_type in WEIGHTED_VERTEX_CHUNKS
-            col_prop(weight_layout, mesh_properties, "high_precision_weights")
-
             nonweight_layout = layout.column()
             nonweight_layout.active = mesh_properties.vertex_chunk_type == 'AUTO' or mesh_properties.vertex_chunk_type not in WEIGHTED_VERTEX_CHUNKS
             col_prop(nonweight_layout, mesh_properties, "force_binary_weights")
