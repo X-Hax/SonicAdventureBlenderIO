@@ -2,6 +2,7 @@ import os
 import bpy
 import platform
 import struct
+from ..register.property_groups.addon_preferences import SAIO_AddonPreferences
 
 from os.path import dirname
 
@@ -16,3 +17,7 @@ def is_arm():
 def is_x64():
     return struct.calcsize("P") == 8
 
+def get_addon_preferences(context: bpy.types.Context | None = None) -> SAIO_AddonPreferences:
+    if context is None:
+        context = bpy.context
+    return context.preferences.addons[PACKAGE_NAME].preferences
