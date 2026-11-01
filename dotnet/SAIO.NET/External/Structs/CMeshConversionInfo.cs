@@ -1,4 +1,5 @@
 ﻿using SA3D.Modeling.Convert;
+using SA3D.Modeling.Convert.Weighted;
 using SA3D.Modeling.Mesh.Chunk;
 using System;
 using System.Linq;
@@ -9,8 +10,7 @@ namespace SAIO.NET.External.Structs
 	{
 		public CMesh mesh;
 
-		public int* attachedNodeIndices;
-		public int attachedNodeIndicesSize;
+		public int attachedNodeIndex;
 
 		public bool hasNormals;
 		public bool hasDiffuseColors;
@@ -25,29 +25,27 @@ namespace SAIO.NET.External.Structs
 			{
 				mesh = CMesh.FromInternal(info.Mesh),
 
-				attachedNodeIndices = Allocate.AllocFromArray(info.AttachedNodeIndices.ToArray()),
-				attachedNodeIndicesSize = info.AttachedNodeIndices.Count,
+				attachedNodeIndex = info.AttachedNodeIndex,
 
 				hasNormals = info.HasNormals,
 				hasDiffuseColors = info.HasDiffuseColors,
 				hasSpecularColors = info.HasSpecularColors,
 				volumeMesh = info.VolumeMesh,
-				chunkVertexType = (byte)info.ChunkVertexType,
+				chunkVertexType = (byte)((byte)info.ChunkVertexType - 32),
 				noBounds = info.NoBounds
 			};
 		}
 
 		readonly MeshConversionInfo IConvertInternal<MeshConversionInfo>.ToInternal()
 		{
-			return new(
-				((IConvertInternal<SA3D.Modeling.Convert.Weighted.WeightedMesh>)mesh).ToInternal(),
-				Util.ToArray(attachedNodeIndices, attachedNodeIndicesSize) ?? throw new NullReferenceException("attachedNodeIndices is null!"))
+			return new(mesh.ToInternal())
 			{
+				AttachedNodeIndex = attachedNodeIndex,
 				HasNormals = hasNormals,
 				HasDiffuseColors = hasDiffuseColors,
 				HasSpecularColors = hasSpecularColors,
 				VolumeMesh = volumeMesh,
-				ChunkVertexType = (VertexChunkType)chunkVertexType,
+				ChunkVertexType = (VertexChunkType)(chunkVertexType + 32),
 				NoBounds = noBounds,
 			};
 		}

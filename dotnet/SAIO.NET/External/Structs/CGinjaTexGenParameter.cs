@@ -1,5 +1,6 @@
 ﻿using SA3D.Modeling.Mesh.Ginja.Enums;
 using SA3D.Modeling.Mesh.Ginja.Parameters;
+using System;
 
 namespace SAIO.NET.External.Structs
 {
@@ -30,6 +31,12 @@ namespace SAIO.NET.External.Structs
 				TexGenSource = (GinjaTexGenSource)texGenSource,
 				MatrixID = (GinjaTexGenMatrix)matrixID,
 			};
+		}
+
+
+		public readonly override int GetHashCode()
+		{
+			return HashCode.Combine(texCoord, texGenType, texGenSource, matrixID);
 		}
 	}
 }

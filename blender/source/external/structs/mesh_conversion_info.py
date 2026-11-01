@@ -7,8 +7,7 @@ from .mesh import CMesh
 
 class CMeshConversionInfo(ctypes.Structure):
     mesh: CMesh
-    attached_node_indices: TPointer['int']
-    attached_node_indices_size: int
+    attached_node_index: int
     has_normals: bool
     has_diffuse_colors: bool
     has_specular_colors: bool
@@ -18,8 +17,7 @@ class CMeshConversionInfo(ctypes.Structure):
 
 CMeshConversionInfo._fields_ = [
     ("mesh", CMesh),
-    ("attached_node_indices", ctypes.POINTER(ctypes.c_int)),
-    ("attached_node_indices_size", ctypes.c_int),
+    ("attached_node_index", ctypes.c_int),
     ("has_normals", ctypes.c_bool),
     ("has_diffuse_colors", ctypes.c_bool),
     ("has_specular_colors", ctypes.c_bool),

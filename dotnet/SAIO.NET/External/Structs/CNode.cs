@@ -1,5 +1,6 @@
 ﻿using SA3D.Modeling.ObjectData;
 using SA3D.Modeling.ObjectData.Enums;
+using SAIO.NET.Internal;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -12,10 +13,6 @@ namespace SAIO.NET.External.Structs
 		public int parentIndex;
 		public Matrix4x4 transform;
 
-		public bool noPosition;
-		public bool noRotation;
-		public bool noScale;
-		public bool rotateZYX;
 		public bool noAnimate;
 		public bool noMorph;
 		public bool clip;
@@ -31,10 +28,6 @@ namespace SAIO.NET.External.Structs
 				parentIndex = node.Parent == null ? -1 : nodeIndexLut[node.Parent],
 				transform = node.LocalMatrix,
 
-				noPosition = node.NoPosition,
-				noRotation = node.NoRotation,
-				noScale = node.NoScale,
-				rotateZYX = node.RotateZYX,
 				noAnimate = node.NoAnimate,
 				noMorph = node.NoMorph,
 				clip = node.Clip,
@@ -64,12 +57,12 @@ namespace SAIO.NET.External.Structs
 		internal readonly struct ToInternalContext
 		{
 			public readonly Node[] nodes;
-			public readonly bool useQuaternions;
+			public readonly RotationMode rotationMode;
 
-			public ToInternalContext(Node[] nodes, bool useQuaternions)
+			public ToInternalContext(Node[] nodes, RotationMode rotationMode)
 			{
 				this.nodes = nodes;
-				this.useQuaternions = useQuaternions;
+				this.rotationMode = rotationMode;
 			}
 		}
 
@@ -78,18 +71,19 @@ namespace SAIO.NET.External.Structs
 			Node result = new()
 			{
 				Label = Util.ToString(label) ?? throw new NullReferenceException("label is null"),
-				NoPosition = noPosition,
-				NoRotation = noRotation,
-				NoScale = noScale,
 				NoAnimate = noAnimate,
 				NoMorph = noMorph,
-				UseQuaternionRotation = context.useQuaternions,
+				UseQuaternionRotation = context.rotationMode == RotationMode.Quaternion,
 				Clip = clip,
 				CacheRotation = cacheRotation,
 				ApplyCachedRotation = applyCachedRotation,
 			};
 
-			result.SetRotationZYX(rotateZYX, RotationUpdateMode.Keep);
+
+			if(context.rotationMode == RotationMode.EulerZYX)
+			{
+				result.SetRotationZYX(true, RotationUpdateMode.Keep);
+			}
 
 			Matrix4x4.Decompose
 				(transform,
@@ -108,10 +102,10 @@ namespace SAIO.NET.External.Structs
 			return result;
 		}
 
-		internal static Node ArrayToInternal(CNode* nodes, int nodesSize, bool useQuaternions)
+		internal static Node ArrayToInternal(CNode* nodes, int nodesSize, RotationMode rotationMode)
 		{
 			Node[] resultNodes = new Node[nodesSize];
-			ToInternalContext context = new(resultNodes, useQuaternions);
+			ToInternalContext context = new(resultNodes, rotationMode);
 
 			for(int i = 0; i < nodesSize; i++)
 			{

@@ -2,9 +2,9 @@
 
 namespace SAIO.NET.Internal
 {
-	internal struct ModelImportSettings
+	internal struct ModelExportSettings
 	{
-		public bool UseQuaternions { get; set; }
+		public RotationMode RotationMode { get; set; }
 
 		public WeightedMeshConverterParameters Parameters { get; set; }
 	}

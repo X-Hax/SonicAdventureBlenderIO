@@ -39,7 +39,7 @@ namespace SAIO.NET.External.Structs
 			return result;
 		}
 
-		readonly WeightedMesh IConvertInternal<WeightedMesh>.ToInternal()
+		readonly internal WeightedMesh ToInternal()
 		{
 			int vertexWeightsSize = weightNodeIndexMapSize == 0 ? 0 : weightNodeIndexMapSize + 1;
 
@@ -49,6 +49,11 @@ namespace SAIO.NET.External.Structs
 				Util.ToArray<CMaterial, WeightedMaterial>(materials, triangleSetsSize) ?? throw new NullReferenceException("materials is null"),
 				Util.ToString(label)
 			);
+		}
+
+		readonly WeightedMesh IConvertInternal<WeightedMesh>.ToInternal()
+		{
+			return ToInternal();
 		}
 	}
 }

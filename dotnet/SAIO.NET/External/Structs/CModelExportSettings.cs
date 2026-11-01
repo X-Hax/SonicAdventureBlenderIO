@@ -3,26 +3,26 @@ using SAIO.NET.Internal;
 
 namespace SAIO.NET.External.Structs
 {
-	public struct CModelImportSettings : IConvertInternal<ModelImportSettings>
+	public struct CModelExportSettings : IConvertInternal<ModelExportSettings>
 	{
-		public bool useQuaternions;
+		public int rotationMode;
 
 		public CMeshConverterParameters meshConverterParameters;
 
-		internal static CModelImportSettings FromInternal(ModelImportSettings settings)
+		internal static CModelExportSettings FromInternal(ModelExportSettings settings)
 		{
 			return new()
 			{
-				useQuaternions = settings.UseQuaternions,
+				rotationMode = (int)settings.RotationMode,
 				meshConverterParameters = CMeshConverterParameters.FromInternal(settings.Parameters)
 			};
 		}
 
-		ModelImportSettings IConvertInternal<ModelImportSettings>.ToInternal()
+		ModelExportSettings IConvertInternal<ModelExportSettings>.ToInternal()
 		{
 			return new()
 			{
-				UseQuaternions = useQuaternions,
+				RotationMode = (RotationMode)rotationMode,
 				Parameters = meshConverterParameters.ToInternal<CMeshConverterParameters, WeightedMeshConverterParameters>()
 			};
 		}

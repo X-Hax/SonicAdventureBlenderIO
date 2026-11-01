@@ -59,19 +59,19 @@ class SAIONET(ExternalLibrary):
         return cls._lib().matrix_invert(byref(matrix))
 
     @classmethod
-    def matrix_create_translation(cls, position: CVector3):
+    def matrix_create_translation(cls, position: CVector3) -> CMatrix:
         return cls._lib().matrix_create_translation(position)
 
     @classmethod
-    def matrix_create_rotation(cls, euler_rotation: CVector3):
+    def matrix_create_rotation(cls, euler_rotation: CVector3) -> CMatrix:
         return cls._lib().matrix_create_rotation(euler_rotation)
 
     @classmethod
-    def matrix_create_from_quaternion(cls, quaternion: CQuaternion):
+    def matrix_create_from_quaternion(cls, quaternion: CQuaternion) -> CMatrix:
         return cls._lib().matrix_create_from_quaternion(quaternion)
     
     @classmethod
-    def matrix_create_scale(cls, scale: CVector3):
+    def matrix_create_scale(cls, scale: CVector3) -> CMatrix:
         return cls._lib().matrix_create_scale(scale)
 
     @classmethod
@@ -95,4 +95,26 @@ class SAIONET(ExternalLibrary):
     @classmethod
     def quaternion_create_from_rotation_matrix(cls, matrix: CMatrix):
         return cls._lib().quaternion_create_from_rotation_matrix(matrix)
+
+    ################################################################################################
+    # Material
+
+    @classmethod
+    def material_get_hash(cls, material: TPointer[CMaterial]) -> int:
+        return cls._lib().material_get_hash(material)
+
+    ################################################################################################
+    # Model
+
+    @classmethod
+    def model_read_files(cls, filepaths: list[str]) -> list[TPointer[CModel]]:
+        c_filepaths = util.as_array([c_wchar_p(filepath) for filepath in filepaths], c_wchar_p)
+        c_filepaths_size = c_int(len(filepaths))
+
+        array = cls._lib().model_read_files(
+            c_filepaths,
+            c_filepaths_size
+        )
+
+        return util.array_to_list(array, POINTER(CModel))
     

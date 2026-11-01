@@ -170,7 +170,6 @@ namespace SAIO.NET.External
 
 		#endregion
 
-
 		#region Quaternion
 
 		[UnmanagedCallersOnly(EntryPoint = "quaternion_create_from_rotation_matrix")]
@@ -189,19 +188,26 @@ namespace SAIO.NET.External
 
 		#endregion
 
+		#region Material
+
+		[UnmanagedCallersOnly(EntryPoint = "material_get_hash")]
+		public static int MaterialGetHashCode(CMaterial* material)
+		{
+			return material->GetHashCode();
+		}
+
+		#endregion
+
 		#region Model
 
 		[UnmanagedCallersOnly(EntryPoint = "model_read_files")]
-		public static CArray ModelReadFiles(char** filepaths, int filepathsSize, CModelImportSettings* importSettings)
+		public static CArray ModelReadFiles(char** filepaths, int filepathsSize)
 		{
 			try
 			{
 				string[] filepathsArray = Util.ToStringArray(filepaths, filepathsSize)!;
-				ModelImportSettings internalImportSettings = importSettings->ToInternal<CModelImportSettings, ModelImportSettings>();
-
-				Model[] models = Model.ReadFiles(filepathsArray, internalImportSettings);
-
-				CModel* result = Allocate.AllocFromArray(models, CModel.FromInternal);
+				Model[] models = Model.ReadFiles(filepathsArray);
+				CModel** result = Allocate.AllocPointersFromArray(models, CModel.FromInternal);
 
 				return new(
 					result,

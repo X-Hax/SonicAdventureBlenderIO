@@ -8,60 +8,16 @@ def col_prop(
     text=None):
 
     if text is None:
-        text = data.bl_rna.properties[property].name
+        if hasattr(data, 'properties'):
+            text = data.properties.bl_rna.properties[property].name
+        else:    
+            text = data.bl_rna.properties[property].name
 
     layout.column(heading=text)\
         .prop(data, property, text="")
 
 
-def prop_advanced(
-        layout: bpy.types.UILayout,
-        label: str,
-        data1: any,
-        property1: str,
-        data2: any = None,
-        property2: str | None = None,
-        active=True):
-
-
-    if isinstance(getattr(data1, property1), bool):
-        col = layout.column(heading=label)
-        col.active = active
-        col.use_property_decorate = False
-        col.use_property_split = True
-        col.prop(data1, property1, text="")
-    else:
-        col = layout.column()
-        col.active = active
-        col.use_property_decorate = False
-        col.use_property_split = True
-        col.prop(data1, property1, text=label)
-
-
-
-    # if not auto_scale:
-    #     split = layout.split(factor=0.5)
-    #     split.active = active
-
-    #     row = split.row()
-    #     row.alignment = 'LEFT'
-
-    #     if data2 is not None and property2 is not None:
-    #         row.prop(data2, property2, text="")
-
-    #     row.label(text=label)
-    #     split.prop(data1, property1, text="")
-
-
-def local_prop_advanced(layout: bpy.types.UILayout, data1: any, data2: any = None):
-    def prop_callback_callback(label: str, property1: str, property2: str | None = None, active=True):
-        prop_advanced(layout, label, data1, property1, data2, property2, active)
-
-    return prop_callback_callback
-
-
 TOOL_PROPERTY = tuple[str, str, dict]
-
 
 def draw_list(
         layout: bpy.types.UILayout,

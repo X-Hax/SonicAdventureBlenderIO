@@ -59,7 +59,7 @@ class SAIO_Material(bpy.types.PropertyGroup):
         default=False
     )
 
-    specular_exponent: IntProperty(
+    specular_exponent: FloatProperty(
         name="Specular Exponent",
         description="Specular exponent on the material",
         default=11,

@@ -10,11 +10,14 @@ namespace SAIO.NET.External.Structs
 		public char* description;
 		public char* author;
 
+		public int rotationMode;
+
 		public CNode* nodes;
 		public int nodesSize;
 
 		public CMeshConversionInfo* meshes;
 		public int meshesSize;
+
 
 
 		internal static CModel FromInternal(Model model)
@@ -34,13 +37,14 @@ namespace SAIO.NET.External.Structs
 			return result;
 		}
 
-		internal Model ToInternal(bool useQuaternions)
+		internal Model ToInternal()
 		{
 			return new(
 				Util.ToString(name) ?? throw new NullReferenceException("name is null"),
 				Util.ToString(description) ?? string.Empty,
 				Util.ToString(author) ?? string.Empty,
-				CNode.ArrayToInternal(nodes, nodesSize, useQuaternions),
+				(RotationMode)rotationMode,
+				CNode.ArrayToInternal(nodes, nodesSize, (RotationMode)rotationMode),
 				new() { MeshInfo = [.. 
 					Util.ToArray<CMeshConversionInfo, MeshConversionInfo>(meshes, meshesSize) 
 					?? throw new NullReferenceException("meshes is null")] }

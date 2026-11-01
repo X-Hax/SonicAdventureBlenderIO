@@ -79,11 +79,16 @@ FUNCTIONS = {
         ),
         nettypes.CQuaternion,
     ),
+    "material_get_hash": (
+        (
+            ctypes.POINTER(structs.CMaterial),
+        ),
+        ctypes.c_int,
+    ),
     "model_read_files": (
         (
             ctypes.POINTER(ctypes.c_wchar_p),
             ctypes.c_int,
-            ctypes.POINTER(structs.CModelImportSettings),
         ),
         structs.CArray,
     ),

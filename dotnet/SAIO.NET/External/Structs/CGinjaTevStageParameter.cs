@@ -1,5 +1,6 @@
 ﻿using SA3D.Modeling.Mesh.Ginja.Enums;
 using SA3D.Modeling.Mesh.Ginja.Parameters;
+using System;
 
 namespace SAIO.NET.External.Structs
 {
@@ -31,6 +32,12 @@ namespace SAIO.NET.External.Structs
 				TexMap = (GinjaTexMapID)texMap,
 				ColorChannel = (GinjaColorChannelID)colorChannel,
 			};
+		}
+
+
+		public readonly override int GetHashCode()
+		{
+			return HashCode.Combine(tevStage, texCoord, texMap, colorChannel);
 		}
 	}
 }

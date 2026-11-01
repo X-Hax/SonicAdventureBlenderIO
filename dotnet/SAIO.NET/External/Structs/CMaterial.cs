@@ -1,6 +1,8 @@
 ﻿using SA3D.Modeling.Convert.Weighted;
 using SA3D.Modeling.Mesh;
 using SA3D.Modeling.Mesh.Ginja.Parameters;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace SAIO.NET.External.Structs
@@ -19,7 +21,7 @@ namespace SAIO.NET.External.Structs
 		public bool clampV;
 		public bool mirrorU;
 		public bool mirrorV;
-		public bool normalMapping;
+		public bool environmentMapping;
 		public byte texcoordPrecisionLevel;
 
 		public byte textureFilterMode;
@@ -38,9 +40,6 @@ namespace SAIO.NET.External.Structs
 
 		public CGinjaTevStageParameter ginjaTevStageParameter;
 		public CGinjaTexGenParameter ginjaTexGenParameter;
-		public byte ginjaChannelCount;
-		public byte ginjaTexGenCount;
-		public byte ginjaTevStageCount;
 		public bool ginjaUseVertexColorForDiffuse;
 		public bool ginjaUseVertexColorForAmbient;
 		public byte ginjaTextureSlot;
@@ -60,7 +59,7 @@ namespace SAIO.NET.External.Structs
 				clampV = material.ClampV,
 				mirrorU = material.MirrorU,
 				mirrorV = material.MirrorV,
-				normalMapping = material.NormalMapping,
+				environmentMapping = material.EnvironmentMapping,
 				texcoordPrecisionLevel = material.TexcoordPrecisionLevel,
 				textureFilterMode = (byte)material.TextureFilterMode,
 				anisotropicFiltering = material.AnisotropicFiltering,
@@ -81,7 +80,7 @@ namespace SAIO.NET.External.Structs
 			};
 		}
 
-		public readonly WeightedMaterial ToInternal()
+		readonly WeightedMaterial IConvertInternal<WeightedMaterial>.ToInternal()
 		{
 			return new()
 			{
@@ -95,7 +94,7 @@ namespace SAIO.NET.External.Structs
 				ClampV = clampV,
 				MirrorU = mirrorU,
 				MirrorV = mirrorV,
-				NormalMapping = normalMapping,
+				EnvironmentMapping = environmentMapping,
 				TexcoordPrecisionLevel = texcoordPrecisionLevel,
 				TextureFilterMode = (FilterMode)textureFilterMode,
 				AnisotropicFiltering = anisotropicFiltering,
@@ -114,6 +113,41 @@ namespace SAIO.NET.External.Structs
 				GinjaUseVertexColorForAmbient = ginjaUseVertexColorForAmbient,
 				GinjaTextureSlot = ginjaTextureSlot,
 			};
+		}
+
+
+		public readonly override int GetHashCode()
+		{
+			HashCode hash = new();
+			hash.Add(diffuse);
+			hash.Add(specular);
+			hash.Add(specularExponent);
+			hash.Add(ambient);
+			hash.Add(useTexture);
+			hash.Add(textureIndex);
+			hash.Add(clampU);
+			hash.Add(clampV);
+			hash.Add(mirrorU);
+			hash.Add(mirrorV);
+			hash.Add(environmentMapping);
+			hash.Add(texcoordPrecisionLevel);
+			hash.Add(textureFilterMode);
+			hash.Add(anisotropicFiltering);
+			hash.Add(mipmapDistanceMultiplier);
+			hash.Add(alphaMode);
+			hash.Add(sourceBlendMode);
+			hash.Add(destinationBlendMode);
+			hash.Add(doubleSided);
+			hash.Add(ignoreLighting);
+			hash.Add(ignoreAmbient);
+			hash.Add(ignoreSpecular);
+			hash.Add(flatShading);
+			hash.Add(ginjaTevStageParameter);
+			hash.Add(ginjaTexGenParameter);
+			hash.Add(ginjaUseVertexColorForDiffuse);
+			hash.Add(ginjaUseVertexColorForAmbient);
+			hash.Add(ginjaTextureSlot);
+			return hash.ToHashCode();
 		}
 	}
 }

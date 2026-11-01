@@ -10,6 +10,7 @@ class CModel(ctypes.Structure):
     name: str
     description: str
     author: str
+    rotation_mode: int
     nodes: TPointer['CNode']
     nodes_size: int
     meshes: TPointer['CMeshConversionInfo']
@@ -19,6 +20,7 @@ CModel._fields_ = [
     ("name", ctypes.c_wchar_p),
     ("description", ctypes.c_wchar_p),
     ("author", ctypes.c_wchar_p),
+    ("rotation_mode", ctypes.c_int),
     ("nodes", ctypes.POINTER(CNode)),
     ("nodes_size", ctypes.c_int),
     ("meshes", ctypes.POINTER(CMeshConversionInfo)),

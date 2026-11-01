@@ -7,6 +7,6 @@ from .mesh import CMesh
 from .mesh_conversion_info import CMeshConversionInfo
 from .mesh_converter_parameters import CMeshConverterParameters
 from .model import CModel
-from .model_import_settings import CModelImportSettings
+from .model_export_settings import CModelExportSettings
 from .node import CNode
 from .vertex import CVertex

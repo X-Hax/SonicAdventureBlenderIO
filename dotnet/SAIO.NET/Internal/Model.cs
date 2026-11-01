@@ -6,6 +6,7 @@ using SA3D.Modeling.ObjectData;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SAIO.NET.Internal
 {
@@ -15,20 +16,23 @@ namespace SAIO.NET.Internal
 		public string Description { get; set; }
 		public string Author { get; set; }
 
+		public RotationMode RotationMode { get; set; }
+
 		public Node RootNode { get; set; }
 
 		public MeshConversionSet Meshes { get; set; }
 
-		public Model(string name, string description, string author, Node rootNode, MeshConversionSet meshes)
+		public Model(string name, string description, string author, RotationMode rotationMode, Node rootNode, MeshConversionSet meshes)
 		{
 			Name = name;
 			Description = description;
 			Author = author;
+			RotationMode = rotationMode;
 			RootNode = rootNode;
 			Meshes = meshes;
 		}
 
-		public static Model[] ReadFiles(string[] filepaths, ModelImportSettings importSettings)
+		public static Model[] ReadFiles(string[] filepaths)
 		{
 			List<Model> result = [];
 
@@ -50,12 +54,20 @@ namespace SAIO.NET.Internal
 						author = authorBlock!.Value;
 					}
 
+					RotationMode rotationMode =
+						modelFile.Model.GetTreeNodeEnumerable().Any(x => x.UseQuaternionRotation)
+						? RotationMode.Quaternion
+						: modelFile.Model.GetTreeNodeEnumerable().Any(x => x.RotateZYX)
+						? RotationMode.EulerZYX
+						: RotationMode.EulerXYZ;
+
 					MeshConversionSet meshes = MeshConversionSet.ConvertToWeighted(modelFile.Model);
 
 					result.Add(new(
-						Path.GetFileName(filepath),
+						Path.GetFileNameWithoutExtension(filepath),
 						descripton,
 						author,
+						rotationMode,
 						modelFile.Model,
 						meshes
 					));

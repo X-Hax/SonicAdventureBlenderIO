@@ -17,7 +17,7 @@ class CMaterial(ctypes.Structure):
     clamp_v: bool
     mirror_u: bool
     mirror_v: bool
-    normal_mapping: bool
+    environment_mapping: bool
     texcoord_precision_level: int
     texture_filter_mode: int
     anisotropic_filtering: bool
@@ -32,9 +32,6 @@ class CMaterial(ctypes.Structure):
     flat_shading: bool
     ginja_tev_stage_parameter: CGinjaTevStageParameter
     ginja_tex_gen_parameter: CGinjaTexGenParameter
-    ginja_channel_count: int
-    ginja_tex_gen_count: int
-    ginja_tev_stage_count: int
     ginja_use_vertex_color_for_diffuse: bool
     ginja_use_vertex_color_for_ambient: bool
     ginja_texture_slot: int
@@ -50,7 +47,7 @@ CMaterial._fields_ = [
     ("clamp_v", ctypes.c_bool),
     ("mirror_u", ctypes.c_bool),
     ("mirror_v", ctypes.c_bool),
-    ("normal_mapping", ctypes.c_bool),
+    ("environment_mapping", ctypes.c_bool),
     ("texcoord_precision_level", ctypes.c_ubyte),
     ("texture_filter_mode", ctypes.c_ubyte),
     ("anisotropic_filtering", ctypes.c_bool),
@@ -65,9 +62,6 @@ CMaterial._fields_ = [
     ("flat_shading", ctypes.c_bool),
     ("ginja_tev_stage_parameter", CGinjaTevStageParameter),
     ("ginja_tex_gen_parameter", CGinjaTexGenParameter),
-    ("ginja_channel_count", ctypes.c_ubyte),
-    ("ginja_tex_gen_count", ctypes.c_ubyte),
-    ("ginja_tev_stage_count", ctypes.c_ubyte),
     ("ginja_use_vertex_color_for_diffuse", ctypes.c_bool),
     ("ginja_use_vertex_color_for_ambient", ctypes.c_bool),
     ("ginja_texture_slot", ctypes.c_ubyte),

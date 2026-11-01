@@ -1,0 +1,112 @@
+CHUNK_VERTEX_TYPE = [
+    'BLANK4',
+    'NORMAL4',
+    'BLANK',
+    'DIFFUSE',
+    'USER_ATTR',
+    'BLANK',
+    'DIFF_SPEC_5',
+    'DIFF_SPEC_4',
+    'INTENSITY',
+    'NORMAL',
+    'NORMAL_DIFFUSE',
+    'NORMAL_USER_ATTR',
+    'NORMAL',
+    'NORMAL_DIFF_SPEC_5',
+    'NORMAL_DIFF_SPEC_4',
+    'NORMAL_INTENSITY',
+    'NORMAL32',
+    'NORMAL32_DIFFUSE',
+    'NORMAL32_USER_ATTR',
+    'DIFF_SPEC',
+    'DIFFUSE'
+]
+
+TEXTURE_FILTER_MODE = [
+    'NEAREST',
+    'BILINEAR',
+    'TRILINEAR',
+    'TRILINEAR'
+]
+
+ALPHA_MODE = [
+    'OPAQUE',
+    'TRANSPARENT',
+    'FORCE_CLIP_ON',
+    'FORCE_CLIP_OFF',
+]
+
+BLEND_MODE = [
+    'ZERO',
+    'ONE',
+    'OTHER',
+    'INV_OTHER',
+    'SRC',
+    'INV_SRC',
+    'DST',
+    'INV_DST',
+]
+
+GINJA_COLOR_CHANNEL = [
+    'COLOR0',
+    'COLOR1',
+    'ALPHA0',
+    'ALPHA1',
+    'COLOR0A0',
+    'COLOR1A1',
+    'COLORZERO',
+    'ALPHABUMP',
+    'ALPHABUMPN',
+]
+
+GINJA_TEXGEN_TYPE = [
+    'MATRIX3X4',
+    'MATRIX2X4',
+    'BUMP0',
+    'BUMP1',
+    'BUMP2',
+    'BUMP3',
+    'BUMP4',
+    'BUMP5',
+    'BUMP6',
+    'BUMP7',
+    'SRTG',
+]
+
+GINJA_TEXGEN_SOURCE = [
+    'POSITION',
+    'NORMAL',
+    'BINORMAL',
+    'TANGENT',
+    'TEXCOORD0',
+    'TEXCOORD1',
+    'TEXCOORD2',
+    'TEXCOORD3',
+    'TEXCOORD4',
+    'TEXCOORD5',
+    'TEXCOORD6',
+    'TEXCOORD7',
+    'BUMPTEXCOORD0',
+    'BUMPTEXCOORD1',
+    'BUMPTEXCOORD2',
+    'BUMPTEXCOORD3',
+    'BUMPTEXCOORD4',
+    'BUMPTEXCOORD5',
+    'BUMPTEXCOORD6',
+    'COLOR0',
+    'COLOR1',
+]
+
+GINJA_MATRIX_ID = [
+    'MATRIX0',
+    'MATRIX1',
+    'MATRIX2',
+    'MATRIX3',
+    'MATRIX4',
+    'MATRIX5',
+    'MATRIX6',
+    'MATRIX7',
+    'MATRIX8',
+    'MATRIX9',
+    'IDENTITY',
+]
