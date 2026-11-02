@@ -80,8 +80,8 @@ class BaseImportModelOperator(BaseImportOperator):
         name="Bone orientation",
         description="How nodes should be converted into armature-bone space",
         items=(
-            ('DEFAULT', "Default", "Import them with the same orientation like objects"),
-            ('XZ', "XZ", "TODO")
+            ('DEFAULT', "Default", "Import bones with the default orientation (the same as objects)"),
+            ('XZ', "XZ", "Import bones with XZ orientation")
         )
     )
 
