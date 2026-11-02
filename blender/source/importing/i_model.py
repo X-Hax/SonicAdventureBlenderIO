@@ -1,6 +1,7 @@
 from enum import Enum
 import bpy
 from mathutils import Matrix, Vector, Quaternion
+import math
 
 from . import i_mesh, i_transform
 
@@ -8,6 +9,16 @@ from ..external import CModel, CNode, CMeshConversionInfo
 from ..register.property_groups.node_properties import SAIO_Node
 from ..exceptions import SAIODevException
 
+# I honestly am not sure how to derive these from the transform functions, 
+# so i just put them together manually
+INVERSE_MESH_MATRICES = {
+    'XZ': Matrix((
+        (0, -1, 0, 0),
+        (1, 0, 0, 0),
+        (0, 0, 1, 0),
+        (0, 0, 0, 1),
+    ))
+}
 
 class ModelConverter:
 
@@ -33,7 +44,7 @@ class ModelConverter:
 
     _armature: bpy.types.Armature
     _armature_obj: bpy.types.Object
-    _local_matrices: list[Matrix]
+    _world_matrices: list[Matrix]
 
     def __init__(
             self,
@@ -111,7 +122,7 @@ class ModelConverter:
         else:
             convert_matrix = i_transform.c_to_bpy_matrix
 
-        self._local_matrices = [convert_matrix(node.transform) for node in self._c_nodes]
+        self._world_matrices = [convert_matrix(node.transform) for node in self._c_nodes]
 
 
     def _create_bones(self):
@@ -120,15 +131,12 @@ class ModelConverter:
 
             if node.parent_index >= 0:
                 bone.parent = self._armature.edit_bones[node.parent_index]
-                parent_world_matrix = bone.parent.matrix
-            else:
-                parent_world_matrix = Matrix.Identity(4)
 
             self._setup_node_attributes(bone.saio_node, node)
 
             bone.head = (0, 0, 0)
             bone.tail = (0, 1, 0)
-            bone.matrix = (parent_world_matrix @ self._local_matrices[index].normalized())
+            bone.matrix = self._world_matrices[index].normalized()
 
     @staticmethod
     def _get_bone_length_closest(bone: bpy.types.EditBone):
@@ -194,7 +202,7 @@ class ModelConverter:
     def _pre_bone_scale_correct(self):
         # correcting pose bone scales. we invert them first, so that we can
         # apply the armature modifier to get the "correct" mesh
-        for pose_bone, local_matrix in zip(self._armature_obj.pose.bones, self._local_matrices):
+        for pose_bone, local_matrix in zip(self._armature_obj.pose.bones, self._world_matrices):
             _, _, scale = local_matrix.decompose()
             pose_bone.matrix_basis = Matrix.LocRotScale(None, None, scale)
             pose_bone.matrix_basis.invert()
@@ -246,12 +254,19 @@ class ModelConverter:
 
     def _align_with_bone_transforms(self, mesh_obj: bpy.types.Object, bone_index: int):
 
-        bone = self._armature_obj.pose.bones[bone_index]
-        bone_matrix = self._armature_obj.matrix_world @ bone.matrix
+        matrix = i_transform.c_to_bpy_matrix(self._c_nodes[bone_index].transform)
 
-        pos, rot, scale = bone_matrix.decompose()
-        mesh_obj.matrix_world = Matrix.LocRotScale(
-            pos, rot, Vector((1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z)))
+        # inverting the scale (turning e.g. 2 into 0.5)
+        r1 = 1 / (matrix[0][0] ** 2 + matrix[0][1] ** 2 + matrix[0][2] ** 2)
+        r2 = 1 / (matrix[1][0] ** 2 + matrix[1][1] ** 2 + matrix[1][2] ** 2)
+        r3 = 1 / (matrix[2][0] ** 2 + matrix[2][1] ** 2 + matrix[2][2] ** 2)
+
+        mesh_obj.matrix_parent_inverse = Matrix((
+            (matrix[0][0] * r1, matrix[0][1] * r1, matrix[0][2] * r1, matrix[0][3]),
+            (matrix[1][0] * r2, matrix[1][1] * r2, matrix[1][2] * r2, matrix[1][3]),
+            (matrix[2][0] * r3, matrix[2][1] * r3, matrix[2][2] * r3, matrix[2][3]),
+            (0, 0, 0, 1)
+        ))
 
     def _setup_mesh_modifiers(self, mesh_obj: bpy.types.Object):
         # The mesh got exported with "applied scales", so to compensate
@@ -282,15 +297,10 @@ class ModelConverter:
 
         mesh_obj.parent_type = 'BONE'
         mesh_obj.parent_bone = self._armature.bones[mesh.mesh_info.attached_node_index].name
+        mesh_obj.parent_bone_head_tail_factor = 0
 
-        self._context.view_layer.update()
-
-        bone = self._armature_obj.pose.bones[mesh_obj.parent_bone]
-        bone_matrix = self._armature_obj.matrix_world @ bone.matrix
-
-        mesh_obj.matrix_parent_inverse = (
-            mesh_obj.matrix_world.inverted() @ bone_matrix
-        )
+        if self._bone_orientation != 'DEFAULT':
+            mesh_obj.matrix_parent_inverse = INVERSE_MESH_MATRICES[self._bone_orientation]
 
     #########################################################
 

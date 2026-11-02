@@ -26,7 +26,7 @@ namespace SAIO.NET.External.Structs
 			{
 				label = Allocate.AllocString(node.Label),
 				parentIndex = node.Parent == null ? -1 : nodeIndexLut[node.Parent],
-				transform = node.LocalMatrix,
+				transform = node.GetWorldMatrix(),
 
 				noAnimate = node.NoAnimate,
 				noMorph = node.NoMorph,

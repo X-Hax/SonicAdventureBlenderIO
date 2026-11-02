@@ -90,8 +90,8 @@ class MeshConverter:
 
         self._mesh.from_pydata(vertices, [], faces, shade_flat=not self._c_mesh_info.has_normals)
 
-    def _convert_material(self, material: CMaterial):
-        result = bpy.data.materials.new(self._container_name)
+    def _convert_material(self, material: CMaterial, name: str):
+        result = bpy.data.materials.new(name)
         saio_mat: SAIO_Material = result.saio_material
 
         saio_mat.rendering_model = 'FLAT' if material.flat_shading else 'SMOOTH'
@@ -147,7 +147,7 @@ class MeshConverter:
 
             material = self._material_lookup.get(material_hash, None)
             if material is None:
-                material = self._convert_material(c_material)
+                material = self._convert_material(c_material, f"{self._container_name}_{(len(self._material_lookup) + 1)}")
                 self._material_lookup[material_hash] = material
 
             index = self._mesh.materials.find(material.name)

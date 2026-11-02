@@ -102,7 +102,7 @@ class BaseImportModelOperator(BaseImportOperator):
         name="Minimum bone length",
         description="The minimum length a bone should have",
         min=0.01,
-        default=0.01
+        default=0.25
     )
 
     max_leaf_bone_length: FloatProperty(
