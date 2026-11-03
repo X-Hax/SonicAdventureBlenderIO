@@ -1,6 +1,6 @@
 import bpy
 from .base_panel import PropertiesPanel
-from ..property_groups.mesh_properties import SAIO_Mesh, WEIGHTED_VERTEX_CHUNKS, CHUNK_VERTEX_FORMAT_ASSIGNMENTS
+from ..property_groups.mesh_properties import SAIO_Mesh, WEIGHTED_VERTEX_CHUNKS, USER_ATTRIBUTE_VERTEX_CHUNKS
 from ...utility.draw import col_prop
 
 
@@ -27,15 +27,34 @@ class SAIO_PT_Mesh(PropertiesPanel):
         type_layout.active = mesh_properties.override_chunk_output
 
         col_prop(type_layout, mesh_properties, "volume_mesh")
+        type_layout.separator(type="LINE")
+
         type_layout.prop(mesh_properties, "chunk_vertex_contents")
 
-        if len(CHUNK_VERTEX_FORMAT_ASSIGNMENTS[mesh_properties.chunk_vertex_contents]) > 1:
+        if mesh_properties.chunk_vertex_contents != 'AUTO':
             type_layout.prop(mesh_properties, "chunk_vertex_format")
         
         nonweight_layout = type_layout.column()
         nonweight_layout.active = mesh_properties.chunk_vertex_type == 'AUTO' or mesh_properties.chunk_vertex_type in WEIGHTED_VERTEX_CHUNKS
         col_prop(nonweight_layout, mesh_properties, "force_binary_weights")
-        layout.separator(type="LINE")
+
+        vertex_user_attrib_layout = type_layout.column()
+        vertex_user_attrib_layout.active = mesh_properties.chunk_vertex_type in USER_ATTRIBUTE_VERTEX_CHUNKS
+        vertex_user_attrib_layout.prop(mesh_properties, "chunk_vertex_attributes")
+
+        type_layout.separator(type="LINE")
+
+        type_layout.prop(mesh_properties, "chunk_polygon_attributes_mode")
+        type_layout.prop(mesh_properties, "chunk_polygon_attributes_1")
+
+        poly_attrib_2_layout = type_layout.column()
+        poly_attrib_2_layout.active = mesh_properties.chunk_polygon_attributes_mode != 'MERGED_SINGLE'
+        poly_attrib_2_layout.prop(mesh_properties, "chunk_polygon_attributes_2")
+
+        poly_attrib_3_layout = type_layout.column()
+        poly_attrib_3_layout.active = mesh_properties.chunk_polygon_attributes_mode != 'SINGLE_MERGED'
+        poly_attrib_3_layout.prop(mesh_properties, "chunk_polygon_attributes_3")
+
 
     @staticmethod
     def draw_mesh_properties(
@@ -45,7 +64,6 @@ class SAIO_PT_Mesh(PropertiesPanel):
 
         layout.use_property_split = True
         layout.use_property_decorate = False
-
 
         layout.prop(mesh_properties, "normals_mode")
         layout.prop(mesh_properties, "color_mode")
@@ -77,3 +95,4 @@ class SAIO_PT_Mesh(PropertiesPanel):
             self.layout,
             context.scene.saio_scene.file_format,
             context.active_object.data.saio_mesh)
+            

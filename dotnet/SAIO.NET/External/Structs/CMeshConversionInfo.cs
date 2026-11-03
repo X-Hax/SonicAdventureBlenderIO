@@ -1,8 +1,5 @@
 ﻿using SA3D.Modeling.Convert;
-using SA3D.Modeling.Convert.Weighted;
 using SA3D.Modeling.Mesh.Chunk;
-using System;
-using System.Linq;
 
 namespace SAIO.NET.External.Structs
 {
@@ -13,6 +10,7 @@ namespace SAIO.NET.External.Structs
 		public int attachedNodeIndex;
 
 		public bool hasNormals;
+		public bool hasVertexUserAttributes;
 		public bool hasDiffuseColors;
 		public bool hasSpecularColors;
 		public bool volumeMesh;
@@ -28,6 +26,7 @@ namespace SAIO.NET.External.Structs
 				attachedNodeIndex = info.AttachedNodeIndex,
 
 				hasNormals = info.HasNormals,
+				hasVertexUserAttributes = info.HasVertexUserAttributes,
 				hasDiffuseColors = info.HasDiffuseColors,
 				hasSpecularColors = info.HasSpecularColors,
 				volumeMesh = info.VolumeMesh,
@@ -42,6 +41,7 @@ namespace SAIO.NET.External.Structs
 			{
 				AttachedNodeIndex = attachedNodeIndex,
 				HasNormals = hasNormals,
+				HasVertexUserAttributes = hasVertexUserAttributes,
 				HasDiffuseColors = hasDiffuseColors,
 				HasSpecularColors = hasSpecularColors,
 				VolumeMesh = volumeMesh,

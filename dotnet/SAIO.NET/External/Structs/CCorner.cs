@@ -9,16 +9,22 @@ namespace SAIO.NET.External.Structs
 		public Vector4 diffuse;
 		public Vector4 specular;
 		public Vector2 texCoord;
+		public ushort attributes1;
+		public ushort attributes2;
+		public ushort attributes3;
 
 
-		internal static CCorner FromInternal(WeightedCorner parameter)
+		internal static CCorner FromInternal(WeightedCorner corner)
 		{
 			return new()
 			{
-				vertexIndex = parameter.VertexIndex,
-				diffuse = parameter.Diffuse,
-				specular = parameter.Specular,
-				texCoord = parameter.TexCoord,
+				vertexIndex = corner.VertexIndex,
+				diffuse = corner.Diffuse,
+				specular = corner.Specular,
+				texCoord = corner.TexCoord,
+				attributes1 = corner.Attributes1, 
+				attributes2 = corner.Attributes2, 
+				attributes3 = corner.Attributes3
 			};
 		}
 
@@ -30,6 +36,9 @@ namespace SAIO.NET.External.Structs
 				Diffuse = diffuse,
 				Specular = specular,
 				TexCoord = texCoord,
+				Attributes1 = attributes1,
+				Attributes2 = attributes2,
+				Attributes3 = attributes3
 			};
 		}
 	}

@@ -2,7 +2,6 @@
 using SA3D.Modeling.Mesh;
 using SA3D.Modeling.Mesh.Ginja.Parameters;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace SAIO.NET.External.Structs
@@ -44,6 +43,8 @@ namespace SAIO.NET.External.Structs
 		public bool ginjaUseVertexColorForAmbient;
 		public byte ginjaTextureSlot;
 
+		public byte polygonAttributeCount;
+
 
 		public static CMaterial FromInternal(WeightedMaterial material)
 		{
@@ -77,6 +78,7 @@ namespace SAIO.NET.External.Structs
 				ginjaUseVertexColorForDiffuse = material.GinjaUseVertexColorForDiffuse,
 				ginjaUseVertexColorForAmbient = material.GinjaUseVertexColorForAmbient,
 				ginjaTextureSlot = material.GinjaTextureSlot,
+				polygonAttributeCount = material.PolygonAttributeCount
 			};
 		}
 
@@ -112,6 +114,7 @@ namespace SAIO.NET.External.Structs
 				GinjaUseVertexColorForDiffuse = ginjaUseVertexColorForDiffuse,
 				GinjaUseVertexColorForAmbient = ginjaUseVertexColorForAmbient,
 				GinjaTextureSlot = ginjaTextureSlot,
+				PolygonAttributeCount = polygonAttributeCount
 			};
 		}
 
@@ -147,6 +150,7 @@ namespace SAIO.NET.External.Structs
 			hash.Add(ginjaUseVertexColorForDiffuse);
 			hash.Add(ginjaUseVertexColorForAmbient);
 			hash.Add(ginjaTextureSlot);
+			hash.Add(polygonAttributeCount);
 			return hash.ToHashCode();
 		}
 	}

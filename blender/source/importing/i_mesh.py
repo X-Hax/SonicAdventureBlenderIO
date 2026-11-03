@@ -170,6 +170,17 @@ class MeshConverter:
         )
         self._mesh.validate()
 
+    def _convert_vertex_user_attributes(self):
+        if not self._c_mesh_info.has_vertex_user_attributes:
+            return
+
+        attribute: bpy.types.IntAttribute = self._mesh.attributes.new("Vertex User Attributes", "INT", "POINT")
+        for i, c_vertex in enumerate(self._c_vertices):
+            attribute.data[i].value = c_vertex.user_attributes
+
+        saio_mesh: SAIO_Mesh = self._mesh.saio_mesh
+        saio_mesh.chunk_vertex_attributes = attribute.name
+
     def _convert_weights(self):
 
         if not self._for_armature or self._c_mesh_info.mesh.weight_node_index_map_size == 0 and not self._force_weights:
@@ -205,7 +216,7 @@ class MeshConverter:
         return True
             
     def _convert_colors(self, color_name: str, get_color: Callable[[CCorner], CVector4]):
-        color_attribute = self._mesh.color_attributes.new(color_name, 'FLOAT_COLOR', 'CORNER')
+        color_attribute: bpy.types.FloatColorAttribute = self._mesh.color_attributes.new(color_name, 'FLOAT_COLOR', 'CORNER')
 
         loop = iter(color_attribute.data)
         for triangle_set in self._c_triangle_sets:
@@ -229,6 +240,44 @@ class MeshConverter:
                 uv_layer.uv[index].vector = (corner.tex_coord.x, 1 - corner.tex_coord.y)
                 index += 1
 
+    def _convert_polygon_attributes(self):
+        attribute_count = max([m.polygon_attribute_count for m in self._c_materials])
+        if attribute_count == 0:
+            return
+
+        saio_mesh: SAIO_Mesh = self._mesh.saio_mesh
+
+        attribute_1: bpy.types.IntAttribute = self._mesh.attributes.new("Polygon Attributes 1", "INT", "FACE")
+        saio_mesh.chunk_polygon_attributes_1 = attribute_1.name
+
+        attribute_2: bpy.types.IntAttribute | None = None
+        if attribute_count > 1:
+            attribute_2 = self._mesh.attributes.new("Polygon Attributes 2", "INT", "FACE")
+            saio_mesh.chunk_polygon_attributes_2 = attribute_2.name
+
+        attribute_3: bpy.types.IntAttribute | None = None
+        if attribute_count > 2:
+            attribute_3 = self._mesh.attributes.new("Polygon Attributes 3", "INT", "FACE")
+            saio_mesh.chunk_polygon_attributes_3 = attribute_3.name
+
+        index = 0
+        for c_triangle_set, c_material in zip(self._c_triangle_sets, self._c_materials):
+            if not c_material.polygon_attribute_count == 0:
+                index += int(len(c_triangle_set) / 3)
+                continue
+
+            for c_corner in c_triangle_set:
+                attribute_1.data[index].value = c_corner.attributes1
+
+                if attribute_2 is not None:
+                    attribute_2.data[index].value = c_corner.attributes2
+
+                if attribute_3 is not None:
+                    attribute_3.data[index].value = c_corner.attributes3
+
+                index += 1
+
+
     def _convert_mesh(self, mesh_info: CMeshConversionInfo):
         self._c_mesh_info = mesh_info
         self._mesh = bpy.data.meshes.new(mesh_info.mesh.label)
@@ -247,6 +296,7 @@ class MeshConverter:
         self._convert_materials()
 
         self._convert_normals()
+        self._convert_vertex_user_attributes()
         has_weights = self._convert_weights()
 
         if mesh_info.has_diffuse_colors:
@@ -256,6 +306,7 @@ class MeshConverter:
             self._convert_colors("Specular", lambda x: x.specular)
 
         self._convert_texcoords()
+        self._convert_polygon_attributes()
 
         return ConvertedMesh(self._mesh, mesh_info, has_weights)
 

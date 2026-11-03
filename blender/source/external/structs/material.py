@@ -35,6 +35,7 @@ class CMaterial(ctypes.Structure):
     ginja_use_vertex_color_for_diffuse: bool
     ginja_use_vertex_color_for_ambient: bool
     ginja_texture_slot: int
+    polygon_attribute_count: int
 
 CMaterial._fields_ = [
     ("diffuse", nettypes.CVector4),
@@ -65,5 +66,6 @@ CMaterial._fields_ = [
     ("ginja_use_vertex_color_for_diffuse", ctypes.c_bool),
     ("ginja_use_vertex_color_for_ambient", ctypes.c_bool),
     ("ginja_texture_slot", ctypes.c_ubyte),
+    ("polygon_attribute_count", ctypes.c_ubyte),
 ]
 
