@@ -13,7 +13,7 @@ class CVertex(ctypes.Structure):
 CVertex._fields_ = [
     ("position", nettypes.CVector3),
     ("normal", nettypes.CVector3),
-    ("user_attributes", ctypes.c_uint),
+    ("user_attributes", ctypes.c_int),
     ("weights", ctypes.POINTER(ctypes.c_float)),
 ]
 
