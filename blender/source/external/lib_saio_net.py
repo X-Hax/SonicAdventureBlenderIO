@@ -97,6 +97,22 @@ class SAIONET(ExternalLibrary):
         return cls._lib().quaternion_create_from_rotation_matrix(matrix)
 
     ################################################################################################
+    # Texture name
+
+    @classmethod
+    def texturename_read_file(cls, filepath: str):
+        array = cls._lib().texturename_read_file(c_wchar_p(filepath))
+        return util.array_to_list(array, c_wchar_p)
+
+    @classmethod
+    def texturename_write_file(cls, filepath: str, texture_names: list[str]):
+        c_filepath = c_wchar_p(filepath)
+        c_texture_names = util.as_array([c_wchar_p(texture_name) for texture_name in texture_names], c_wchar_p)
+        c_texture_names_size = c_int(len(texture_names))
+        
+        cls._lib().texturename_write_file(c_filepath, c_texture_names, c_texture_names_size)
+    
+    ################################################################################################
     # Material
 
     @classmethod

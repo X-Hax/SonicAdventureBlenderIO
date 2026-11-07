@@ -2,6 +2,7 @@ import bpy
 from bpy.props import (
     EnumProperty,
     StringProperty,
+    BoolProperty
 )
 
 from ...utility.general import get_addon_preferences
@@ -76,6 +77,12 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         default="MDL"
     )
 
+    chao_chunk: BoolProperty(
+        name="Chao Chunk",
+        description="Whether the chunk models are chao chunk models (Vertex colors are formatted differently)",
+        default=False
+    )
+
     @classmethod
     def register(cls):
-        bpy.types.Scene.saio_scene = bpy.props.PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
+        bpy.types.Scene.saio_scene = bpy.props.PointerProperty(type=cls)

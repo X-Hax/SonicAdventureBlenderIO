@@ -79,6 +79,20 @@ FUNCTIONS = {
         ),
         nettypes.CQuaternion,
     ),
+    "texturename_read_file": (
+        (
+            ctypes.c_wchar_p,
+        ),
+        structs.CArray,
+    ),
+    "texturename_write_file": (
+        (
+            ctypes.c_wchar_p,
+            ctypes.POINTER(ctypes.c_wchar_p),
+            ctypes.c_int,
+        ),
+        None,
+    ),
     "material_get_hash": (
         (
             ctypes.POINTER(structs.CMaterial),

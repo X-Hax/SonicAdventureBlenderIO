@@ -1,6 +1,7 @@
 ﻿using SA3D.Common.IO;
 using SA3D.Modeling.Convert;
 using SA3D.Modeling.File;
+using SA3D.Modeling.File.MetaData;
 using SA3D.Modeling.File.MetaData.Blocks;
 using SA3D.Modeling.ObjectData;
 using System;
@@ -15,6 +16,7 @@ namespace SAIO.NET.Internal
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public string Author { get; set; }
+		public bool ChaoChunk { get; set; }
 
 		public RotationMode RotationMode { get; set; }
 
@@ -22,11 +24,12 @@ namespace SAIO.NET.Internal
 
 		public MeshConversionSet Meshes { get; set; }
 
-		public Model(string name, string description, string author, RotationMode rotationMode, Node rootNode, MeshConversionSet meshes)
+		public Model(string name, string description, string author, bool chaoChunk, RotationMode rotationMode, Node rootNode, MeshConversionSet meshes)
 		{
 			Name = name;
 			Description = description;
 			Author = author;
+			ChaoChunk = chaoChunk;
 			RotationMode = rotationMode;
 			RootNode = rootNode;
 			Meshes = meshes;
@@ -54,6 +57,8 @@ namespace SAIO.NET.Internal
 						author = authorBlock!.Value;
 					}
 
+					bool chaoChunk = modelFile.MetaData.Blocks.Any(x => x is FlagMetaDataBlock flag && flag.Value == MetaDataFlags.ChaoChunk);
+
 					RotationMode rotationMode =
 						modelFile.Model.GetTreeNodeEnumerable().Any(x => x.UseQuaternionRotation)
 						? RotationMode.Quaternion
@@ -67,6 +72,7 @@ namespace SAIO.NET.Internal
 						Path.GetFileNameWithoutExtension(filepath),
 						descripton,
 						author,
+						chaoChunk,
 						rotationMode,
 						modelFile.Model,
 						meshes

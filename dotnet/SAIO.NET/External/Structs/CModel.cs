@@ -9,6 +9,7 @@ namespace SAIO.NET.External.Structs
 		public char* name;
 		public char* description;
 		public char* author;
+		public bool chaoChunk;
 
 		public int rotationMode;
 
@@ -27,6 +28,7 @@ namespace SAIO.NET.External.Structs
 				name = Allocate.AllocString(model.Name),
 				description = Allocate.AllocString(model.Description),
 				author = Allocate.AllocString(model.Author),
+				chaoChunk = model.ChaoChunk,
 
 				meshes = Allocate.AllocFromArray(model.Meshes.MeshInfo, CMeshConversionInfo.FromInternal),
 				meshesSize = model.Meshes.MeshInfo.Count
@@ -43,6 +45,7 @@ namespace SAIO.NET.External.Structs
 				Util.ToString(name) ?? throw new NullReferenceException("name is null"),
 				Util.ToString(description) ?? string.Empty,
 				Util.ToString(author) ?? string.Empty,
+				chaoChunk,
 				(RotationMode)rotationMode,
 				CNode.ArrayToInternal(nodes, nodesSize, (RotationMode)rotationMode),
 				new() { MeshInfo = [.. 

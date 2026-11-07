@@ -10,6 +10,7 @@ class CModel(ctypes.Structure):
     name: str
     description: str
     author: str
+    chao_chunk: bool
     rotation_mode: int
     nodes: TPointer['CNode']
     nodes_size: int
@@ -20,6 +21,7 @@ CModel._fields_ = [
     ("name", ctypes.c_wchar_p),
     ("description", ctypes.c_wchar_p),
     ("author", ctypes.c_wchar_p),
+    ("chao_chunk", ctypes.c_bool),
     ("rotation_mode", ctypes.c_int),
     ("nodes", ctypes.POINTER(CNode)),
     ("nodes_size", ctypes.c_int),

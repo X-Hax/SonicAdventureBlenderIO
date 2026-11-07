@@ -36,6 +36,7 @@ class SAIO_OT_Import_Model(BaseImportModelOperator):
 
             scene.saio_scene.author = model.author
             scene.saio_scene.description = model.description
+            scene.saio_scene.chao_chunk = model.chao_chunk
 
             collection = bpy.data.collections.new(model.name)
             scene.collection.children.link(collection)

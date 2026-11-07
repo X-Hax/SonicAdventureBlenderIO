@@ -2,6 +2,7 @@
 using SAIO.NET.Internal;
 using System;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace SAIO.NET.External
@@ -183,6 +184,47 @@ namespace SAIO.NET.External
 			{
 				ErrorHandler.HandleError(exception);
 				return default;
+			}
+		}
+
+		#endregion
+
+		#region Texture names
+
+		[UnmanagedCallersOnly(EntryPoint = "texturename_read_file")]
+		public static CArray TexturenameReadListFile(char* filepath)
+		{
+			try
+			{
+				string filepathString = Util.ToString(filepath) ?? throw new NullReferenceException("Filepath is null");
+
+				string[] textureNames = TextureNames.ReadTextureNameListFromFrile(filepathString);
+
+				return new(
+					Allocate.AllocStringArray(textureNames),
+					textureNames.Length
+				);
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
+				return default;
+			}
+		}
+
+		[UnmanagedCallersOnly(EntryPoint = "texturename_write_file")]
+		public static void TexturenameWriteListFile(char* filepath, char** textureNames, int textureNamesSize)
+		{
+			try
+			{
+				string filepathString = Util.ToString(filepath) ?? throw new NullReferenceException("Filepath is null");
+				string[] textureNamesArray = Util.ToStringArray(textureNames, textureNamesSize)!;
+
+				TextureNames.WriteTextureNameListToFile(filepathString, textureNamesArray);
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
 			}
 		}
 

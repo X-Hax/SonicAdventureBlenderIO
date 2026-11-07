@@ -88,7 +88,7 @@ class MeshConverter:
                     triangle_set[i + 2].vertex_index
                 ))
 
-        self._mesh.from_pydata(vertices, [], faces, shade_flat=not self._c_mesh_info.has_normals)
+        self._mesh.from_pydata(vertices, [], faces, shade_flat=False)
 
     def _convert_material(self, material: CMaterial, name: str):
         result = bpy.data.materials.new(name)
@@ -222,7 +222,7 @@ class MeshConverter:
         for triangle_set in self._c_triangle_sets:
             for corner in triangle_set:
                 color = get_color(corner)
-                next(loop).color = (color.x, color.y, color.z, color.w)
+                next(loop).color_srgb = (color.x, color.y, color.z, color.w)
 
     def _convert_texcoords(self):
         if not any([m.use_texture for m in self._c_materials]):
