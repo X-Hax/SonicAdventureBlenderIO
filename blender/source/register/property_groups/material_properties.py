@@ -268,4 +268,4 @@ class SAIO_Material(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Material.saio_material = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
+        bpy.types.Material.saio_material = PointerProperty(type=cls)

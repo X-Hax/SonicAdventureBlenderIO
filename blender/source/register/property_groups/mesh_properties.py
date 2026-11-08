@@ -243,4 +243,4 @@ class SAIO_Mesh(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Mesh.saio_mesh = PointerProperty(type=cls) # pylint: disable=assignment-from-no-return
+        bpy.types.Mesh.saio_mesh = PointerProperty(type=cls)

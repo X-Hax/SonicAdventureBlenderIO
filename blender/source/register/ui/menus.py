@@ -16,7 +16,7 @@ class TOPBAR_MT_SAIO_Import(bpy.types.Menu):
         layout.operator(SAIO_OT_Import_Model.bl_idname)
 
     @staticmethod
-    def menu_func(self, context): # pylint: disable=unused-argument
+    def menu_func(self, context):
         self.layout.menu(TOPBAR_MT_SAIO_Import.__name__)
 
     @classmethod
