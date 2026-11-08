@@ -2,8 +2,11 @@ import bpy
 from bpy.props import (
     EnumProperty,
     StringProperty,
-    BoolProperty
+    BoolProperty,
+    PointerProperty
 )
+
+from .texturename_properties import SAIO_TextureNameList
 
 from ...utility.general import get_addon_preferences
 
@@ -82,7 +85,18 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         description="Whether the chunk models are chao chunk models (Vertex colors are formatted differently)",
         default=False
     )
+    
+    texturename_world: PointerProperty(
+        type=bpy.types.World,
+        name="Texturename list storage",
+    )
 
     @classmethod
     def register(cls):
         bpy.types.Scene.saio_scene = bpy.props.PointerProperty(type=cls)
+
+    @property
+    def texturename_list(self) -> SAIO_TextureNameList | None:
+        if self.texturename_world is None:
+            return None
+        return self.texturename_world.saio_texturename_list
