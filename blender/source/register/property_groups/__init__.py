@@ -4,9 +4,17 @@ from .mesh_properties import SAIO_Mesh
 from .ginja_material_properties import SAIO_Material_Ginja
 from .material_properties import SAIO_Material
 from .node_properties import SAIO_Node
-from . import texturename_properties
+from . import texture_properties, texturename_properties
 
 to_register = [
+
+    texture_properties.SAIO_Texture_GV,
+    texture_properties.SAIO_Texture_PV,
+    texture_properties.SAIO_Texture_PVX,
+    texture_properties.SAIO_Texture_PAK,
+    texture_properties.SAIO_Texture,
+    texture_properties.SAIO_TextureList,
+
     texturename_properties.SAIO_TextureName,
     texturename_properties.SAIO_TextureNameList,
 

@@ -1,5 +1,3 @@
-import os
-
 from bpy.props import (
     EnumProperty,
     StringProperty,

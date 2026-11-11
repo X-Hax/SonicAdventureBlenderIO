@@ -93,6 +93,12 @@ FUNCTIONS = {
         ),
         None,
     ),
+    "texture_read_archive_file": (
+        (
+            ctypes.c_wchar_p,
+        ),
+        structs.CTextureSet,
+    ),
     "material_get_hash": (
         (
             ctypes.POINTER(structs.CMaterial),

@@ -1,6 +1,10 @@
-﻿using SAIO.NET.External.Structs;
+﻿using SA3D.Archival.Textures;
+using SA3D.Common.IO;
+using SAIO.NET.External.Structs;
 using SAIO.NET.Internal;
 using System;
+using System.ComponentModel;
+using System.IO;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -224,6 +228,34 @@ namespace SAIO.NET.External
 			catch (Exception exception)
 			{
 				ErrorHandler.HandleError(exception);
+			}
+		}
+
+		#endregion
+
+		#region Textures
+
+		[UnmanagedCallersOnly(EntryPoint = "texture_read_archive_file")]
+		public static CTextureSet TextureReadArchiveFile(char* filepath)
+		{
+			try
+			{
+				string filepathString = Util.ToString(filepath) ?? throw new NullReferenceException("Filepath is null");
+				FileIOInfo fileIOInfo = new(filepathString);
+
+				if(!ITextureArchive.TryReadTextureArchiveFromFile(fileIOInfo, out ITextureArchive? archive))
+				{
+					throw new InvalidDataException("File is not a texture archive");
+				}
+
+				CTextureSet result = CTextureSet.FromInternal(archive);
+				result.compressedArchive = Path.GetExtension(filepathString).ToLower() == ".prs";
+				return result;
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
+				return default;
 			}
 		}
 

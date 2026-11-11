@@ -64,9 +64,9 @@ namespace SAIO.NET.External
 			return result;
 		}
 
-		public static T* AllocFromArray<T>(IList<T>? values) where T : unmanaged
+		public static T* AllocFromArray<T>(IEnumerable<T>? values) where T : unmanaged
 		{
-			T* result = Alloc<T>(values?.Count ?? 0);
+			T* result = Alloc<T>(values is IList<T> list ? list.Count : values?.Count() ?? 0);
 
 			if (result != null)
 			{
@@ -81,7 +81,7 @@ namespace SAIO.NET.External
 			return result;
 		}
 
-		public static T** AllocPointersFromArray<T>(IList<T>? array) where T : unmanaged
+		public static T** AllocPointersFromArray<T>(IEnumerable<T>? array) where T : unmanaged
 		{
 			if (array == null)
 			{
@@ -93,12 +93,13 @@ namespace SAIO.NET.External
 		}
 
 
-		public static O* AllocFromArray<I, O>(IList<I>? values, Func<I, O> convert) where O : unmanaged
+		public static O* AllocFromArray<I, O>(IEnumerable<I>? values, Func<I, O> convert) where O : unmanaged
 		{
 			return AllocFromArray(values?.Select(convert).ToArray());
 		}
 
-		public static O** AllocPointersFromArray<I, O>(IList<I>? array, Func<I, O> convert) where O : unmanaged
+
+		public static O** AllocPointersFromArray<I, O>(IEnumerable<I>? array, Func<I, O> convert) where O : unmanaged
 		{
 			if (array == null)
 			{
@@ -110,12 +111,12 @@ namespace SAIO.NET.External
 		}
 
 
-		public static O* AllocFromArray<I, C, O>(IList<I>? values, Func<I, C, O> convert, C context) where O : unmanaged
+		public static O* AllocFromArray<I, C, O>(IEnumerable<I>? values, Func<I, C, O> convert, C context) where O : unmanaged
 		{
 			return AllocFromArray(values?.Select(x => convert(x, context)).ToArray());
 		}
 
-		public static O** AllocPointersFromArray<I, C, O>(IList<I>? array, Func<I, C, O> convert, C context) where O : unmanaged
+		public static O** AllocPointersFromArray<I, C, O>(IEnumerable<I>? array, Func<I, C, O> convert, C context) where O : unmanaged
 		{
 			if (array == null)
 			{
@@ -134,7 +135,7 @@ namespace SAIO.NET.External
 				return;
 			}
 
-			T[] allValues = values.SelectMany(x => x).ToArray();
+			T[] allValues = [.. values.SelectMany(x => x)];
 			T* outAllValues = AllocFromArray(allValues);
 
 			outValues = (T**)Alloc<nint>(values.Count);

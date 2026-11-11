@@ -9,4 +9,6 @@ from .mesh_converter_parameters import CMeshConverterParameters
 from .model import CModel
 from .model_export_settings import CModelExportSettings
 from .node import CNode
+from .texture import CTexture
+from .texture_set import CTextureSet
 from .vertex import CVertex

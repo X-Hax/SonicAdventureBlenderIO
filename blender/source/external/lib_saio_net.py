@@ -55,7 +55,7 @@ class SAIONET(ExternalLibrary):
         return cls._lib().matrix_multiply(a, b)
 
     @classmethod
-    def matrix_invert(cls, matrix: CMatrix):
+    def matrix_invert(cls, matrix: CMatrix) -> CMatrix:
         return cls._lib().matrix_invert(byref(matrix))
 
     @classmethod
@@ -85,7 +85,7 @@ class SAIONET(ExternalLibrary):
         return position, rotation, scale
 
     @classmethod
-    def matrix_to_euler(cls, matrix: CMatrix):
+    def matrix_to_euler(cls, matrix: CMatrix) -> CVector3:
         return cls._lib().matrix_to_euler(matrix)
 
 
@@ -93,14 +93,14 @@ class SAIONET(ExternalLibrary):
     # Quaternion
 
     @classmethod
-    def quaternion_create_from_rotation_matrix(cls, matrix: CMatrix):
+    def quaternion_create_from_rotation_matrix(cls, matrix: CMatrix) -> CQuaternion:
         return cls._lib().quaternion_create_from_rotation_matrix(matrix)
 
     ################################################################################################
     # Texture name
 
     @classmethod
-    def texturename_read_file(cls, filepath: str):
+    def texturename_read_file(cls, filepath: str) -> list[c_wchar_p]:
         array = cls._lib().texturename_read_file(c_wchar_p(filepath))
         return util.array_to_list(array, c_wchar_p)
 
@@ -111,6 +111,14 @@ class SAIONET(ExternalLibrary):
         c_texture_names_size = c_int(len(texture_names))
         
         cls._lib().texturename_write_file(c_filepath, c_texture_names, c_texture_names_size)
+
+    ################################################################################################
+    # Texture
+
+    @classmethod
+    def texture_read_archive_file(cls, filepath: str) -> CTextureSet:
+        c_filepath = c_wchar_p(filepath)
+        return cls._lib().texture_read_archive_file(c_filepath)
     
     ################################################################################################
     # Material

@@ -110,3 +110,103 @@ GINJA_MATRIX_ID = [
     'MATRIX9',
     'IDENTITY',
 ]
+
+ARCHIVE_FORMAT = [
+    'PAK',
+    'GVM',
+    'PVM',
+    'PVMX',
+]
+
+TEXTURE_TYPE = [
+    'COLOR',
+    'INDEX8',
+    'INDEX4',
+]
+
+GV_FORMAT = [ 
+    'INTENSITY4',
+    'INTENSITY8',
+    'INTENSITYA4',
+    'INTENSITYA8',
+    'RGB565',
+    'RGB5A3',
+    'ARGB8',
+    None,
+    'INDEX4',
+    'INDEX8',
+    None,
+    None,
+    None,
+    None,
+    'DXT1',
+]
+
+GV_PALETTE_FORMAT = [
+    'INTENSITYA8',
+    'RGB565',
+    'RGB5A3',
+]
+
+PV_PIXEL_FORMAT = [
+    'ARGB1555',
+    'RGB565',
+    'ARGB4',
+    'YUV422',
+    'BUMP',
+    'ARGB8',
+    'RGB24',
+]
+
+PV_TEXTURE_DATA_FORMAT = [
+    None,
+    'SQUARETWIDDLED',
+    'SQUARETWIDDLED',
+    'VQ',
+    'VQ',
+    'INDEX4',
+    'INDEX4',
+    'INDEX8',
+    'INDEX8',
+    'RECTANGLE',
+    None,
+    'STRIDE',
+    None,
+    'RECTANGLETWIDDLED',
+    None,
+    None,
+    'SMALLVQ',
+    'SMALLVQ',
+    'SQUARETWIDDLED',
+]
+
+PV_TEXTURE_DATA_FORMAT_MIPMAP = [
+    None,
+    'NONE',
+    'INCLUDE',
+    'NONE',
+    'INCLUDE',
+    'NONE',
+    'INCLUDE',
+    'NONE',
+    'INCLUDE',
+    'NONE',
+    None,
+    'NONE',
+    None,
+    'NONE',
+    None,
+    None,
+    'NONE',
+    'INCLUDE',
+    'DMA',
+]
+
+IMAGE_FORMAT = [
+    'DDSBC1',
+    'DDSBC2',
+    'DDSBC3',
+    'PNG',
+    'JPG',
+    'BMP',
+]

@@ -12,6 +12,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="SA3D.Archival" Version="2.2.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\..\..\SA3D.Modeling.Convert\src\SA3D.Modeling.Convert\SA3D.Modeling.Convert.csproj" />
 	</ItemGroup>
 

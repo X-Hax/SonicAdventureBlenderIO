@@ -6,6 +6,7 @@ from bpy.props import (
     PointerProperty
 )
 
+from .texture_properties import SAIO_TextureList
 from .texturename_properties import SAIO_TextureNameList
 
 from ...utility.general import get_addon_preferences
@@ -86,6 +87,11 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         default=False
     )
     
+    texture_world: PointerProperty(
+        type=bpy.types.World,
+        name="Texture list storage"
+    )
+
     texturename_world: PointerProperty(
         type=bpy.types.World,
         name="Texturename list storage",
@@ -94,6 +100,12 @@ class SAIO_Scene(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
         bpy.types.Scene.saio_scene = bpy.props.PointerProperty(type=cls)
+
+    @property
+    def texture_list(self) -> SAIO_TextureList | None:
+        if self.texture_world is None:
+            return None
+        return self.texture_world.saio_texture_list
 
     @property
     def texturename_list(self) -> SAIO_TextureNameList | None:
