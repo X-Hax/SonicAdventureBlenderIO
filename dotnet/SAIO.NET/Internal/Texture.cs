@@ -63,6 +63,23 @@ namespace SAIO.NET.Internal
 				throw new InvalidOperationException("Unsupported texture instance");
 			}
 
+			// Images in blender start in the bottom left, instead of top left, so we gotta flip the image
+			int halfHeight = texture.Height / 2;
+			int rowWidth = texture.Width * 4;
+			for(int y = 0; y < halfHeight; y++)
+			{
+				int yStart = y * rowWidth;
+				int yEnd = (texture.Height - (y + 1)) * rowWidth;
+
+				for (int x = 0; x < rowWidth; x++)
+				{
+					int start = yStart + x;
+					int end = yEnd + x;
+
+					(pixels[start], pixels[end]) = (pixels[end], pixels[start]);
+				}
+			}
+
 			Texture result = new(texture.Name, texture.Width, texture.Height, texture.TextureType, pixels)
 			{
 				GlobalIndex = unchecked((int)texture.GlobalIndex)
