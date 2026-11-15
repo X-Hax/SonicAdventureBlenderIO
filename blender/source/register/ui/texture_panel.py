@@ -45,17 +45,20 @@ class SAIO_UL_TextureList(bpy.types.UIList):
             index,
             flt_flag):
 
-        split = layout.split(factor=0.4)
+        if item.image is None:
+            icon = 'X'
+        else:
+            icon = 'NONE'
+            layout = layout.row()
+            layout.alignment = 'LEFT'
+            layout.template_icon(layout.icon(item.image))
 
-        split.label(
-            text=str(index),
-            icon='X' if item.image is None else 'CHECKMARK')
-
-        split.prop(
+        layout.prop(
             item,
             "name",
             text="",
-            emboss=False)
+            emboss=False,
+            icon=icon)
 
 class BaseTextureContextMenu(bpy.types.Menu):
     bl_label = "Texture list operations"
@@ -84,7 +87,7 @@ def _draw_texture_properties(
     archive_format: str,
     texture_properties: SAIO_Texture):
 
-    layout.prop_search(texture_properties, "image", bpy.data, "images")
+    layout.template_ID_preview(texture_properties, "image")
     layout.prop(texture_properties, "name")
     layout.prop(texture_properties, "texture_type")
     layout.prop(texture_properties, "global_index")
