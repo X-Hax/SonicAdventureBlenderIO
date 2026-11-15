@@ -1,12 +1,9 @@
-﻿using SA3D.Archival.Textures.GV;
-using SA3D.Archival.Textures.PV;
-using SA3D.Archival.Textures.PVX;
-using SA3D.Texturing;
-using SAIO.NET.Internal;
+﻿using SAIO.NET.Internal;
+using System;
 
 namespace SAIO.NET.External.Structs
 {
-	public unsafe struct CTextureSet
+	public unsafe struct CTextureSet : IConvertInternal<TextureSet>
 	{
 		public CTexture* textures;
 		public int texturesSize;
@@ -14,21 +11,25 @@ namespace SAIO.NET.External.Structs
 		public int archiveFormat;
 		public bool compressedArchive;
 
-		public static CTextureSet FromInternal(ITextureSet textureSet)
+		internal static CTextureSet FromInternal(TextureSet textureSet)
 		{
-			TextureArchiveFormat archiveFormat = textureSet switch
-			{
-				GVArchive => TextureArchiveFormat.GVM,
-				PVArchive => TextureArchiveFormat.PVM,
-				PVXArchive => TextureArchiveFormat.PVMX,
-				_ => TextureArchiveFormat.PAK,
-			};
-
 			return new()
 			{
 				textures = Allocate.AllocFromArray(textureSet.Textures, CTexture.FromInternal),
-				texturesSize = textureSet.Textures.Count,
-				archiveFormat = (int)archiveFormat
+				texturesSize = textureSet.Textures.Length,
+				archiveFormat = (int)textureSet.ArchiveFormat,
+				compressedArchive = textureSet.Compress
+			};
+		}
+
+		readonly TextureSet IConvertInternal<TextureSet>.ToInternal()
+		{
+			return new(
+				Util.ToArray<CTexture, Texture>(textures, texturesSize) ?? throw new NullReferenceException("Textures is null")
+			)
+			{
+				ArchiveFormat = (TextureArchiveFormat)archiveFormat,
+				Compress = compressedArchive
 			};
 		}
 	}

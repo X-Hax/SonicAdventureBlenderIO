@@ -241,16 +241,9 @@ namespace SAIO.NET.External
 			try
 			{
 				string filepathString = Util.ToString(filepath) ?? throw new NullReferenceException("Filepath is null");
-				FileIOInfo fileIOInfo = new(filepathString);
 
-				if(!ITextureArchive.TryReadTextureArchiveFromFile(fileIOInfo, out ITextureArchive? archive))
-				{
-					throw new InvalidDataException("File is not a texture archive");
-				}
-
-				CTextureSet result = CTextureSet.FromInternal(archive);
-				result.compressedArchive = Path.GetExtension(filepathString).ToLower() == ".prs";
-				return result;
+				TextureSet textureSet = TextureSet.ReadTextureArchive(filepathString);
+				return CTextureSet.FromInternal(textureSet);
 			}
 			catch (Exception exception)
 			{
