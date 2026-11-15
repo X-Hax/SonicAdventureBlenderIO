@@ -28,7 +28,11 @@ namespace SAIO.NET.Internal
 		public int OverrideWidth { get; set; }
 		public int OverrideHeight { get; set; }
 
+		public bool PAKPunchthrough { get; set; }
+		public bool PAKHasMipmaps { get; set; }
+		
 		public TextureImageFormat ImageFormat { get; set; }
+
 
 		public Texture(string name, int width, int height, TextureType type, byte[] pixels)
 		{

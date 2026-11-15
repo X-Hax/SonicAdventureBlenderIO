@@ -24,12 +24,14 @@ def import_texture_set(texture_list: SAIO_TextureList, texture_set: CTextureSet)
         img.use_fake_user = True
         img.pack()
 
-        tex: SAIO_Texture = texture_list.new(name=texture.name, image=img)
+        tex: SAIO_Texture = texture_list.new(image=img)
         tex.global_index = texture.global_index
         tex.texture_type = enums.TEXTURE_TYPE[texture.texture_type]
 
         if texture_list.archive_format == 'PAK':
             tex.pak.image_format = enums.IMAGE_FORMAT[texture.image_format]
+            tex.pak.has_mipmaps = texture.pak_has_mipmaps
+            tex.pak.punchthrough = texture.pak_punchthrough
 
         elif texture_list.archive_format == 'GVM':
             tex.gv.format = enums.GV_FORMAT[texture.gv_format]

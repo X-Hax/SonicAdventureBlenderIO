@@ -20,6 +20,8 @@ class CTexture(ctypes.Structure):
     pv_pixel_format: int
     override_width: int
     override_height: int
+    pak_punchthrough: bool
+    pak_has_mipmaps: bool
     image_format: int
 
 CTexture._fields_ = [
@@ -38,6 +40,8 @@ CTexture._fields_ = [
     ("pv_pixel_format", ctypes.c_int),
     ("override_width", ctypes.c_int),
     ("override_height", ctypes.c_int),
+    ("pak_punchthrough", ctypes.c_bool),
+    ("pak_has_mipmaps", ctypes.c_bool),
     ("image_format", ctypes.c_int),
 ]
 

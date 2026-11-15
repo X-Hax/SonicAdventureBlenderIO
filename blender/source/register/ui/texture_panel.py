@@ -45,20 +45,19 @@ class SAIO_UL_TextureList(bpy.types.UIList):
             index,
             flt_flag):
 
+        icon = 'NONE'
+        icon_value = 0
+
         if item.image is None:
             icon = 'X'
         else:
-            icon = 'NONE'
-            layout = layout.row()
-            layout.alignment = 'LEFT'
-            layout.template_icon(layout.icon(item.image))
+            icon_value = layout.icon(item.image)
 
-        layout.prop(
-            item,
-            "name",
-            text="",
-            emboss=False,
-            icon=icon)
+        layout.label(
+            text=f"[{index:02}]   {item.slot_name}",
+            icon=icon,
+            icon_value=icon_value
+        )
 
 class BaseTextureContextMenu(bpy.types.Menu):
     bl_label = "Texture list operations"
@@ -88,7 +87,12 @@ def _draw_texture_properties(
     texture_properties: SAIO_Texture):
 
     layout.template_ID_preview(texture_properties, "image")
-    layout.prop(texture_properties, "name")
+    col_prop(layout, texture_properties, "use_custom_slot_name")
+
+    name_layout = layout.column()
+    name_layout.enabled = texture_properties.use_custom_slot_name
+    name_layout.prop(texture_properties, "slot_name")
+
     layout.prop(texture_properties, "texture_type")
     layout.prop(texture_properties, "global_index")
 
@@ -101,6 +105,11 @@ def _draw_texture_properties(
 
     if archive_format == 'PAK':
         layout.prop(texture_properties.pak, "image_format")
+        col_prop(layout, texture_properties.pak, "punchthrough")
+        
+        has_mipmaps_layout = layout.column()
+        has_mipmaps_layout.active = texture_properties.pak.image_format in {'DDS', 'DXT1', 'DXT3', 'DXT5'}
+        col_prop(has_mipmaps_layout, texture_properties.pak, "has_mipmaps")
 
     elif archive_format == 'GVM':
         layout.prop(texture_properties.gv, "format")
@@ -125,9 +134,9 @@ def _draw_texture_properties(
         draw_dither(texture_properties.pv.data_format)
 
     elif archive_format == 'PVMX':
+        layout.prop(texture_properties.pak, "image_format")
         layout.prop(texture_properties.pvx, "override_width")
         layout.prop(texture_properties.pvx, "override_height")
-        layout.prop(texture_properties.pak, "image_format")
 
 
 def draw_texture_list_panel(

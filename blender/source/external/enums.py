@@ -203,9 +203,10 @@ PV_TEXTURE_DATA_FORMAT_MIPMAP = [
 ]
 
 IMAGE_FORMAT = [
-    'DDSBC1',
-    'DDSBC2',
-    'DDSBC3',
+    'DDS',
+    'DXT1',
+    'DXT3',
+    'DXT5',
     'PNG',
     'JPG',
     'BMP',

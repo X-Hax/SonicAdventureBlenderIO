@@ -1,6 +1,7 @@
 ﻿using SA3D.Archival.Textures.GV;
 using SA3D.Archival.Textures.PV;
 using SA3D.Texturing;
+using SAIO.NET.Internal;
 using System;
 using Texture = SAIO.NET.Internal.Texture;
 
@@ -30,6 +31,9 @@ namespace SAIO.NET.External.Structs
 		public int overrideWidth;
 		public int overrideHeight;
 
+		public bool pakPunchthrough;
+		public bool pakHasMipmaps;
+
 		public int imageFormat;
 
 
@@ -52,6 +56,9 @@ namespace SAIO.NET.External.Structs
 				pvPixelFormat = (int)texture.PVPixelFormat,
 				overrideWidth = texture.OverrideWidth,
 				overrideHeight = texture.OverrideHeight,
+				pakPunchthrough = texture.PAKPunchthrough,
+				pakHasMipmaps = texture.PAKHasMipmaps,
+				imageFormat = (int)texture.ImageFormat
 			};
 		}
 
@@ -74,6 +81,9 @@ namespace SAIO.NET.External.Structs
 				PVPixelFormat = (PVPixelFormat)pvPixelFormat,
 				OverrideWidth = overrideWidth,
 				OverrideHeight = overrideHeight,
+				PAKPunchthrough = pakPunchthrough,
+				PAKHasMipmaps = pakHasMipmaps,
+				ImageFormat = (TextureImageFormat)imageFormat
 			};
 		}
 	}

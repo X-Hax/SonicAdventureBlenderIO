@@ -143,23 +143,84 @@ class SAIO_Texture_PAK(bpy.types.PropertyGroup):
         name="Image format",
         description="Format in which the image should be encoded",
         items=(
-            ('DDSBC1', "DDS (BC1)", "DDS texture with RGB565 and 1 or 0 bits of alpha"),
-            ('DDSBC2', "DDS (BC2)", "DDS texture with RGB565 and 4 bits of alpha"),
-            ('DDSBC3', "DDS (BC3)", "DDS texture with RGB565 and 8 bits of alpha"),
+            ('DDS', "DDS", "Uncompressed DDS texture (RGBA8)"),
+            ('DXT1', "DDS (BC1)", "DDS texture with RGB565 and 1 or 0 bits of alpha"),
+            ('DXT3', "DDS (BC2)", "DDS texture with RGB565 and 4 bits of alpha"),
+            ('DXT5', "DDS (BC3)", "DDS texture with RGB565 and 8 bits of alpha"),
             ('PNG', "PNG", ""),
             ('JPG', "JPG", ""),
             ('BMP', "BMP", "")
         ),
-        default='DDSBC1'
+        default='DXT1'
     )
+
+    punchthrough: BoolProperty(
+        name="Punchthrough",
+        description="Texture transparency is to be rendered using punchthrough rendering",
+        default=False
+    )
+
+    has_mipmaps: BoolProperty(
+        name="Has mipmaps",
+        description="Whether the texture has mipmaps. Only applies to DDS image formats",
+        default=True
+    )
+
+
+def _get_slot_name(texture):
+    if texture.use_custom_slot_name:
+        return texture.custom_slot_name
+    elif texture.image is None:
+        return "!!NO IMAGE!!"
+    else:
+        return texture.image.name[:28]
+
+def _set_slot_name(texture, new_name):
+    if not texture.use_custom_slot_name_internal:
+        raise SAIOException("Texture is not using a custom name")
+    
+    texture.custom_slot_name = new_name
+
+def _get_use_custom_slot_name(texture):
+    return texture.use_custom_slot_name_internal
+
+def _set_use_custom_slot_name(texture, new_value):
+    if texture.use_custom_slot_name_internal == new_value:
+        return
+
+    texture.use_custom_slot_name_internal = new_value
+
+    if new_value:
+        texture.custom_slot_name = _get_slot_name(texture)
+
 
 class SAIO_Texture(bpy.types.PropertyGroup):
 
-    name: StringProperty(
+    slot_name: StringProperty(
         name="Slot name",
         description="The name of the slot",
+        get=_get_slot_name,
+        set=_set_slot_name
+    )
+
+    custom_slot_name: StringProperty(
+        name="Custom slot name",
+        description="The name of the slot",
         maxlen=0x28,
-        default=""
+        default="Texture"
+    )
+
+    use_custom_slot_name: BoolProperty(
+        name="Use custom slot name",
+        description="Use a custom slot name, otherwise use name of the image",
+        get=_get_use_custom_slot_name,
+        set=_set_use_custom_slot_name
+    )
+
+    use_custom_slot_name_internal: BoolProperty(
+        name="Use custom slot name (internal)",
+        description="Internal field behind use_custom_slot_name",
+        default=False
     )
 
     global_index: IntProperty(
@@ -274,24 +335,10 @@ class SAIO_TextureList(BaseList):
         if "image" in args:
             value.image = args["image"]
 
-        if "name" in args:
-            value.name = args["name"]
-        elif value.image is not None:
-            value.name = os.path.splitext(value.image.name)[0]
-        else:
-            value.name = "Texture"
-
     def _on_clear(self):
         for t in self:
             if t.image is not None:
                 t.image.use_fake_user = False
-
-    def autoname(self):
-        for tex in self:
-            if tex.image is not None:
-                tex.name = os.path.splitext(tex.image.name)[0]
-            else:
-                tex.name = "Texture"
 
     @ classmethod
     def register(cls):

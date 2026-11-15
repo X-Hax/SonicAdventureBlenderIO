@@ -1,12 +1,17 @@
-﻿using SA3D.Archival;
+﻿using Amicitia.IO.Binary;
+using Amicitia.IO.Streams;
+using SA3D.Archival;
 using SA3D.Archival.PAK;
 using SA3D.Archival.Textures;
 using SA3D.Archival.Textures.GV;
 using SA3D.Archival.Textures.PV;
 using SA3D.Archival.Textures.PVX;
+using SA3D.Common.IO;
 using SA3D.Texturing;
 using System;
 using System.Diagnostics;
+using System.Formats.Tar;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -59,9 +64,33 @@ namespace SAIO.NET.Internal
 
 			if (archive is PAKArchive pakArchive2)
 			{
-				foreach ((Texture texture, PAKEntry entry) in textures.Zip(pakArchive2.Entries))
+				PAKEntry? infoEntry = pakArchive2.Entries.FirstOrDefault((PAKEntry x) => x.Name.EndsWith(".inf"));
+				if(infoEntry != null)
 				{
-					texture.ImageFormat = DetectFormat(entry.Data);
+					int count = infoEntry.Data.Length / 60;
+					PAKTextureInfo[] pakTextureInfo;
+					using (MemoryStream stream = new(infoEntry.Data))
+					{
+						using BinaryObjectReader reader = new(stream, StreamOwnership.Retain, Endianness.Little);
+						pakTextureInfo = reader.ReadObjectArray<PAKTextureInfo>(count);
+					}
+
+					foreach((Texture texture, PAKTextureInfo texInfo) in textures.Zip(pakTextureInfo))
+					{
+						PAKEntry entry = pakArchive2.Entries.FirstOrDefault(x => x.Name == texInfo.Name)
+							?? pakArchive2.Entries.First(x => x.Name.StartsWith(texInfo.Name));
+
+						texture.ImageFormat = DetectFormat(entry.Data);
+						texture.PAKHasMipmaps = texInfo.Attributes.HasFlag(PAKTextureAttributes.Mipmapped);
+						texture.PAKPunchthrough = texInfo.Type == GVTextureFormat.DXT1;
+					}
+				}
+				else
+				{
+					foreach ((Texture texture, PAKEntry entry) in textures.Zip(pakArchive2.Entries))
+					{
+						texture.ImageFormat = DetectFormat(entry.Data);
+					}
 				}
 			}
 			else if(archive is PVXArchive pvxArchive)
@@ -95,44 +124,33 @@ namespace SAIO.NET.Internal
 			{
 				return TextureImageFormat.JPG;
 			}
-			
+
 			// DDS
-			if (// Signature check
-				data[0] == 0x44
+			if (data[0] == 0x44
 				&& data[1] == 0x44
 				&& data[2] == 0x53
-				&& data[3] == 0x20
-
-				// fourCC flag check
-				&& (data[84] & 0x4) != 0
-
-				// fourCC value check)
-				&& data[88] == 0x44
-				&& data[89] == 0x58
-				&& data[90] == 0x31
-				&& data[91] == 0x30
-				
-				// format check
-				&& data[129] == 0 
-				&& data[130] == 0 
-				&& data[131] == 0
-				)
+				&& data[3] == 0x20)
 			{
-				switch (data[128])
+
+				if ((data[80] & 0x4) != 0 // fourCC flag check
+
+					// fourCC value == DXT
+					&& data[84] == 0x44
+					&& data[85] == 0x58
+					&& data[86] == 0x54)
 				{
-					case 70: // BC1_TYPELESS
-					case 71: // BC1_UNORM
-					case 72: // BC1_UNORM_SRGB
-						return TextureImageFormat.DDSBC1;
-					case 73: // BC2_TYPELESS
-					case 74: // BC2_UNORM
-					case 75: // BC2_UNORM_SRGB
-						return TextureImageFormat.DDSBC2;
-					case 76: // BC3_TYPELESS
-					case 77: // BC3_UNORM
-					case 78: // BC3_UNORM_SRGB
-						return TextureImageFormat.DDSBC3;
+					switch (data[87])
+					{
+						case 0x31:
+							return TextureImageFormat.DXT1;
+						case 0x33:
+							return TextureImageFormat.DXT3;
+						case 0x35:
+							return TextureImageFormat.DXT5;
+					}
 				}
+
+				return TextureImageFormat.DDS;
 			}
 
 			return TextureImageFormat.PNG;
