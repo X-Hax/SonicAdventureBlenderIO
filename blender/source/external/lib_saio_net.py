@@ -119,6 +119,21 @@ class SAIONET(ExternalLibrary):
     def texture_read_archive_file(cls, filepath: str) -> CTextureSet:
         c_filepath = c_wchar_p(filepath)
         return cls._lib().texture_read_archive_file(c_filepath)
+
+    @classmethod
+    def texture_import_pack(cls, directory_path: str) -> CTextureSet:
+        c_directory_path = c_wchar_p(directory_path)
+        return cls._lib().texture_import_pack(c_directory_path)
+
+    @classmethod
+    def texture_write_archive_file(cls, texture_set: TPointer[CTextureSet], filepath: str):
+        c_filepath = c_wchar_p(filepath)
+        cls._lib().texture_write_archive_file(texture_set, c_filepath)
+
+    @classmethod
+    def texture_export_pack(cls, texture_set: TPointer[CTextureSet], directory_path: str):
+        c_directory_path = c_wchar_p(directory_path)
+        cls._lib().texture_export_pack(texture_set, c_directory_path)
     
     ################################################################################################
     # Material

@@ -1,8 +1,14 @@
-﻿using SA3D.Archival.Textures.GV;
+﻿using BCnEncoder.Encoder;
+using BCnEncoder.Shared;
+using BCnEncoder.Shared.ImageFiles;
+using SA3D.Archival.Textures.GV;
 using SA3D.Archival.Textures.PV;
 using SA3D.Archival.Textures.PVX;
 using SA3D.Texturing;
+using SA3D.Texturing.IO;
+using SAIO.NET.External.Structs;
 using System;
+using System.IO;
 
 namespace SAIO.NET.Internal
 {
@@ -29,9 +35,9 @@ namespace SAIO.NET.Internal
 		public int OverrideHeight { get; set; }
 
 		public bool PAKPunchthrough { get; set; }
-		public bool PAKHasMipmaps { get; set; }
 		
 		public TextureImageFormat ImageFormat { get; set; }
+		public bool ImageHasMipMaps { get; set; }
 
 
 		public Texture(string name, int width, int height, TextureType type, byte[] pixels)
@@ -47,6 +53,26 @@ namespace SAIO.NET.Internal
 			Type = type;
 			Pixels = pixels;
 			ImageFormat = TextureImageFormat.PNG;
+		}
+
+		private static void FlipImage(byte[] pixels, int width, int height, int bpp)
+		{
+			// Images in blender start in the bottom left, instead of top left, so we gotta flip the image
+			int halfHeight = height / 2;
+			int rowWidth = width * bpp;
+			for (int y = 0; y < halfHeight; y++)
+			{
+				int yStart = y * rowWidth;
+				int yEnd = (height - (y + 1)) * rowWidth;
+
+				for (int x = 0; x < rowWidth; x++)
+				{
+					int start = yStart + x;
+					int end = yEnd + x;
+
+					(pixels[start], pixels[end]) = (pixels[end], pixels[start]);
+				}
+			}
 		}
 
 		public static Texture FromITexture(ITexture texture)
@@ -67,22 +93,7 @@ namespace SAIO.NET.Internal
 				throw new InvalidOperationException("Unsupported texture instance");
 			}
 
-			// Images in blender start in the bottom left, instead of top left, so we gotta flip the image
-			int halfHeight = texture.Height / 2;
-			int rowWidth = texture.Width * 4;
-			for(int y = 0; y < halfHeight; y++)
-			{
-				int yStart = y * rowWidth;
-				int yEnd = (texture.Height - (y + 1)) * rowWidth;
-
-				for (int x = 0; x < rowWidth; x++)
-				{
-					int start = yStart + x;
-					int end = yEnd + x;
-
-					(pixels[start], pixels[end]) = (pixels[end], pixels[start]);
-				}
-			}
+			FlipImage(pixels, texture.Width, texture.Height, 4);
 
 			Texture result = new(texture.Name, texture.Width, texture.Height, texture.TextureType, pixels)
 			{
@@ -112,6 +123,134 @@ namespace SAIO.NET.Internal
 			}
 
 			return result;
+		}
+
+		public static TextureImageFormat DetectImageFormat(ReadOnlySpan<byte> data, out bool hasMipmaps)
+		{
+			hasMipmaps = false;
+
+			// Bitmap
+			if (data[0] == 0x42
+				&& data[1] == 0x4D)
+			{
+				return TextureImageFormat.BMP;
+			}
+
+			// JPG
+			if (data[0] == 0xFF
+				&& data[1] == 0xD8
+				&& data[2] == 0xFF)
+			{
+				return TextureImageFormat.JPG;
+			}
+
+			// DDS
+			if (data[0] == 0x44
+				&& data[1] == 0x44
+				&& data[2] == 0x53
+				&& data[3] == 0x20)
+			{
+
+				hasMipmaps = data[28] > 0;
+
+				if ((data[80] & 0x4) != 0 // fourCC flag check
+
+					// fourCC value == DXT
+					&& data[84] == 0x44
+					&& data[85] == 0x58
+					&& data[86] == 0x54)
+				{
+					switch (data[87])
+					{
+						case 0x31:
+							return TextureImageFormat.DXT1;
+						case 0x33:
+							return TextureImageFormat.DXT3;
+						case 0x35:
+							return TextureImageFormat.DXT5;
+					}
+				}
+
+				return TextureImageFormat.DDS;
+			}
+
+			return TextureImageFormat.PNG;
+		}
+	
+		public ITexture ToSA3DTexture()
+		{
+			if(Type == TextureType.RGBA32)
+			{
+				byte[] pixels = (byte[])Pixels.Clone();
+				FlipImage(pixels, Width, Height, 4);
+
+				return new SA3D.Texturing.Texture(pixels, Width, Height, false)
+				{
+					Name = Name,
+					GlobalIndex = unchecked((uint)GlobalIndex),
+					OverrideHeight = OverrideHeight,
+					OverrideWidth = OverrideWidth,
+				};
+			}
+			else
+			{
+				byte[] indexPixels = new byte[Width * Height];
+				for(int i = 0, o = 0; o < indexPixels.Length; o++, i += 4)
+				{
+					indexPixels[o] = Pixels[i];
+				}
+				FlipImage(indexPixels, Width, Height, 1);
+
+				return new IndexTexture(indexPixels, Width, Height, Type == TextureType.Index4, false)
+				{
+					Name = Name,
+					GlobalIndex = unchecked((uint)GlobalIndex),
+					OverrideHeight = OverrideHeight,
+					OverrideWidth = OverrideWidth,
+				};
+			}
+		}
+
+		public byte[] ConvertToImage()
+		{
+			ITexture texture = ToSA3DTexture();
+
+			switch (ImageFormat)
+			{
+				case TextureImageFormat.DDS:
+				case TextureImageFormat.DXT1:
+				case TextureImageFormat.DXT3:
+				case TextureImageFormat.DXT5:
+					BcEncoder bcEncoder = new();
+
+					bcEncoder.OutputOptions.GenerateMipMaps = ImageHasMipMaps;
+					bcEncoder.OutputOptions.Format = ImageFormat switch
+					{
+						TextureImageFormat.DXT1 => CompressionFormat.Bc1,
+						TextureImageFormat.DXT3 => CompressionFormat.Bc2,
+						TextureImageFormat.DXT5 => CompressionFormat.Bc3,
+						_ => CompressionFormat.Rgba
+					};
+					bcEncoder.OutputOptions.DdsPreferDxt10Header = false;
+					bcEncoder.OutputOptions.DdsBc1WriteAlphaFlag = true;
+					bcEncoder.OutputOptions.FileFormat = OutputFileFormat.Dds;
+
+					DdsFile file = bcEncoder.EncodeToDds(texture.GetRGBA32Data(), texture.Width, texture.Height, PixelFormat.Rgba32);
+					using (MemoryStream stream = new())
+					{
+						file.Write(stream);
+						return stream.ToArray();
+					}
+
+				case TextureImageFormat.PNG:
+					return TextureFileUtilities.WriteImageToBytes(texture, SA3D.Texturing.IO.ImageFormat.PNG);
+				case TextureImageFormat.JPG:
+					return TextureFileUtilities.WriteImageToBytes(texture, SA3D.Texturing.IO.ImageFormat.JPG);
+				case TextureImageFormat.BMP:
+					return TextureFileUtilities.WriteImageToBytes(texture, SA3D.Texturing.IO.ImageFormat.BMP);
+				default:
+					throw new ArgumentException($"Invalid image format \"{ImageFormat}\"");
+			}
 		}
 	}
 }

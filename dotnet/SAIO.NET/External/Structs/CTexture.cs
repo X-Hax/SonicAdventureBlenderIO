@@ -32,9 +32,9 @@ namespace SAIO.NET.External.Structs
 		public int overrideHeight;
 
 		public bool pakPunchthrough;
-		public bool pakHasMipmaps;
 
 		public int imageFormat;
+		public bool imageHasMipmaps;
 
 
 		internal static CTexture FromInternal(Texture texture)
@@ -57,8 +57,8 @@ namespace SAIO.NET.External.Structs
 				overrideWidth = texture.OverrideWidth,
 				overrideHeight = texture.OverrideHeight,
 				pakPunchthrough = texture.PAKPunchthrough,
-				pakHasMipmaps = texture.PAKHasMipmaps,
-				imageFormat = (int)texture.ImageFormat
+				imageFormat = (int)texture.ImageFormat,
+				imageHasMipmaps = texture.ImageHasMipMaps,
 			};
 		}
 
@@ -82,8 +82,8 @@ namespace SAIO.NET.External.Structs
 				OverrideWidth = overrideWidth,
 				OverrideHeight = overrideHeight,
 				PAKPunchthrough = pakPunchthrough,
-				PAKHasMipmaps = pakHasMipmaps,
-				ImageFormat = (TextureImageFormat)imageFormat
+				ImageFormat = (TextureImageFormat)imageFormat,
+				ImageHasMipMaps = imageHasMipmaps,
 			};
 		}
 	}

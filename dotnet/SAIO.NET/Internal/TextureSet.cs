@@ -8,6 +8,8 @@ using SA3D.Archival.Textures.PV;
 using SA3D.Archival.Textures.PVX;
 using SA3D.Common.IO;
 using SA3D.Texturing;
+using SA3D.Texturing.IO;
+using SAIO.NET.External.Structs;
 using System;
 using System.Diagnostics;
 using System.Formats.Tar;
@@ -22,11 +24,13 @@ namespace SAIO.NET.Internal
 		public Texture[] Textures { get; }
 		public TextureArchiveFormat ArchiveFormat { get; set; }
 		public bool Compress { get; set; }
+		public TexturePaletteHandling PaletteHandling { get; set; }
 
 		public TextureSet(Texture[] textures)
 		{
 			Textures = textures;
 		}
+
 
 		public static TextureSet ReadTextureArchive(string filepath)
 		{
@@ -80,8 +84,12 @@ namespace SAIO.NET.Internal
 						PAKEntry entry = pakArchive2.Entries.FirstOrDefault(x => x.Name == texInfo.Name)
 							?? pakArchive2.Entries.First(x => x.Name.StartsWith(texInfo.Name));
 
-						texture.ImageFormat = DetectFormat(entry.Data);
-						texture.PAKHasMipmaps = texInfo.Attributes.HasFlag(PAKTextureAttributes.Mipmapped);
+						texture.ImageFormat = Texture.DetectImageFormat(entry.Data, out bool imageHasMipmaps);
+
+						texture.ImageHasMipMaps =
+							(imageHasMipmaps || texture.ImageFormat is TextureImageFormat.PNG or TextureImageFormat.JPG or TextureImageFormat.BMP)
+							&& texInfo.Attributes.HasFlag(PAKTextureAttributes.Mipmapped);
+
 						texture.PAKPunchthrough = texInfo.Type == GVTextureFormat.DXT1;
 					}
 				}
@@ -89,7 +97,8 @@ namespace SAIO.NET.Internal
 				{
 					foreach ((Texture texture, PAKEntry entry) in textures.Zip(pakArchive2.Entries))
 					{
-						texture.ImageFormat = DetectFormat(entry.Data);
+						texture.ImageFormat = Texture.DetectImageFormat(entry.Data, out bool imageHasMipmaps);
+						texture.ImageHasMipMaps = imageHasMipmaps;
 					}
 				}
 			}
@@ -97,7 +106,8 @@ namespace SAIO.NET.Internal
 			{
 				foreach ((Texture texture, PVXTexture pvx) in textures.Zip(pvxArchive.Entries))
 				{
-					texture.ImageFormat = DetectFormat(pvx.Data);
+					texture.ImageFormat = Texture.DetectImageFormat(pvx.Data, out bool imageHasMipmaps);
+					texture.ImageHasMipMaps = imageHasMipmaps;
 				}
 			}
 
@@ -108,52 +118,236 @@ namespace SAIO.NET.Internal
 			};
 		}
 	
-		private static TextureImageFormat DetectFormat(ReadOnlySpan<byte> data)
+		public static TextureSet ImportTexturePack(string directory)
 		{
-			// Bitmap
-			if (data[0] == 0x42
-				&& data[1] == 0x4D)
+			SA3D.Texturing.TextureSet texturePack = TextureFileUtilities.ImportTexturePack(directory);
+
+			Texture[] textures = [.. texturePack.Textures.Select(Texture.FromITexture)];
+
+			string indexPath = Path.Join(directory, "index.txt");
+			string[] index = File.ReadAllLines(indexPath);
+
+			foreach ((string item, Texture texture) in index.Zip(textures))
 			{
-				return TextureImageFormat.BMP;
+				string[] values = item.Split(',');
+				string filename = values[1];
+
+				string texturePath = Path.Join(directory, filename);
+				byte[] data = File.ReadAllBytes(texturePath);
+				texture.ImageFormat = Texture.DetectImageFormat(data, out bool imageHasMipmaps);
+				texture.ImageHasMipMaps = imageHasMipmaps;
 			}
 
-			// JPG
-			if (data[0] == 0xFF
-				&& data[1] == 0xD8
-				&& data[2] == 0xFF)
+			return new(textures)
 			{
-				return TextureImageFormat.JPG;
-			}
+				ArchiveFormat = TextureArchiveFormat.PVMX
+			};
+		}
 
-			// DDS
-			if (data[0] == 0x44
-				&& data[1] == 0x44
-				&& data[2] == 0x53
-				&& data[3] == 0x20)
+
+		public void WriteTextureArchive(string filepath)
+		{
+			IArchive archive;
+
+			switch (ArchiveFormat)
 			{
+				case TextureArchiveFormat.PAK:
+					PAKEntry[] pakTextures = new PAKEntry[Textures.Length + 1];
+					PAKTextureInfo[] pakTextureInfos = new PAKTextureInfo[Textures.Length];
 
-				if ((data[80] & 0x4) != 0 // fourCC flag check
+					string filename = Path.GetFileNameWithoutExtension(filepath).ToLower();
 
-					// fourCC value == DXT
-					&& data[84] == 0x44
-					&& data[85] == 0x58
-					&& data[86] == 0x54)
-				{
-					switch (data[87])
+					string pakDirectoryPath = Path.ChangeExtension(Path.GetFullPath(filepath), null).ToLower();
+					if(Path.PathSeparator != '\\')
 					{
-						case 0x31:
-							return TextureImageFormat.DXT1;
-						case 0x33:
-							return TextureImageFormat.DXT3;
-						case 0x35:
-							return TextureImageFormat.DXT5;
+						pakDirectoryPath = pakDirectoryPath.Replace(Path.PathSeparator, '\\');
 					}
-				}
 
-				return TextureImageFormat.DDS;
+					int resourceStart = pakDirectoryPath.IndexOf("\\gd_pc\\");
+
+					string pakPath = resourceStart != -1
+						? "..\\..\\..\\sonic2\\resource" + pakDirectoryPath[resourceStart..] + '\\'
+						: "..\\..\\..\\sonic2\\resource\\gd_pc\\prs\\" + filename + '\\';
+
+					for (int i = 0; i < Textures.Length; i++)
+					{
+						Texture texture = Textures[i];
+
+						string textureName = texture.Name.ToLower() + texture.ImageFormat switch
+						{
+							TextureImageFormat.DDS
+							or TextureImageFormat.DXT1
+							or TextureImageFormat.DXT3
+							or TextureImageFormat.DXT5 => ".dds",
+							TextureImageFormat.JPG => ".jpg",
+							TextureImageFormat.BMP => ".bmp",
+							_ => ".png",
+						};
+
+						pakTextures[i] = new(texture.ConvertToImage(), textureName, pakPath + textureName);
+
+						pakTextureInfos[i] = new()
+						{
+							Name = textureName,
+							GlobalIndex = unchecked((uint)texture.GlobalIndex),
+							Type = texture.PAKPunchthrough ? GVTextureFormat.DXT1 : GVTextureFormat.RGB5A3,
+							BitDepth = 0,
+							PixelFormat = texture.PAKPunchthrough ? GVTextureFormat.DXT1 : GVTextureFormat.RGB5A3,
+							Width = (uint)texture.Width,
+							Height = (uint)texture.Height,
+							DataSize = (uint)pakTextures[i].Data.Length,
+							Attributes = texture.ImageHasMipMaps ? PAKTextureAttributes.Mipmapped : default
+						};
+					}
+
+					using (MemoryStream pakTextureInfoStream = new())
+					{
+						BinaryObjectWriter writer = new(pakTextureInfoStream, StreamOwnership.Retain, Endianness.Little);
+						writer.WriteObjectArray(pakTextureInfos);
+						pakTextures[^1] = new(pakTextureInfoStream.ToArray(), filename + ".inf", pakPath + filename + ".inf");
+					}
+
+					archive = new PAKArchive(filename);
+					((PAKArchive)archive).Entries.AddRange(pakTextures);
+
+					break;
+				case TextureArchiveFormat.GVM:
+					GVArchive gvArchive = new();
+
+					foreach (Texture texture in Textures)
+					{
+						GVTexture gvTexture = GVTexture.CreateFromTexture(
+							texture.ToSA3DTexture(),
+							texture.GVFormat,
+							texture.GVHasMipmaps,
+							texture.GVPaletteFormat,
+							texture.Dither
+						);
+
+						gvArchive.Entries.Add(gvTexture);
+
+						if(gvTexture.Palette != null)
+						{
+							if(texture.GVStorePalette)
+							{
+								gvTexture.StorePalette = texture.GVStorePalette;
+							}
+							else
+							{
+								switch (PaletteHandling)
+								{
+									case TexturePaletteHandling.Export:
+										string paletteFilePath = Path.Join(Path.GetDirectoryName(filepath), gvTexture.Name + ".gvp");
+										((GVPalette)gvTexture.Palette).WriteToFile(paletteFilePath);
+										break;
+									case TexturePaletteHandling.Embed:
+										gvArchive.Palettes.Add((GVPalette)gvTexture.Palette);
+										break;
+								}
+							}
+						}
+					}
+
+					archive = gvArchive;
+					break;
+				case TextureArchiveFormat.PVM:
+					PVArchive pvArchive = new();
+
+					foreach (Texture texture in Textures)
+					{
+						PVTexture pvTexture = PVTexture.CreateFromTexture(
+							texture.ToSA3DTexture(),
+							texture.PVPixelFormat,
+							texture.PVDataFormat,
+							texture.Dither
+						);
+
+						pvArchive.Entries.Add(pvTexture);
+
+						if (pvTexture.Palette != null)
+						{
+							switch (PaletteHandling)
+							{
+								case TexturePaletteHandling.Export:
+									string paletteFilePath = Path.Join(Path.GetDirectoryName(filepath), pvTexture.Name + ".pvp");
+									((PVPalette)pvTexture.Palette).WriteToFile(paletteFilePath);
+									break;
+								case TexturePaletteHandling.Embed:
+									pvArchive.Palettes.Add((PVPalette)pvTexture.Palette);
+									break;
+							}
+							
+						}
+					}
+
+					archive = pvArchive;
+					break;
+				case TextureArchiveFormat.PVMX:
+					PVXTexture[] pvxTextures = new PVXTexture[Textures.Length];
+					for(int i = 0; i < Textures.Length; i++)
+					{
+						Texture texture = Textures[i];
+						pvxTextures[i] = new()
+						{
+							Name = texture.Name,
+							Data = texture.ConvertToImage(),
+							GlobalIndex = unchecked((uint)texture.GlobalIndex),
+							OverrideWidth = texture.OverrideWidth,
+							OverrideHeight = texture.OverrideHeight,
+						};
+					}
+
+					archive = new PVXArchive(pvxTextures);
+					break;
+				default:
+					throw new InvalidOperationException("Invalid archive format");
 			}
 
-			return TextureImageFormat.PNG;
+			byte[] data = archive.WriteToBytes(new(filepath));
+
+			if(Compress)
+			{
+				data = PRS.Compress(data);
+			}
+
+			File.WriteAllBytes(filepath, data);
+		}
+
+		public void ExportTexturePack(string directory)
+		{
+			SA3D.Texturing.Texture[] textures = new SA3D.Texturing.Texture[Textures.Length];
+
+			for(int i = 0; i < textures.Length; i++)
+			{
+				Texture texture = Textures[i];
+
+				string name = texture.Name + texture.ImageFormat switch
+				{
+					TextureImageFormat.DDS 
+					or TextureImageFormat.DXT1 
+					or TextureImageFormat.DXT3 
+					or TextureImageFormat.DXT5 => ".dds",
+					TextureImageFormat.JPG => ".jpg",
+					TextureImageFormat.BMP => ".bmp",
+					_ => ".png",
+				};
+
+				textures[i] = new(texture.Pixels, texture.Width, texture.Height, false)
+				{
+					OverrideWidth = texture.OverrideWidth,
+					OverrideHeight = texture.OverrideHeight,
+					GlobalIndex = unchecked((uint)texture.GlobalIndex),
+					Name = name
+				};
+
+				File.WriteAllBytes(
+					Path.Join(directory, name),
+					texture.ConvertToImage()
+				);
+			}
+
+			SA3D.Texturing.TextureSet textureSet = new(textures);
+			textureSet.WriteContentIndexToFile(Path.Join(directory, "index.txt"), string.Empty);
 		}
 	}
 }

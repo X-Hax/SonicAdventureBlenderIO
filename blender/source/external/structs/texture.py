@@ -21,8 +21,8 @@ class CTexture(ctypes.Structure):
     override_width: int
     override_height: int
     pak_punchthrough: bool
-    pak_has_mipmaps: bool
     image_format: int
+    image_has_mipmaps: bool
 
 CTexture._fields_ = [
     ("name", ctypes.c_wchar_p),
@@ -41,7 +41,7 @@ CTexture._fields_ = [
     ("override_width", ctypes.c_int),
     ("override_height", ctypes.c_int),
     ("pak_punchthrough", ctypes.c_bool),
-    ("pak_has_mipmaps", ctypes.c_bool),
     ("image_format", ctypes.c_int),
+    ("image_has_mipmaps", ctypes.c_bool),
 ]
 

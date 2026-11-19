@@ -10,6 +10,7 @@ namespace SAIO.NET.External.Structs
 
 		public int archiveFormat;
 		public bool compressedArchive;
+		public int paletteHandling;
 
 		internal static CTextureSet FromInternal(TextureSet textureSet)
 		{
@@ -18,7 +19,8 @@ namespace SAIO.NET.External.Structs
 				textures = Allocate.AllocFromArray(textureSet.Textures, CTexture.FromInternal),
 				texturesSize = textureSet.Textures.Length,
 				archiveFormat = (int)textureSet.ArchiveFormat,
-				compressedArchive = textureSet.Compress
+				compressedArchive = textureSet.Compress,
+				paletteHandling = (int)textureSet.PaletteHandling
 			};
 		}
 
@@ -29,7 +31,8 @@ namespace SAIO.NET.External.Structs
 			)
 			{
 				ArchiveFormat = (TextureArchiveFormat)archiveFormat,
-				Compress = compressedArchive
+				Compress = compressedArchive,
+				PaletteHandling = (TexturePaletteHandling)paletteHandling
 			};
 		}
 	}

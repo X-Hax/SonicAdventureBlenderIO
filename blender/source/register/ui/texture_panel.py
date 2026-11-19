@@ -73,6 +73,10 @@ class BaseTextureContextMenu(bpy.types.Menu):
         mode_op(texop.SAIO_OT_Textures_Clear.bl_idname)
         layout.separator()
         mode_op(texop.SAIO_OT_Textures_Import_Archive.bl_idname)
+        mode_op(texop.SAIO_OT_Textures_Import_Pack.bl_idname)
+        layout.separator()
+        mode_op(texop.SAIO_OT_Textures_Export_Archive.bl_idname)
+        mode_op(texop.SAIO_OT_Textures_Export_Pack.bl_idname)
 
 class SAIO_MT_TextureContextMenuScene(BaseTextureContextMenu):
     texture_mode = 'SCENE'
@@ -135,6 +139,11 @@ def _draw_texture_properties(
 
     elif archive_format == 'PVMX':
         layout.prop(texture_properties.pak, "image_format")
+
+        has_mipmaps_layout = layout.column()
+        has_mipmaps_layout.active = texture_properties.pak.image_format in {'DDS', 'DXT1', 'DXT3', 'DXT5'}
+        col_prop(has_mipmaps_layout, texture_properties.pak, "has_mipmaps")
+        
         layout.prop(texture_properties.pvx, "override_width")
         layout.prop(texture_properties.pvx, "override_height")
 

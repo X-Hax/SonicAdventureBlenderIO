@@ -7,6 +7,9 @@ to_register = [
     texture_operators.SAIO_OT_Textures_Clear,
     texture_operators.SAIO_OT_Textures_Autoname,
     texture_operators.SAIO_OT_Textures_Import_Archive,
+    texture_operators.SAIO_OT_Textures_Import_Pack,
+    texture_operators.SAIO_OT_Textures_Export_Archive,
+    texture_operators.SAIO_OT_Textures_Export_Pack,
 
     texture_name_operators.SAIO_OT_TextureNames_Add,
     texture_name_operators.SAIO_OT_TextureNames_Remove,

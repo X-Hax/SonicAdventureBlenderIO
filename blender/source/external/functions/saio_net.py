@@ -99,6 +99,26 @@ FUNCTIONS = {
         ),
         structs.CTextureSet,
     ),
+    "texture_import_pack": (
+        (
+            ctypes.c_wchar_p,
+        ),
+        structs.CTextureSet,
+    ),
+    "texture_write_archive_file": (
+        (
+            ctypes.POINTER(structs.CTextureSet),
+            ctypes.c_wchar_p,
+        ),
+        None,
+    ),
+    "texture_export_pack": (
+        (
+            ctypes.POINTER(structs.CTextureSet),
+            ctypes.c_wchar_p,
+        ),
+        None,
+    ),
     "material_get_hash": (
         (
             ctypes.POINTER(structs.CMaterial),

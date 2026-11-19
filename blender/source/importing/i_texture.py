@@ -18,7 +18,7 @@ def import_texture_set(texture_list: SAIO_TextureList, texture_set: CTextureSet)
             alpha=True)
 
         pixel_size = texture.width * texture.height * 4
-        factor = 1.0 / 256.0
+        factor = 1.0 / 255.0
         img.pixels = [texture.pixels[i] * factor for i in range(pixel_size)]
         img.update()
         img.use_fake_user = True
@@ -30,7 +30,7 @@ def import_texture_set(texture_list: SAIO_TextureList, texture_set: CTextureSet)
 
         if texture_list.archive_format == 'PAK':
             tex.pak.image_format = enums.IMAGE_FORMAT[texture.image_format]
-            tex.pak.has_mipmaps = texture.pak_has_mipmaps
+            tex.pak.has_mipmaps = texture.image_has_mipmaps
             tex.pak.punchthrough = texture.pak_punchthrough
 
         elif texture_list.archive_format == 'GVM':
@@ -48,6 +48,4 @@ def import_texture_set(texture_list: SAIO_TextureList, texture_set: CTextureSet)
             tex.pvx.override_width = texture.override_width
             tex.pvx.override_height = texture.override_height
             tex.pak.image_format = enums.IMAGE_FORMAT[texture.image_format]
-
-
-
+            tex.pak.has_mipmaps = texture.image_has_mipmaps

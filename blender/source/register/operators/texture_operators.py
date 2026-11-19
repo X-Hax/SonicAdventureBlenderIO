@@ -3,8 +3,7 @@ import bpy
 
 from bpy.props import (
     EnumProperty,
-    StringProperty,
-    BoolProperty
+    StringProperty
 )
 
 from .base_operators import (
@@ -23,8 +22,9 @@ from .base_list_operators import (
 from ..property_groups.texture_properties import SAIO_TextureList
 
 from ...importing import i_texture
+from ...exporting import o_texture
 from ...external import SAIONET, CTextureSet
-
+from ...exceptions import SAIODevException
 
 class TextureOperator(SAIOBaseOperator):
     bl_options = {'UNDO'}
@@ -39,7 +39,7 @@ class TextureOperator(SAIOBaseOperator):
         options={'HIDDEN'},
     )
 
-    def get_texture_list(self, context):
+    def get_texture_list(self, context) -> SAIO_TextureList | None:
         world = None
         if self.mode == "SCENE":
             world = context.scene.saio_scene.texture_world
@@ -124,3 +124,82 @@ class SAIO_OT_Textures_Import_Archive(TextureImportOperator):
 
     def _get_texture_set(self):
         return SAIONET.texture_read_archive_file(self.filepath)
+
+
+class SAIO_OT_Textures_Import_Pack(TextureImportOperator):
+    bl_idname = "saio.textures_importpack"
+    bl_label = "Import Texture pack"
+
+    filter_glob: StringProperty(
+        default=f"*{os.path.sep}index.txt;",
+        options={'HIDDEN'},
+    )
+
+    def _get_texture_set(self):
+        return SAIONET.texture_import_pack(self.filepath)
+
+
+class TextureExportOperator(TextureOperator, SAIOBaseFileSaveOperator):
+    pass
+
+class SAIO_OT_Textures_Export_Archive(TextureExportOperator):
+    bl_idname = "saio.textures_exportarchive"
+    bl_label = "Export as texture Archive"
+
+    filename_ext  = ".prs"
+
+    def check(self, context):
+        texture_list = self.get_texture_list(context)
+
+        if texture_list.compress:
+            extension = '.prs'
+        elif texture_list.archive_format == 'PAK':
+            extension = '.pak'
+        elif texture_list.archive_format == 'GVM':
+            extension = '.gvm'
+        elif texture_list.archive_format == 'PVM':
+            extension = '.pvm'
+        elif texture_list.archive_format == 'PVMX':
+            extension = '.pvmx'
+        else:
+            raise SAIODevException("Invalid archive format") 
+
+        no_ext, old_extension = os.path.splitext(self.filepath)
+
+        if old_extension != extension:
+            self.filepath = no_ext + extension
+            return True
+
+        return False
+
+    def list_execute(
+        self,
+        context: bpy.types.Context,
+        texture_list: SAIO_TextureList):
+
+        with SAIONET.load():
+            texture_set = o_texture.create_texture_set(texture_list, None)
+            SAIONET.texture_write_archive_file(texture_set, self.filepath)
+            
+class SAIO_OT_Textures_Export_Pack(TextureExportOperator):
+    bl_idname = "saio.textures_exportpack"
+    bl_label = "Export as texture pack"
+
+    filename_ext  = ".txt"
+
+    def check(self, context):
+        filename = os.path.basename(self.filepath)
+        if filename != "index.txt":
+            self.filepath = os.path.join(os.path.dirname(self.filepath), "index.txt")
+            return True
+        return False
+
+    def list_execute(
+        self,
+        context: bpy.types.Context,
+        texture_list: SAIO_TextureList):
+
+        with SAIONET.load():
+            texture_set = o_texture.create_texture_set(texture_list, 'PVMX')
+            directory_path = os.path.dirname(self.filepath)
+            SAIONET.texture_export_pack(texture_set, directory_path)

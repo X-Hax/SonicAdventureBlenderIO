@@ -252,6 +252,55 @@ namespace SAIO.NET.External
 			}
 		}
 
+		[UnmanagedCallersOnly(EntryPoint = "texture_import_pack")]
+		public static CTextureSet TextureImportPack(char* directoryPath)
+		{
+			try
+			{
+				string directoryPathString = Util.ToString(directoryPath) ?? throw new NullReferenceException("directoryPath is null");
+
+				TextureSet textureSet = TextureSet.ImportTexturePack(directoryPathString);
+				return CTextureSet.FromInternal(textureSet);
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
+				return default;
+			}
+		}
+
+		[UnmanagedCallersOnly(EntryPoint = "texture_write_archive_file")]
+		public static void TextureWriteArchiveFile(CTextureSet* textureSet, char* filepath)
+		{
+			try
+			{
+				TextureSet internalTextureSet = textureSet->ToInternal<CTextureSet, TextureSet>();
+				string filepathString = Util.ToString(filepath) ?? throw new NullReferenceException("directoryPath is null");
+
+				internalTextureSet.WriteTextureArchive(filepathString);
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
+			}
+		}
+
+		[UnmanagedCallersOnly(EntryPoint = "texture_export_pack")]
+		public static void TextureExportPack(CTextureSet* textureSet, char* directoryPath)
+		{
+			try
+			{
+				TextureSet internalTextureSet = textureSet->ToInternal<CTextureSet, TextureSet>();
+				string directoryPathString = Util.ToString(directoryPath) ?? throw new NullReferenceException("directoryPath is null");
+
+				internalTextureSet.ExportTexturePack(directoryPathString);
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
+			}
+		}
+
 		#endregion
 
 		#region Material

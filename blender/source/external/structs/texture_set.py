@@ -10,11 +10,13 @@ class CTextureSet(ctypes.Structure):
     textures_size: int
     archive_format: int
     compressed_archive: bool
+    palette_handling: int
 
 CTextureSet._fields_ = [
     ("textures", ctypes.POINTER(CTexture)),
     ("textures_size", ctypes.c_int),
     ("archive_format", ctypes.c_int),
     ("compressed_archive", ctypes.c_bool),
+    ("palette_handling", ctypes.c_int),
 ]
 
