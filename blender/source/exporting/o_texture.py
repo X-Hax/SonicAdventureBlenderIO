@@ -56,7 +56,8 @@ def create_texture_set(texture_list: SAIO_TextureList, force_archive_format: str
         textures = util.as_array(c_textures, CTexture),
         textures_size = len(c_textures),
         archive_format = enums.ARCHIVE_FORMAT.index(archive_format),
-        compressed_archive = texture_list.compress
+        compressed_archive = texture_list.compress,
+        palette_handling = enums.TEXTURE_PALETTE_HANDLING.index(texture_list.palette_handling)
     )
 
     return ctypes.pointer(result)

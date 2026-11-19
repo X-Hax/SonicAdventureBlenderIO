@@ -211,3 +211,9 @@ IMAGE_FORMAT = [
     'JPG',
     'BMP',
 ]
+
+TEXTURE_PALETTE_HANDLING = [
+    'EXPORT',
+    'EMBED',
+    'IGNORE',
+]
