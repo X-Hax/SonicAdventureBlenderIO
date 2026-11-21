@@ -3,7 +3,7 @@ from .scene_panel import SAIO_PT_Scene
 from .mesh_panel import SAIO_PT_Mesh
 from .material_panel import SAIO_PT_Material
 from .node_panel import SAIO_PT_Node, SAIO_PT_Node_Bone
-from . import texturename_panel, texture_panel
+from . import texturename_panel, texture_panel, viewport_toolbar
 
 to_register = [
     menus.TOPBAR_MT_SAIO_Import,
@@ -13,6 +13,9 @@ to_register = [
     SAIO_PT_Material,
     SAIO_PT_Node, 
     SAIO_PT_Node_Bone,
+
+    viewport_toolbar.SAIO_PT_VTP_Material,
+    viewport_toolbar.SAIO_PT_VTP_Info,
 
     texture_panel.SAIO_UL_TextureList,
     texture_panel.SAIO_MT_TextureContextMenuScene,

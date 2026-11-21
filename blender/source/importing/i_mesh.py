@@ -17,7 +17,7 @@ from ..external import (
     CMaterial,
     CVector4
 )
-from ..utility import progress_console
+from ..utility import progress_console, material_setup
 
 class ConvertedMesh:
 
@@ -155,11 +155,14 @@ class MeshConverter:
                 index = len(self._mesh.materials)
                 self._mesh.materials.append(material)
 
+            material_indices.append(index)
+
         index = 0
         for triangle_set, material_index in zip(self._c_triangle_sets, material_indices):
-            for f in range(index, index + len(triangle_set)):
+            face_count = int(len(triangle_set) / 3)
+            for f in range(index, index + face_count):
                 self._mesh.polygons[f].material_index = material_index
-            face_indexindex += len(triangle_set)
+            index += face_count
 
     def _convert_normals(self):
         if not self._c_mesh_info.has_normals:
@@ -327,6 +330,9 @@ class MeshConverter:
         progress_console.end()
 
         return result
+
+    def setup_materials(self, context: bpy.types.Context):
+        material_setup.setup_and_update_materials(context, self._material_lookup.values())
 
     def reset(self):
         self._material_lookup.clear()

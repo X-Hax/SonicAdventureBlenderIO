@@ -21,3 +21,37 @@ def get_addon_preferences(context: bpy.types.Context | None = None) -> SAIO_Addo
     if context is None:
         context = bpy.context
     return context.preferences.addons[PACKAGE_NAME].preferences
+
+
+
+def get_template_path():
+    return os.path.join(ADDON_DIR, "SAIOTemplates.blend")
+
+
+def compare_path(a: str, b: str):
+    absolute = bpy.path.abspath(b)
+    absolute = os.path.abspath(absolute)
+    return a == absolute
+
+
+def load_template_blend():
+    lib_path = get_template_path()
+
+    found = False
+    for library in bpy.data.libraries:
+        if compare_path(lib_path, library.filepath):
+            found = True
+            break
+
+    if not found:
+        bpy.ops.wm.link(
+            filename="SAIO Templates",
+            directory=f"{lib_path}{os.path.sep}Scene{os.path.sep}"
+        )
+
+
+def is_from_template(data: bpy.types.ID):
+    if data.library is None:
+        return False
+
+    return compare_path(get_template_path(), data.library.filepath)

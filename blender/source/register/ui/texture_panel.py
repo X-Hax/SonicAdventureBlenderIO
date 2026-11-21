@@ -90,7 +90,7 @@ def _draw_texture_properties(
     archive_format: str,
     texture_properties: SAIO_Texture):
 
-    layout.template_ID_preview(texture_properties, "image")
+    layout.template_ID_preview(texture_properties, "image", cols=4, rows=4)
     col_prop(layout, texture_properties, "use_custom_slot_name")
 
     name_layout = layout.column()

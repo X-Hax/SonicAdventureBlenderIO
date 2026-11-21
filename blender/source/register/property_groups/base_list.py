@@ -1,8 +1,9 @@
 import bpy
 from bpy.props import IntProperty
+from typing import Callable, Iterator
+from ...exceptions import SAIODevException
 
-
-class BaseList(bpy.types.PropertyGroup):
+class BaseList[T](bpy.types.PropertyGroup):
 
     active_index: IntProperty(
         name="Active texture index",
@@ -10,19 +11,19 @@ class BaseList(bpy.types.PropertyGroup):
         default=-1
     )
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         return self.elements.__iter__() 
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.elements.__len__() 
 
-    def __getitem__(self, key: int | str):
+    def __getitem__(self, key: int | str) -> T:
         if isinstance(key, int):
             return self.elements[key] 
-        return super().__getitem__(key)
+        raise SAIODevException("Invalid item key")
 
     @classmethod
-    def _get_index_comparator(cls, value):
+    def _get_index_comparator(cls, value: any) -> Callable[[any], bool]:
         raise NotImplementedError()
 
     def _on_created(self, value, **args):

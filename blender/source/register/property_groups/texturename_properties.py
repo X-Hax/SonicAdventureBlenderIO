@@ -20,7 +20,7 @@ class SAIO_TextureName(bpy.types.PropertyGroup):
         pass
 
 
-class SAIO_TextureNameList(BaseList):
+class SAIO_TextureNameList(BaseList[SAIO_TextureName]):
 
     elements: CollectionProperty(
         type=SAIO_TextureName,

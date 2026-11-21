@@ -273,7 +273,7 @@ class SAIO_Texture(bpy.types.PropertyGroup):
     def register(cls):
         pass
 
-class SAIO_TextureList(BaseList):
+class SAIO_TextureList(BaseList[SAIO_Texture]):
 
     archive_format: EnumProperty(
         name="Archive format",

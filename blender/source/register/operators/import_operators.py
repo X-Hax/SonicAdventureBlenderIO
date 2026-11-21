@@ -46,6 +46,8 @@ class SAIO_OT_Import_Model(BaseImportModelOperator):
                 model
             )
 
+            self.mesh_converter.setup_materials(context)
+
             self.node_converter.reset()
 
         progress_console.update("Importing data")

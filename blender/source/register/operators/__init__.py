@@ -1,6 +1,14 @@
-from . import import_operators, texture_name_operators, texture_operators
+from . import (
+    import_operators, 
+    texture_name_operators, 
+    texture_operators,
+    material_operators,
+    info_operators
+)
 
 to_register = [
+    import_operators.SAIO_OT_Import_Model,
+
     texture_operators.SAIO_OT_Textures_Add,
     texture_operators.SAIO_OT_Textures_Remove,
     texture_operators.SAIO_OT_Textures_Move,
@@ -18,5 +26,12 @@ to_register = [
     texture_name_operators.SAIO_OT_TextureNames_Import,
     texture_name_operators.SAIO_OT_TextureNames_Export,
 
-    import_operators.SAIO_OT_Import_Model
+    material_operators.SAIO_OT_Material_UpdateProperties,
+    material_operators.SAIO_OT_Material_UpdateActiveProperties,
+    material_operators.SAIO_OT_Material_UpdateTextures,
+    material_operators.SAIO_OT_Material_AttemptConvert,
+    material_operators.SAIO_OT_Material_AssembleTextureList,
+
+    info_operators.SAIO_OT_Info_Manual,
+    info_operators.SAIO_OT_Info_Discord,
 ]

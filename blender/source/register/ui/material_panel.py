@@ -7,6 +7,7 @@ from ..property_groups.ginja_material_properties import SAIO_Material_Ginja
 from ..property_groups.mesh_properties import MESH_DATA_TYPES
 
 from ...utility.draw import col_prop
+from ...utility import material_setup
 
 
 class SAIO_PT_Material(PropertiesPanel):
@@ -163,7 +164,9 @@ class SAIO_PT_Material(PropertiesPanel):
     def draw_texture_properties(
         layout: bpy.types.UILayout,
         file_format: str,
-        saio_material: SAIO_Material):
+        material: bpy.types.Material):
+
+        saio_material: SAIO_Material = material.saio_material
 
         header, menu = layout.panel("saio_mat_texture")
         header.label(text="Texture")
@@ -181,6 +184,11 @@ class SAIO_PT_Material(PropertiesPanel):
         menu.prop(saio_material, "texture_id")
         if file_format == 'GINJA':
             menu.prop(saio_material.ginja_properties, "texture_slot")
+
+        texture_node = material_setup.get_texture_node(material)
+        if texture_node is not None:
+            menu.template_ID_preview(texture_node, "image", cols=4, rows=4)
+
 
         if file_format in ["CHUNK", "BASIC"]:
             menu.separator(type="LINE")
@@ -236,14 +244,15 @@ class SAIO_PT_Material(PropertiesPanel):
     def draw_material_properties(
             layout: bpy.types.UILayout,
             file_format: str,
-            material: bpy.types.Material | None,
-            saio_material: bpy.types.Material):
+            material: bpy.types.Material):
+
+        saio_material: bpy.types.Material = material.saio_material
 
         SAIO_PT_Material.draw_rendering_properties(layout, file_format, saio_material)
         SAIO_PT_Material.draw_transparency_properties(layout, saio_material)
         SAIO_PT_Material.draw_lighting_properties(layout, file_format, saio_material)
         SAIO_PT_Material.draw_color_properties(layout, file_format, saio_material)
-        SAIO_PT_Material.draw_texture_properties(layout, file_format, saio_material)
+        SAIO_PT_Material.draw_texture_properties(layout, file_format, material)
 
 
     # === overriden methods === #
@@ -270,5 +279,4 @@ class SAIO_PT_Material(PropertiesPanel):
         SAIO_PT_Material.draw_material_properties(
             self.layout,
             context.scene.saio_scene.file_format,
-            context.active_object.active_material,
-            context.active_object.active_material.saio_material)
+            context.active_object.active_material)
