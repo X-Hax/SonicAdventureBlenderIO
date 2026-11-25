@@ -17,6 +17,12 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
         default=False
     )
 
+    show_unknown_surface_attributes: BoolProperty(
+        name="Show unknown surface attributes",
+        description="Show unknown surface attributes for level models",
+        default=False
+    )
+
     multi_threading_mode: EnumProperty(
         name="Multi-threading mode",
         description="Whether and how to apply multi threading when e.g. exporting models",
@@ -52,6 +58,7 @@ class SAIO_AddonPreferences(bpy.types.AddonPreferences):
 
         col_prop(layout, self, "use_ninja_vertex_type_names")
         col_prop(layout, self, "enable_ginja")
+        col_prop(layout, self, "show_unknown_surface_attributes")
         layout.separator(type="LINE")
 
         layout.prop(self, "multi_threading_mode")

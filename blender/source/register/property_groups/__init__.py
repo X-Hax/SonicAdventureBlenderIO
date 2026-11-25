@@ -4,6 +4,7 @@ from .mesh_properties import SAIO_Mesh
 from .ginja_material_properties import SAIO_Material_Ginja
 from .material_properties import SAIO_Material
 from .node_properties import SAIO_Node
+from .level_model_properties import SAIO_LevelModel
 from . import texture_properties, texturename_properties
 
 to_register = [
@@ -24,4 +25,5 @@ to_register = [
     SAIO_Material_Ginja,
     SAIO_Material,
     SAIO_Node,
+    SAIO_LevelModel
 ]

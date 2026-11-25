@@ -74,7 +74,7 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         description="Enables specific SAIO tools for the scene.",
         items=[
             ("MDL", "Model", "Model file"),
-            #("LVL", "Landtable", "Landtable file"),
+            ("LVL", "Level", "Level file"),
             #("EVR", "SA2 Event Root", "SA2 Event root/base scene"),
             #("EVC", "SA2 Event Scene", "SA2 Event cut/sub scene"),
         ],
@@ -112,3 +112,13 @@ class SAIO_Scene(bpy.types.PropertyGroup):
         if self.texturename_world is None:
             return None
         return self.texturename_world.saio_texturename_list
+
+    @staticmethod
+    def check_is_landtable(context: bpy.types.Context | None = None):
+        if context is None:
+            context = bpy.context
+
+        if context.scene.saio_scene.scene_type != 'LVL':
+            return "Scene is not marked as a level"
+
+        return None
