@@ -67,9 +67,17 @@ def _setup_material(
         node.height = tnode.height
         node.width = tnode.width
         node.location = tnode.location
+        node.hide = tnode.hide
 
         if tnode.type == 'GROUP':
             node.node_tree = tnode.node_tree
+
+        elif tnode.type == 'MIX':
+            node.data_type = tnode.data_type
+            node.blend_type = tnode.blend_type
+
+        elif tnode.type == 'MATH':
+            node.operation = tnode.operation
 
         for tinput in tnode.inputs:
             input_socket = _get_socket_by_identifier(node.inputs, tinput.identifier)
@@ -127,16 +135,18 @@ def _material_connect_texture(
     try:
         texture = node_tree.nodes["SAIO Texture"]
         shader = node_tree.nodes["SAIO Principled"]
+        color = node_tree.nodes["SAIO Color"]
     except Exception:
         return
 
     def setup_links(
             output_index: int,
+            input_node: bpy.types.ShaderNode,
             input_name: str,
             use_link: bool):
 
         texture_output = texture.outputs[output_index]
-        input_socket = shader.inputs[input_name]
+        input_socket = input_node.inputs[input_name]
 
         if use_link:
             node_tree.links.new(texture_output, input_socket)
@@ -145,8 +155,8 @@ def _material_connect_texture(
             for link in links:
                 node_tree.links.remove(link)
 
-    setup_links(0, "Base Color", use_texture)
-    setup_links(1, "Alpha", use_texture and use_alpha)
+    setup_links(0, color, "B", use_texture)
+    setup_links(1, shader, "Alpha", use_texture and use_alpha)
 
 
 def _material_update_blending(material: bpy.types.Material):

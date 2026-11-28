@@ -71,7 +71,7 @@ class ModelConverter:
 
 
     @staticmethod
-    def _setup_node_attributes(saio_node: SAIO_Node, c_node: CNode):
+    def setup_node_attributes(saio_node: SAIO_Node, c_node: CNode):
         saio_node.no_animate = c_node.no_animate
         saio_node.no_morph = c_node.no_morph
         saio_node.clip = c_node.clip
@@ -93,7 +93,7 @@ class ModelConverter:
             obj = bpy.data.objects.new(self._node_names[index], data)
 
             obj.empty_display_type = 'ARROWS'
-            self._setup_node_attributes(obj.saio_node, node)
+            self.setup_node_attributes(obj.saio_node, node)
 
             self._collection.objects.link(obj)
 
@@ -132,7 +132,7 @@ class ModelConverter:
             if node.parent_index >= 0:
                 bone.parent = self._armature.edit_bones[node.parent_index]
 
-            self._setup_node_attributes(bone.saio_node, node)
+            self.setup_node_attributes(bone.saio_node, node)
 
             bone.head = (0, 0, 0)
             bone.tail = (0, 1, 0)

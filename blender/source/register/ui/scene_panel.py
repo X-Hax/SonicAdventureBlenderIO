@@ -28,7 +28,7 @@ class SAIO_PT_Scene(PropertiesPanel):
         row.prop(setting_properties, "file_format", text="")
         row.prop(setting_properties, "scene_type", text="")
 
-        if setting_properties.file_format == 'CHUNK' and setting_properties.scene_type == 'MDL':
+        if setting_properties.internal_file_format == 'CHUNK' and setting_properties.scene_type == 'MDL':
             col_prop(layout, setting_properties, "chao_chunk")
 
     def draw_panel(self, context):

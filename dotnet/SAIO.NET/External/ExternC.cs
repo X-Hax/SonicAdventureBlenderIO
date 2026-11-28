@@ -2,6 +2,7 @@
 using SA3D.Common.IO;
 using SAIO.NET.External.Structs;
 using SAIO.NET.Internal;
+using SAIO.NET.Internal.Texturing;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -327,6 +328,31 @@ namespace SAIO.NET.External
 				return new(
 					result,
 					models.Length
+				);
+			}
+			catch (Exception exception)
+			{
+				ErrorHandler.HandleError(exception);
+				return default;
+			}
+		}
+
+		#endregion
+
+		#region Level
+
+		[UnmanagedCallersOnly(EntryPoint = "level_read_files")]
+		public static CArray LevelReadFiles(char** filepaths, int filepathsSize)
+		{
+			try
+			{
+				string[] filepathsArray = Util.ToStringArray(filepaths, filepathsSize)!;
+				Level[] levels = Level.ReadFiles(filepathsArray);
+				CLevel** result = Allocate.AllocPointersFromArray(levels, CLevel.FromInternal);
+
+				return new(
+					result,
+					levels.Length
 				);
 			}
 			catch (Exception exception)

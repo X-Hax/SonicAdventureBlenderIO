@@ -1,3 +1,10 @@
+FORMAT = [
+    'BASIC',
+    'BASICDX',
+    'CHUNK',
+    'GINJA'
+]
+
 CHUNK_VERTEX_TYPE = [
     'BLANK4',
     'NORMAL4',

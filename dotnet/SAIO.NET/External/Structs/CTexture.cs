@@ -1,9 +1,9 @@
 ﻿using SA3D.Archival.Textures.GV;
 using SA3D.Archival.Textures.PV;
 using SA3D.Texturing;
-using SAIO.NET.Internal;
+using SAIO.NET.Internal.Texturing;
 using System;
-using Texture = SAIO.NET.Internal.Texture;
+using Texture = SAIO.NET.Internal.Texturing.Texture;
 
 
 

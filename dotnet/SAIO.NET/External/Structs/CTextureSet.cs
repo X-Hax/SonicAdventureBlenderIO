@@ -1,4 +1,4 @@
-﻿using SAIO.NET.Internal;
+﻿using SAIO.NET.Internal.Texturing;
 using System;
 
 namespace SAIO.NET.External.Structs

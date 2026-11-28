@@ -2,6 +2,8 @@ from .array import CArray
 from .corner import CCorner
 from .ginja_tev_stage_parameter import CGinjaTevStageParameter
 from .ginja_tex_gen_parameter import CGinjaTexGenParameter
+from .level import CLevel
+from .level_model import CLevelModel
 from .material import CMaterial
 from .mesh import CMesh
 from .mesh_conversion_info import CMeshConversionInfo

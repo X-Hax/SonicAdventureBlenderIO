@@ -8,6 +8,7 @@ from . import (
 
 to_register = [
     import_operators.SAIO_OT_Import_Model,
+    import_operators.SAIO_OT_Import_Level,
 
     texture_operators.SAIO_OT_Textures_Add,
     texture_operators.SAIO_OT_Textures_Remove,

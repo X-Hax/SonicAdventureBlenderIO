@@ -93,6 +93,6 @@ class SAIO_PT_Mesh(PropertiesPanel):
 
         SAIO_PT_Mesh.draw_mesh_properties(
             self.layout,
-            context.scene.saio_scene.file_format,
+            context.scene.saio_scene.internal_file_format,
             context.active_object.data.saio_mesh)
             

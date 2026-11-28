@@ -1,7 +1,8 @@
 import bpy
 
 from ..operators.import_operators import (
-    SAIO_OT_Import_Model
+    SAIO_OT_Import_Model,
+    SAIO_OT_Import_Level
 )
 
 
@@ -14,6 +15,7 @@ class TOPBAR_MT_SAIO_Import(bpy.types.Menu):
 
         layout.label(text="Import...")
         layout.operator(SAIO_OT_Import_Model.bl_idname)
+        layout.operator(SAIO_OT_Import_Level.bl_idname)
 
     @staticmethod
     def menu_func(self, context):

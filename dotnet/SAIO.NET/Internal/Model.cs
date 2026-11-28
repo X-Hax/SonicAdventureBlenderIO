@@ -4,6 +4,7 @@ using SA3D.Modeling.File;
 using SA3D.Modeling.File.MetaData;
 using SA3D.Modeling.File.MetaData.Blocks;
 using SA3D.Modeling.ObjectData;
+using SA3D.Modeling.Structs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,7 @@ namespace SAIO.NET.Internal
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public string Author { get; set; }
+		public Format Format { get; set; }
 		public bool ChaoChunk { get; set; }
 
 		public RotationMode RotationMode { get; set; }
@@ -24,11 +26,12 @@ namespace SAIO.NET.Internal
 
 		public MeshConversionSet Meshes { get; set; }
 
-		public Model(string name, string description, string author, bool chaoChunk, RotationMode rotationMode, Node rootNode, MeshConversionSet meshes)
+		public Model(string name, string description, string author, Format format, bool chaoChunk, RotationMode rotationMode, Node rootNode, MeshConversionSet meshes)
 		{
 			Name = name;
 			Description = description;
 			Author = author;
+			Format = format;
 			ChaoChunk = chaoChunk;
 			RotationMode = rotationMode;
 			RootNode = rootNode;
@@ -72,6 +75,7 @@ namespace SAIO.NET.Internal
 						Path.GetFileNameWithoutExtension(filepath),
 						descripton,
 						author,
+						modelFile.Format,
 						chaoChunk,
 						rotationMode,
 						modelFile.Model,

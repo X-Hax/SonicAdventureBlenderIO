@@ -132,4 +132,11 @@ FUNCTIONS = {
         ),
         structs.CArray,
     ),
+    "level_read_files": (
+        (
+            ctypes.POINTER(ctypes.c_wchar_p),
+            ctypes.c_int,
+        ),
+        structs.CArray,
+    ),
 }

@@ -13,9 +13,12 @@ from ...utility.general import get_addon_preferences
 
 _FILE_FORMATS = (
     ("BASIC", "Basic", ""),
+    ("BASICDX", "Basic (DX)", ""),
     ("CHUNK", "Chunk", ""),
     ("GINJA", "Ginja", "")
 )
+
+_FILE_FORMATS_NO_GINJA = _FILE_FORMATS[:-1]
 
 _FILE_FORMAT_LUT = {}
 for index, item in enumerate(_FILE_FORMATS):
@@ -26,10 +29,7 @@ def _get_file_format_items(saio_scene, context: bpy.types.Context):
     if pref.enable_ginja or saio_scene.internal_file_format == 'GINJA':
         return _FILE_FORMATS
     else:
-        return (
-            ("BASIC", "Basic", ""),
-            ("CHUNK", "Chunk", "")
-        )
+        return _FILE_FORMATS_NO_GINJA
     
 def _get_file_format(saio_scene):
     return _FILE_FORMAT_LUT[saio_scene.internal_file_format]
@@ -53,11 +53,7 @@ class SAIO_Scene(bpy.types.PropertyGroup):
     internal_file_format: EnumProperty(
         name="File format (internal)",
         description="Determines the file output format",
-        items=(
-            ("BASIC", "Basic", ""),
-            ("CHUNK", "Chunk", ""),
-            ("GINJA", "Ginja", "")
-        ),
+        items=_FILE_FORMATS,
         default="CHUNK"
     )
 

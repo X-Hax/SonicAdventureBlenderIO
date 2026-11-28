@@ -76,7 +76,7 @@ class SAIO_PT_Material(PropertiesPanel):
         menu.use_property_decorate = False
         menu.use_property_split = True
 
-        if file_format in ['CHUNK', 'BASIC']:
+        if file_format in {'CHUNK', 'BASIC', 'BASICDX'}:
             menu.prop(saio_material, "rendering_model")
 
         menu.column(heading="Double sided").prop(saio_material, "double_sided", text="")
@@ -190,7 +190,7 @@ class SAIO_PT_Material(PropertiesPanel):
             menu.template_ID_preview(texture_node, "image", cols=4, rows=4)
 
 
-        if file_format in ["CHUNK", "BASIC"]:
+        if file_format in ['CHUNK', 'BASIC', 'BASICDX']:
             menu.separator(type="LINE")
             menu.prop(saio_material, "texture_filtering")
             col_prop(menu, saio_material, "anisotropic_filtering")
@@ -278,5 +278,5 @@ class SAIO_PT_Material(PropertiesPanel):
     def draw_panel(self, context):
         SAIO_PT_Material.draw_material_properties(
             self.layout,
-            context.scene.saio_scene.file_format,
+            context.scene.saio_scene.internal_file_format,
             context.active_object.active_material)

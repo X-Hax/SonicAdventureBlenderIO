@@ -1,4 +1,5 @@
 ﻿using SA3D.Modeling.Convert;
+using SA3D.Modeling.Structs;
 using SAIO.NET.Internal;
 using System;
 
@@ -9,6 +10,7 @@ namespace SAIO.NET.External.Structs
 		public char* name;
 		public char* description;
 		public char* author;
+		public int format;
 		public bool chaoChunk;
 
 		public int rotationMode;
@@ -20,7 +22,6 @@ namespace SAIO.NET.External.Structs
 		public int meshesSize;
 
 
-
 		internal static CModel FromInternal(Model model)
 		{
 			CModel result = new()
@@ -28,6 +29,7 @@ namespace SAIO.NET.External.Structs
 				name = Allocate.AllocString(model.Name),
 				description = Allocate.AllocString(model.Description),
 				author = Allocate.AllocString(model.Author),
+				format = (int)model.Format,
 				chaoChunk = model.ChaoChunk,
 
 				meshes = Allocate.AllocFromArray(model.Meshes.MeshInfo, CMeshConversionInfo.FromInternal),
@@ -39,12 +41,13 @@ namespace SAIO.NET.External.Structs
 			return result;
 		}
 
-		internal Model ToInternal()
+		internal readonly Model ToInternal()
 		{
 			return new(
 				Util.ToString(name) ?? throw new NullReferenceException("name is null"),
 				Util.ToString(description) ?? string.Empty,
 				Util.ToString(author) ?? string.Empty,
+				(Format)format,
 				chaoChunk,
 				(RotationMode)rotationMode,
 				CNode.ArrayToInternal(nodes, nodesSize, (RotationMode)rotationMode),

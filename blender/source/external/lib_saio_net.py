@@ -156,4 +156,19 @@ class SAIONET(ExternalLibrary):
         )
 
         return util.array_to_list(array, POINTER(CModel))
+
+    ################################################################################################
+    # Level
+
+    @classmethod
+    def level_read_files(cls, filepaths: list[str]) -> list[TPointer[CLevel]]:
+        c_filepaths = util.as_array([c_wchar_p(filepath) for filepath in filepaths], c_wchar_p)
+        c_filepaths_size = c_int(len(filepaths))
+
+        array = cls._lib().level_read_files(
+            c_filepaths,
+            c_filepaths_size
+        )
+
+        return util.array_to_list(array, POINTER(CLevel))
     

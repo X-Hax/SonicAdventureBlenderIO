@@ -20,12 +20,17 @@ namespace SAIO.NET.External.Structs
 		public bool applyCachedRotation;
 
 
-		internal static CNode FromInternal(Node node, Dictionary<Node, int> nodeIndexLut)
+		internal static CNode FromInternal(Node node, Dictionary<Node, int>? nodeIndexLut)
 		{
+			if(node.Parent != null && nodeIndexLut == null)
+			{
+				throw new NullReferenceException("No node lookup provided");
+			}
+
 			return new()
 			{
 				label = Allocate.AllocString(node.Label),
-				parentIndex = node.Parent == null ? -1 : nodeIndexLut[node.Parent],
+				parentIndex = node.Parent == null ? -1 : nodeIndexLut![node.Parent],
 				transform = node.GetWorldMatrix(),
 
 				noAnimate = node.NoAnimate,
@@ -56,10 +61,10 @@ namespace SAIO.NET.External.Structs
 
 		internal readonly struct ToInternalContext
 		{
-			public readonly Node[] nodes;
+			public readonly Node[]? nodes;
 			public readonly RotationMode rotationMode;
 
-			public ToInternalContext(Node[] nodes, RotationMode rotationMode)
+			public ToInternalContext(Node[]? nodes, RotationMode rotationMode)
 			{
 				this.nodes = nodes;
 				this.rotationMode = rotationMode;
@@ -96,6 +101,11 @@ namespace SAIO.NET.External.Structs
 
 			if(parentIndex != -1)
 			{
+				if(context.nodes == null)
+				{
+					throw new NullReferenceException("No node hierarchy provided");
+				}
+
 				context.nodes[parentIndex].AppendChild(result);
 			}
 

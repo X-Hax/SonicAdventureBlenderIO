@@ -59,7 +59,7 @@ class SAIO_PT_LevelModel(PropertiesPanel):
         header, menu = layout.panel("saio_visual_surface_attributes")
         header.label(text="Visual surface attributes")
         if menu:
-            if file_format == 'BASIC':
+            if file_format in {'BASIC', 'BASICDX'}:
                 SAIO_PT_LevelModel.draw_surface_attribute_grid(
                     menu,
                     level_model_properties,
@@ -149,7 +149,7 @@ class SAIO_PT_LevelModel(PropertiesPanel):
         SAIO_PT_LevelModel.draw_level_model_properties(
             self.layout,
             context.scene.saio_scene.scene_type == "LVL",
-            context.scene.saio_scene.file_format,
+            context.scene.saio_scene.internal_file_format,
             preferences.show_unknown_surface_attributes,
             context.active_object
         )

@@ -169,7 +169,7 @@ class BaseImportModelOperator(BaseImportOperator):
             self.armature_mesh_mode != 'DEFAULT'
         )
 
-        self.node_converter = i_model.ModelConverter(
+        self.model_converter = i_model.ModelConverter(
             self.mesh_converter,
             context,
             self.ensure_sibling_order,
