@@ -100,7 +100,7 @@ class ModelConverter:
             if node.parent_index >= 0:
                 obj.parent = objects[node.parent_index]
 
-            obj.matrix_local = matrices[index]
+            obj.matrix_world = matrices[index]
 
             objects.append(obj)
 
