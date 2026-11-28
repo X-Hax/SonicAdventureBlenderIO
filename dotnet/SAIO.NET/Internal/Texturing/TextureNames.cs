@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace SAIO.NET.Internal
+namespace SAIO.NET.Internal.Texturing
 {
 	internal static class TextureNames
 	{

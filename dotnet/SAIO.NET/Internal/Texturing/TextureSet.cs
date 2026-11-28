@@ -17,7 +17,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace SAIO.NET.Internal
+namespace SAIO.NET.Internal.Texturing
 {
 	internal class TextureSet
 	{

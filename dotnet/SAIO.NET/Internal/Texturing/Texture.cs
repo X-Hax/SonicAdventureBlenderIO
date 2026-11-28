@@ -10,7 +10,7 @@ using SAIO.NET.External.Structs;
 using System;
 using System.IO;
 
-namespace SAIO.NET.Internal
+namespace SAIO.NET.Internal.Texturing
 {
 	internal class Texture
 	{

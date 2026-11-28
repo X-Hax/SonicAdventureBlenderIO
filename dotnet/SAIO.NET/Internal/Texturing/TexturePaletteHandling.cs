@@ -1,4 +1,4 @@
-﻿namespace SAIO.NET.Internal
+﻿namespace SAIO.NET.Internal.Texturing
 {
 	internal enum TexturePaletteHandling
 	{

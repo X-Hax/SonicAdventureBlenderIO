@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SAIO.NET.Internal
+namespace SAIO.NET.Internal.Texturing
 {
 	internal enum TextureArchiveFormat
 	{
